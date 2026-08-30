@@ -4,6 +4,10 @@
 
 いまは Android に APK を入れて使う形です。無料の Google Play アプリと、無料の iPhone アプリ（App Store）にする予定です。実装は Dart / Flutter です。詳細は [`docs/技術選定.md`](docs/技術選定.md)、入れ方は [`docs/開発と配布.md`](docs/開発と配布.md) を参照してください。
 
+## 入れ方（Android）
+
+APK は [Releases](https://github.com/kamiikelab/GearDoctor/releases) に置いてあります。最新の `GearDoctor-1.0.3.apk` をダウンロードして、スマホに入れて開きます。「この提供元からのアプリを許可」と出たら、そのアプリだけ許可してください。Play ストアはまだ使いません。
+
 ## できること
 
 - タイヤ、チェーン、ブレーキパッドなど、交換した部品と交換日を記録する
