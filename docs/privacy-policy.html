@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>GearDoctor プライバシーポリシー</title>
+  <title>GearDoctor Privacy Policy</title>
   <style>
     body {
       margin: 0 auto;
@@ -18,104 +18,248 @@
     p, li { font-size: 0.95rem; }
     ul { padding-left: 1.3rem; }
     .meta { color: #555; font-size: 0.9rem; }
+    .lang {
+      display: flex;
+      gap: 0.75rem;
+      margin: 0 0 1.25rem;
+      font-size: 0.9rem;
+    }
+    .lang a { color: #1a1a1a; }
+    .lang a[aria-current="true"] { font-weight: 700; text-decoration: none; }
+    [hidden] { display: none !important; }
   </style>
 </head>
 <body>
-  <h1>GearDoctor プライバシーポリシー</h1>
-  <p class="meta">施行日: 2026年8月29日</p>
+  <nav class="lang" aria-label="Language">
+    <a id="link-ja" href="?lang=ja">日本語</a>
+    <a id="link-en" href="?lang=en">English</a>
+  </nav>
 
-  <p>
-    この文書は、自転車部品の交換時期を知らせるアプリ「GearDoctor」（以下「本アプリ」）が、利用者の情報をどう扱うかを説明します。
-    運営は本アプリの開発者（GitHub: <a href="https://github.com/kamiikelab/GearDoctor">kamiikelab/GearDoctor</a>）です。
-  </p>
+  <article id="ja" lang="ja">
+    <h1>GearDoctor プライバシーポリシー</h1>
+    <p class="meta">施行日: 2026年8月29日</p>
 
-  <h2>1. 基本方針</h2>
-  <p>
-    本アプリは、開発者のサーバーを置きません。部品の記録と走行の集計は、利用者が入れた端末の中で完結します。
-    インターネットを使うのは、利用者が Strava と連携するときと、走行を同期するときです。
-  </p>
+    <p>
+      この文書は、自転車部品の交換時期を知らせるアプリ「GearDoctor」（以下「本アプリ」）が、利用者の情報をどう扱うかを説明します。
+      運営は本アプリの開発者（GitHub: <a href="https://github.com/kamiikelab/GearDoctor">kamiikelab/GearDoctor</a>）です。
+    </p>
 
-  <h2>2. 端末の中に残す情報</h2>
-  <p>本アプリは、次の情報を端末内のデータベースに保存します。</p>
-  <ul>
-    <li>自転車部品の名前、交換周期、交換目安、しきい値</li>
-    <li>交換した日とコメント</li>
-    <li>同期した走行（日付、距離、どの自転車の走行か）</li>
-    <li>集計に使う自転車の選択と、Strava から走行を取る期間（Strava開始日）</li>
-    <li>Strava の表示名と利用者 ID</li>
-    <li>Strava 連携用の Client ID、Client Secret、アクセストークン、リフレッシュトークン</li>
-  </ul>
-  <p>
-    初回起動時は、画面確認用のデモ部品とデモ走行を同じ場所に入れます。
-    利用者が最初に Strava から走行を取ると、デモ走行は消えます。
-  </p>
+    <h2>1. 基本方針</h2>
+    <p>
+      本アプリは、開発者のサーバーを置きません。部品の記録と走行の集計は、利用者が入れた端末の中で完結します。
+      インターネットを使うのは、利用者が Strava と連携するときと、走行を同期するときです。
+    </p>
 
-  <h2>3. 外部に送る情報</h2>
-  <p>
-    本アプリが通信するのは Strava だけです。開発者のサーバー、広告事業者、解析事業者へは送りません。
-  </p>
-  <p>Strava へ送るのは、利用者が操作したときだけです。</p>
-  <ul>
-    <li>連携するとき: 利用者が Strava の画面で許可した範囲で、認可コードをトークンに換えます。</li>
-    <li>同期するとき: 自転車の一覧と、指定した期間の走行一覧を読み取ります。</li>
-    <li>連携を解除するとき: 可能なら Strava 側の認可も無効にします。</li>
-  </ul>
-  <p>
-    走行の取得では、日付、距離、自転車の識別子を使います。
-    GPS の軌跡や地図用の詳細データは取りません。位置情報の権限も使いません。
-  </p>
-  <p>
-    Strava 側の取り扱いは、<a href="https://www.strava.com/legal/privacy">Strava のプライバシーポリシー</a>に従います。
-  </p>
+    <h2>2. 端末の中に残す情報</h2>
+    <p>本アプリは、次の情報を端末内に保存します。</p>
+    <ul>
+      <li>自転車部品の名前、交換周期、交換目安、しきい値</li>
+      <li>交換した日とコメント</li>
+      <li>同期した走行（日付、距離、どの自転車の走行か）</li>
+      <li>集計に使う自転車の選択と、Strava から走行を取る期間（Strava開始日）</li>
+      <li>表示言語の選択</li>
+      <li>Strava の表示名と利用者 ID</li>
+      <li>Strava 連携用の Client ID と Client Secret（Android では端末の暗号化された保管庫。それ以外の環境では端末内のデータベース）</li>
+      <li>Strava のアクセストークンとリフレッシュトークン（端末内のデータベース）</li>
+    </ul>
+    <p>
+      初回起動時は、画面確認用のデモ部品とデモ走行を同じ場所に入れます。
+      利用者が最初に Strava から走行を取ると、デモ走行は消えます。
+    </p>
 
-  <h2>4. 使わないもの</h2>
-  <ul>
-    <li>広告</li>
-    <li>利用状況の解析やクラッシュ報告の送信</li>
-    <li>アカウント登録（本アプリ独自の会員機能はありません）</li>
-    <li>位置情報</li>
-    <li>連絡先、写真、ファイルへの自動アクセス</li>
-  </ul>
-  <p>
-    交換記録と部品設定の CSV は、利用者が画面で書き出したときだけ、入力欄とクリップボードに出します。
-    本アプリが自動で外部へ送ることはありません。
-  </p>
+    <h2>3. 外部に送る情報</h2>
+    <p>
+      本アプリが通信するのは Strava だけです。開発者のサーバー、広告事業者、解析事業者へは送りません。
+    </p>
+    <p>Strava へ送るのは、利用者が操作したときだけです。</p>
+    <ul>
+      <li>連携するとき: 利用者が Strava の画面で許可した範囲で、認可コードをトークンに換えます。</li>
+      <li>同期するとき: 自転車の一覧と、指定した期間の走行一覧を読み取ります。</li>
+      <li>連携を解除するとき: 可能なら Strava 側の認可も無効にします。</li>
+    </ul>
+    <p>
+      走行の取得では、日付、距離、自転車の識別子を使います。
+      GPS の軌跡や地図用の詳細データは取りません。位置情報の権限も使いません。
+    </p>
+    <p>
+      Strava 側の取り扱いは、<a href="https://www.strava.com/legal/privacy">Strava のプライバシーポリシー</a>に従います。
+    </p>
 
-  <h2>5. 利用目的</h2>
-  <ul>
-    <li>部品の交換時期を、走行距離または経過月で知らせる</li>
-    <li>利用者が選んだ自転車の走行だけを、部品の距離に足す</li>
-    <li>Strava との連携を維持し、利用者が指定した期間の走行を取り込む</li>
-  </ul>
-  <p>上記以外の目的では使いません。販売や、第三者への提供もしません。</p>
+    <h2>4. 使わないもの</h2>
+    <ul>
+      <li>広告</li>
+      <li>利用状況の解析やクラッシュ報告の送信</li>
+      <li>アカウント登録（本アプリ独自の会員機能はありません）</li>
+      <li>位置情報</li>
+      <li>連絡先、写真、ファイルへの自動アクセス</li>
+    </ul>
+    <p>
+      交換記録と部品設定の CSV は、利用者が画面で書き出したときだけ、入力欄とクリップボードに出します。
+      本アプリが自動で外部へ送ることはありません。
+    </p>
 
-  <h2>6. 保存期間と削除</h2>
-  <p>情報は、利用者が消すまで端末に残ります。次の方法で消せます。</p>
-  <ul>
-    <li>設定の「連携を解除」: Strava のトークンを消し、可能なら Strava 側の認可も無効にします。</li>
-    <li>設定の「初期状態に戻す」: Strava の連携、走行、部品の設定、交換記録を消し、初回と同じデモ状態に戻します。</li>
-    <li>本アプリのアンインストール: 端末内のデータベースも削除されます。</li>
-  </ul>
-  <p>
-    本アプリは利用者のデータをサーバーに持たないため、開発者へ「アカウント削除」を依頼する手順はありません。
-    端末上の操作で足ります。
-  </p>
+    <h2>5. 利用目的</h2>
+    <ul>
+      <li>部品の交換時期を、走行距離または経過月で知らせる</li>
+      <li>利用者が選んだ自転車の走行だけを、部品の距離に足す</li>
+      <li>Strava との連携を維持し、利用者が指定した期間の走行を取り込む</li>
+    </ul>
+    <p>上記以外の目的では使いません。販売や、第三者への提供もしません。</p>
 
-  <h2>7. 子どもの利用</h2>
-  <p>
-    本アプリは子ども向けではありません。13歳未満の方を対象にした機能や、その情報の収集はありません。
-  </p>
+    <h2>6. 保存期間と削除</h2>
+    <p>情報は、利用者が消すまで端末に残ります。次の方法で消せます。</p>
+    <ul>
+      <li>設定の「連携を解除」: Strava のトークンを消し、可能なら Strava 側の認可も無効にします。</li>
+      <li>設定の「初期状態に戻す」: Strava の連携、走行、部品の設定、交換記録を消し、初回と同じデモ状態に戻します。</li>
+      <li>本アプリのアンインストール: 端末内のデータベースも削除されます。</li>
+    </ul>
+    <p>
+      本アプリは利用者のデータをサーバーに持たないため、開発者へ「アカウント削除」を依頼する手順はありません。
+      端末上の操作で足ります。
+    </p>
 
-  <h2>8. 改定</h2>
-  <p>
-    取り扱う情報や連携先が変わったときは、この文書を更新し、施行日を書き換えて公開します。
-  </p>
+    <h2>7. 子どもの利用</h2>
+    <p>
+      本アプリは子ども向けではありません。13歳未満の方を対象にした機能や、その情報の収集はありません。
+    </p>
 
-  <h2>9. お問い合わせ</h2>
-  <p>
-    この方針についての問い合わせは、
-    <a href="https://github.com/kamiikelab/GearDoctor/issues">GitHub の Issues</a>
-    へお願いします。Google Play に掲載したあとは、ストアに書いた連絡先メールでも受け付けます。
-  </p>
+    <h2>8. 改定</h2>
+    <p>
+      取り扱う情報や連携先が変わったときは、この文書を更新し、施行日を書き換えて公開します。
+    </p>
+
+    <h2>9. お問い合わせ</h2>
+    <p>
+      この方針についての問い合わせは、
+      <a href="https://github.com/kamiikelab/GearDoctor/issues">GitHub の Issues</a>
+      へお願いします。Google Play に掲載したあとは、ストアに書いた連絡先メールでも受け付けます。
+    </p>
+  </article>
+
+  <article id="en" lang="en" hidden>
+    <h1>GearDoctor Privacy Policy</h1>
+    <p class="meta">Effective date: 29 August 2026</p>
+
+    <p>
+      This document explains how GearDoctor (the “App”), which reminds you when bicycle parts are due for replacement, handles your information.
+      The App is operated by its developer (GitHub: <a href="https://github.com/kamiikelab/GearDoctor">kamiikelab/GearDoctor</a>).
+    </p>
+
+    <h2>1. Approach</h2>
+    <p>
+      The App does not run a developer server. Part records and ride totals stay on the device you install it on.
+      It uses the internet only when you connect Strava and when you sync rides.
+    </p>
+
+    <h2>2. Information kept on the device</h2>
+    <p>The App stores the following on the device:</p>
+    <ul>
+      <li>Part names, replacement intervals, targets, and alert thresholds</li>
+      <li>Replacement dates and comments</li>
+      <li>Synced rides (date, distance, and which bike they belong to)</li>
+      <li>The bike used for totals, and the Strava start date used to fetch rides</li>
+      <li>Your display-language choice</li>
+      <li>Your Strava display name and user ID</li>
+      <li>Strava Client ID and Client Secret (on Android, in the device’s encrypted credential store; otherwise in the on-device database)</li>
+      <li>Strava access token and refresh token (on-device database)</li>
+    </ul>
+    <p>
+      On first launch, demo parts and demo rides are stored in the same place.
+      The first time you import rides from Strava, the demo rides are removed.
+    </p>
+
+    <h2>3. Information sent elsewhere</h2>
+    <p>
+      The only service the App talks to is Strava. It does not send data to a developer server, advertisers, or analytics providers.
+    </p>
+    <p>It talks to Strava only when you take an action:</p>
+    <ul>
+      <li>When connecting: it exchanges an authorization code for tokens, within the access you grant on Strava’s screen.</li>
+      <li>When syncing: it reads your list of bikes and rides in the period you choose.</li>
+      <li>When disconnecting: it revokes Strava authorization when that is possible.</li>
+    </ul>
+    <p>
+      Ride import uses date, distance, and bike identifiers.
+      It does not fetch GPS tracks or map detail, and it does not use location permission.
+    </p>
+    <p>
+      How Strava handles data is described in the <a href="https://www.strava.com/legal/privacy">Strava Privacy Policy</a>.
+    </p>
+
+    <h2>4. What the App does not use</h2>
+    <ul>
+      <li>Advertising</li>
+      <li>Usage analytics or crash-report uploads</li>
+      <li>Account sign-up (the App has no membership of its own)</li>
+      <li>Location</li>
+      <li>Automatic access to contacts, photos, or files</li>
+    </ul>
+    <p>
+      Replacement-record and part-settings CSVs appear in the on-screen field and clipboard only when you export them.
+      The App does not send those files out by itself.
+    </p>
+
+    <h2>5. Purpose of use</h2>
+    <ul>
+      <li>To tell you when a part is due, by distance or elapsed months</li>
+      <li>To add only the selected bike’s rides to that part’s distance</li>
+      <li>To keep the Strava connection and import rides for the period you choose</li>
+    </ul>
+    <p>We do not use the information for any other purpose, sell it, or provide it to third parties.</p>
+
+    <h2>6. Retention and deletion</h2>
+    <p>Information stays on the device until you delete it. You can delete it as follows:</p>
+    <ul>
+      <li>Settings → Disconnect: removes Strava tokens and, when possible, revokes Strava authorization.</li>
+      <li>Settings → Reset to demo: deletes the Strava connection, rides, part settings, and replacement records, and restores the first-launch demo.</li>
+      <li>Uninstalling the App: also deletes the on-device database.</li>
+    </ul>
+    <p>
+      Because the App does not keep your data on a server, there is no “account deletion” request to the developer.
+      Actions on the device are enough.
+    </p>
+
+    <h2>7. Children</h2>
+    <p>
+      The App is not directed at children. It has no features for, and does not collect information from, anyone under 13.
+    </p>
+
+    <h2>8. Changes</h2>
+    <p>
+      If the information we handle or the services we connect to change, we will update this document, change the effective date, and publish it.
+    </p>
+
+    <h2>9. Contact</h2>
+    <p>
+      Questions about this policy can be sent to
+      <a href="https://github.com/kamiikelab/GearDoctor/issues">GitHub Issues</a>.
+      After the App is listed on Google Play, the contact email on the store listing will also accept inquiries.
+    </p>
+  </article>
+
+  <script>
+    (function () {
+      var params = new URLSearchParams(location.search);
+      var requested = params.get('lang');
+      var lang = requested === 'en' || requested === 'ja'
+        ? requested
+        : ((navigator.language || '').toLowerCase().indexOf('ja') === 0 ? 'ja' : 'en');
+      var ja = document.getElementById('ja');
+      var en = document.getElementById('en');
+      var linkJa = document.getElementById('link-ja');
+      var linkEn = document.getElementById('link-en');
+      var showJa = lang === 'ja';
+      ja.hidden = !showJa;
+      en.hidden = showJa;
+      document.documentElement.lang = showJa ? 'ja' : 'en';
+      if (showJa) {
+        linkJa.setAttribute('aria-current', 'true');
+        linkEn.removeAttribute('aria-current');
+      } else {
+        linkEn.setAttribute('aria-current', 'true');
+        linkJa.removeAttribute('aria-current');
+      }
+    })();
+  </script>
 </body>
 </html>
