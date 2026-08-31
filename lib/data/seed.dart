@@ -25,71 +25,128 @@ String partIdOnGear(String catalogId, String gearId) => '$catalogId@$gearId';
 
 String groupIdOnGear(String catalogId, String gearId) => '$catalogId@$gearId';
 
+String catalogIdOf(String id) {
+  final at = id.indexOf('@');
+  return at <= 0 ? id : id.substring(0, at);
+}
+
 bool matchesCatalogPart(String partId, String catalogId, String gearId) {
   return partId == catalogId || partId == partIdOnGear(catalogId, gearId);
 }
 
-List<Part> defaultParts() {
+class _CatalogPart {
+  const _CatalogPart(
+    this.id,
+    this.nameJa,
+    this.nameEn,
+    this.cycle,
+    this.recommended,
+    this.custom,
+    this.order,
+  );
+
+  final String id;
+  final String nameJa;
+  final String nameEn;
+  final CycleKind cycle;
+  final int recommended;
+  final int custom;
+  final int order;
+
+  String nameFor(String locale) => locale == 'en' ? nameEn : nameJa;
+}
+
+class _CatalogGroup {
+  const _CatalogGroup(
+    this.id,
+    this.nameJa,
+    this.nameEn,
+    this.frontPartId,
+    this.rearPartId,
+  );
+
+  final String id;
+  final String nameJa;
+  final String nameEn;
+  final String frontPartId;
+  final String rearPartId;
+
+  String nameFor(String locale) => locale == 'en' ? nameEn : nameJa;
+}
+
+const _catalogParts = [
+  _CatalogPart('p_front_tire', '前タイヤ', 'Front tire', CycleKind.distance, 6000, 5000, 0),
+  _CatalogPart('p_rear_tire', '後タイヤ', 'Rear tire', CycleKind.distance, 6000, 5000, 1),
+  _CatalogPart('p_chain', 'チェーン', 'Chain', CycleKind.distance, 4000, 4000, 2),
+  _CatalogPart('p_front_pad', '前ブレーキパッド', 'Front brake pads', CycleKind.distance, 1500, 1500, 3),
+  _CatalogPart('p_rear_pad', '後ブレーキパッド', 'Rear brake pads', CycleKind.distance, 1500, 1500, 4),
+  _CatalogPart('p_front_cable', '前ワイヤー', 'Front cable', CycleKind.distance, 5000, 5000, 5),
+  _CatalogPart('p_rear_cable', '後ワイヤー', 'Rear cable', CycleKind.distance, 5000, 5000, 6),
+  _CatalogPart('p_front_oil', '前ブレーキオイル', 'Front brake fluid', CycleKind.distance, 10000, 10000, 7),
+  _CatalogPart('p_rear_oil', '後ブレーキオイル', 'Rear brake fluid', CycleKind.distance, 10000, 10000, 8),
+  _CatalogPart('p_front_disc', '前ディスク', 'Front disc', CycleKind.distance, 8000, 8000, 9),
+  _CatalogPart('p_rear_disc', '後ディスク', 'Rear disc', CycleKind.distance, 8000, 8000, 10),
+  _CatalogPart('p_bar_tape', 'バーテープ', 'Bar tape', CycleKind.distance, 5000, 5000, 11),
+  _CatalogPart('p_speed_batt', 'スピードセンサ電池', 'Speed sensor battery', CycleKind.months, 12, 12, 12),
+  _CatalogPart('p_power_batt', 'パワーセンサ電池', 'Power meter battery', CycleKind.months, 12, 12, 13),
+  _CatalogPart('p_remote_batt', 'リモコン電池', 'Remote battery', CycleKind.months, 12, 12, 14),
+  _CatalogPart('p_hr_batt', '心拍計電池', 'Heart rate battery', CycleKind.months, 12, 12, 15),
+  _CatalogPart('p_rear_light_batt', 'リヤライト電池', 'Rear light battery', CycleKind.months, 12, 12, 16),
+  _CatalogPart('p_pulley', 'プーリー', 'Pulley', CycleKind.distance, 5000, 5000, 17),
+];
+
+const _catalogGroups = [
+  _CatalogGroup('grp_tire', 'タイヤ', 'Tires', 'p_front_tire', 'p_rear_tire'),
+  _CatalogGroup('grp_pad', 'ブレーキパッド', 'Brake pads', 'p_front_pad', 'p_rear_pad'),
+  _CatalogGroup('grp_cable', 'ワイヤー', 'Cables', 'p_front_cable', 'p_rear_cable'),
+  _CatalogGroup('grp_oil', 'ブレーキオイル', 'Brake fluid', 'p_front_oil', 'p_rear_oil'),
+  _CatalogGroup('grp_disc', 'ディスク', 'Discs', 'p_front_disc', 'p_rear_disc'),
+];
+
+List<Part> defaultParts({String locale = 'ja'}) {
   return [
-    _part('p_front_tire', '前タイヤ', CycleKind.distance, 6000, 5000, 0),
-    _part('p_rear_tire', '後タイヤ', CycleKind.distance, 6000, 5000, 1),
-    _part('p_chain', 'チェーン', CycleKind.distance, 4000, 4000, 2),
-    _part('p_front_pad', '前ブレーキパッド', CycleKind.distance, 1500, 1500, 3),
-    _part('p_rear_pad', '後ブレーキパッド', CycleKind.distance, 1500, 1500, 4),
-    _part('p_front_cable', '前ワイヤー', CycleKind.distance, 5000, 5000, 5),
-    _part('p_rear_cable', '後ワイヤー', CycleKind.distance, 5000, 5000, 6),
-    _part('p_front_oil', '前ブレーキオイル', CycleKind.distance, 10000, 10000, 7),
-    _part('p_rear_oil', '後ブレーキオイル', CycleKind.distance, 10000, 10000, 8),
-    _part('p_front_disc', '前ディスク', CycleKind.distance, 8000, 8000, 9),
-    _part('p_rear_disc', '後ディスク', CycleKind.distance, 8000, 8000, 10),
-    _part('p_bar_tape', 'バーテープ', CycleKind.distance, 5000, 5000, 11),
-    _part('p_speed_batt', 'スピードセンサ電池', CycleKind.months, 12, 12, 12),
-    _part('p_power_batt', 'パワーセンサ電池', CycleKind.months, 12, 12, 13),
-    _part('p_remote_batt', 'リモコン電池', CycleKind.months, 12, 12, 14),
-    _part('p_hr_batt', '心拍計電池', CycleKind.months, 12, 12, 15),
-    _part('p_rear_light_batt', 'リヤライト電池', CycleKind.months, 12, 12, 16),
-    _part('p_pulley', 'プーリー', CycleKind.distance, 5000, 5000, 17),
+    for (final item in _catalogParts)
+      _part(
+        item.id,
+        item.nameFor(locale),
+        item.cycle,
+        item.recommended,
+        item.custom,
+        item.order,
+      ),
   ];
 }
 
-List<DisplayGroup> defaultGroups() {
-  return const [
-    DisplayGroup(
-      id: 'grp_tire',
-      gearId: '',
-      displayName: 'タイヤ',
-      frontPartId: 'p_front_tire',
-      rearPartId: 'p_rear_tire',
-    ),
-    DisplayGroup(
-      id: 'grp_pad',
-      gearId: '',
-      displayName: 'ブレーキパッド',
-      frontPartId: 'p_front_pad',
-      rearPartId: 'p_rear_pad',
-    ),
-    DisplayGroup(
-      id: 'grp_cable',
-      gearId: '',
-      displayName: 'ワイヤー',
-      frontPartId: 'p_front_cable',
-      rearPartId: 'p_rear_cable',
-    ),
-    DisplayGroup(
-      id: 'grp_oil',
-      gearId: '',
-      displayName: 'ブレーキオイル',
-      frontPartId: 'p_front_oil',
-      rearPartId: 'p_rear_oil',
-    ),
-    DisplayGroup(
-      id: 'grp_disc',
-      gearId: '',
-      displayName: 'ディスク',
-      frontPartId: 'p_front_disc',
-      rearPartId: 'p_rear_disc',
-    ),
+List<DisplayGroup> defaultGroups({String locale = 'ja'}) {
+  return [
+    for (final item in _catalogGroups)
+      DisplayGroup(
+        id: item.id,
+        gearId: '',
+        displayName: item.nameFor(locale),
+        frontPartId: item.frontPartId,
+        rearPartId: item.rearPartId,
+      ),
   ];
+}
+
+String inferCatalogLocale(List<Part> parts, {required String fallback}) {
+  final jaById = {
+    for (final part in defaultParts(locale: 'ja')) part.id: part.registeredName,
+  };
+  final enById = {
+    for (final part in defaultParts(locale: 'en')) part.id: part.registeredName,
+  };
+  for (final part in parts) {
+    final id = catalogIdOf(part.id);
+    if (jaById[id] == part.registeredName) {
+      return 'ja';
+    }
+    if (enById[id] == part.registeredName) {
+      return 'en';
+    }
+  }
+  return fallback;
 }
 
 Part partForGear(Part catalog, String gearId) {
@@ -109,7 +166,11 @@ DisplayGroup groupForGear(DisplayGroup catalog, String gearId) {
   );
 }
 
-Future<void> seedDemoData(AppRepository repo) async {
+Future<void> seedDemoData(
+  AppRepository repo, {
+  String locale = 'ja',
+  String? localeCode,
+}) async {
   const aeroad = Gear(id: 'g_aeroad', name: 'Aeroad');
   const endurace = Gear(id: 'g_endurace', name: 'Endurace');
   const grail = Gear(id: 'g_grail', name: 'Grail');
@@ -118,16 +179,33 @@ Future<void> seedDemoData(AppRepository repo) async {
   await repo.upsertGear(grail);
 
   final origin = parseDate('2023-04-15');
-  await seedDefaultCatalogForGear(repo, aeroad.id, startDate: origin);
-  await seedDefaultCatalogForGear(repo, endurace.id, startDate: origin);
-  await seedDefaultCatalogForGear(repo, grail.id, startDate: origin);
+  await seedDefaultCatalogForGear(
+    repo,
+    aeroad.id,
+    startDate: origin,
+    locale: locale,
+  );
+  await seedDefaultCatalogForGear(
+    repo,
+    endurace.id,
+    startDate: origin,
+    locale: locale,
+  );
+  await seedDefaultCatalogForGear(
+    repo,
+    grail.id,
+    startDate: origin,
+    locale: locale,
+  );
 
+  final puncture = locale == 'en' ? 'Replaced after a puncture' : 'パンク後に交換';
+  final sidewall = locale == 'en' ? 'Sidewall cut' : 'サイドカット';
   final replacements = <Replacement>[
     _rep('r_ft1', 'p_front_tire', '2023-04-02', ''),
-    _rep('r_ft2', 'p_front_tire', '2024-01-15', 'パンク後に交換'),
+    _rep('r_ft2', 'p_front_tire', '2024-01-15', puncture),
     _rep('r_ft3', 'p_front_tire', '2025-03-01', 'GP5000'),
     _rep('r_rt1', 'p_rear_tire', '2024-06-20', ''),
-    _rep('r_rt2', 'p_rear_tire', '2025-08-01', 'サイドカット'),
+    _rep('r_rt2', 'p_rear_tire', '2025-08-01', sidewall),
     _rep('r_ch1', 'p_chain', '2025-11-12', ''),
     _rep('r_fp1', 'p_front_pad', '2026-01-20', ''),
     _rep('r_rp1', 'p_rear_pad', '2026-01-20', ''),
@@ -173,6 +251,7 @@ Future<void> seedDemoData(AppRepository repo) async {
     AppSettings(
       selectedGearId: aeroad.id,
       lastSyncFrom: parseDate('2025-07-17'),
+      localeCode: localeCode,
     ),
   );
 }
@@ -183,13 +262,16 @@ Future<void> seedDefaultCatalogForGear(
   AppRepository repo,
   String gearId, {
   required DateTime startDate,
+  String locale = 'ja',
 }) async {
   for (final retired in retiredDefaultPartIds) {
     await repo.deletePart(retired);
     await repo.deletePart(partIdOnGear(retired, gearId));
   }
-  for (final catalog in defaultParts()) {
-    final existing = (await repo.loadParts(gearId: gearId)).where((part) {
+  final existingParts = await repo.loadParts(gearId: gearId);
+  final catalogLocale = inferCatalogLocale(existingParts, fallback: locale);
+  for (final catalog in defaultParts(locale: catalogLocale)) {
+    final existing = existingParts.where((part) {
       return matchesCatalogPart(part.id, catalog.id, gearId);
     }).toList();
     if (existing.isNotEmpty) {
@@ -228,7 +310,7 @@ Future<void> seedDefaultCatalogForGear(
     groupedPartIds.add(group.frontPartId);
     groupedPartIds.add(group.rearPartId);
   }
-  for (final catalog in defaultGroups()) {
+  for (final catalog in defaultGroups(locale: catalogLocale)) {
     final group = groupForGear(catalog, gearId);
     if (existingGroups.any((item) => item.id == group.id)) {
       continue;
@@ -253,6 +335,7 @@ Future<void> ensureMissingDefaultParts(
   required DateTime now,
   DateTime? startDate,
   String? gearId,
+  String locale = 'ja',
 }) async {
   final gears = await repo.loadGears();
   final rides = await repo.loadRides();
@@ -265,6 +348,7 @@ Future<void> ensureMissingDefaultParts(
       repo,
       id,
       startDate: oldestRideOn(rides: rides, gearId: id) ?? startDate ?? now,
+      locale: locale,
     );
   }
 }
@@ -313,6 +397,7 @@ Future<void> migrateToPerGearParts(Database db) async {
       repo,
       id,
       startDate: oldestRideOn(rides: rides, gearId: id) ?? DateTime.now(),
+      locale: 'ja',
     );
   }
 }

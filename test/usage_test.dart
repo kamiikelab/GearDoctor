@@ -1,7 +1,10 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:gear_doctor/data/seed.dart';
 import 'package:gear_doctor/domain/dates.dart';
 import 'package:gear_doctor/domain/recommendations.dart';
 import 'package:gear_doctor/domain/usage.dart';
+import 'package:gear_doctor/l10n/app_localizations.dart';
 import 'package:gear_doctor/models/models.dart';
 import 'package:gear_doctor/widgets/widgets.dart';
 
@@ -251,6 +254,11 @@ void main() {
     expect(recommendedLimitFor('前ディスク', CycleKind.distance), 8000);
     expect(recommendedLimitFor('バーテープ', CycleKind.distance), 5000);
     expect(recommendedLimitFor('プーリー', CycleKind.distance), 5000);
+    expect(recommendedLimitFor('Front tire', CycleKind.distance), 6000);
+    expect(recommendedLimitFor('Chain', CycleKind.distance), 4000);
+    expect(recommendedLimitFor('Front brake pads', CycleKind.distance), 1500);
+    expect(recommendedLimitFor('Heart rate battery', CycleKind.months), 12);
+    expect(recommendedLimitFor('Bar tape', CycleKind.distance), 5000);
   });
 
   test('previous cycle is the last completed interval, or start date if only one replacement', () {
@@ -364,28 +372,70 @@ void main() {
   });
 
   test('demo marks attach to fake gear, sync, and distance', () {
-    expect(formatUsed(4800, CycleKind.distance, demo: true), '4,800km（デモ）');
+    final l10n = lookupAppLocalizations(const Locale('ja'));
+    expect(
+      formatUsed(4800, CycleKind.distance, l10n, demo: true),
+      '4,800km（デモ）',
+    );
     expect(
       formatElapsedAndDue(
         4800,
         6000,
         CycleKind.distance,
+        l10n,
         modeLabel: '推奨',
         demo: true,
       ),
       '4,800 / 6,000 km 推奨（デモ）',
     );
     expect(
-      formatElapsedAndDue(7, 12, CycleKind.months, modeLabel: '自動'),
+      formatElapsedAndDue(7, 12, CycleKind.months, l10n, modeLabel: '自動'),
       '7 / 12 か月 自動',
     );
-    expect(formatTodayUsed(3000, CycleKind.distance), '3,000km（今日）');
-    expect(formatUsed(7, CycleKind.months, demo: true), '7か月');
-    expect(markDemo('最終同期 2025-07-17〜2026-07-15', demo: true),
-        '最終同期 2025-07-17〜2026-07-15（デモ）');
+    expect(formatTodayUsed(3000, CycleKind.distance, l10n), '3,000km（今日）');
+    expect(formatUsed(7, CycleKind.months, l10n, demo: true), '7か月');
     expect(
-      demoGearLabel('Aeroad', demo: true, selected: true),
+      markDemo('最終同期 2025-07-17〜2026-07-15', l10n, demo: true),
+      '最終同期 2025-07-17〜2026-07-15（デモ）',
+    );
+    expect(
+      demoGearLabel('Aeroad', l10n, demo: true, selected: true),
       'Aeroad（デモ・選択中）',
+    );
+  });
+
+  test('english demo marks use a leading space', () {
+    final l10n = lookupAppLocalizations(const Locale('en'));
+    expect(
+      formatUsed(4800, CycleKind.distance, l10n, demo: true),
+      '4,800km (demo)',
+    );
+    expect(
+      demoGearLabel('Aeroad', l10n, demo: true, selected: true),
+      'Aeroad (demo, selected)',
+    );
+  });
+
+  test('default catalog names are stored separately for ja and en', () {
+    expect(
+      defaultParts().firstWhere((part) => part.id == 'p_chain').registeredName,
+      'チェーン',
+    );
+    expect(
+      defaultParts(locale: 'en')
+          .firstWhere((part) => part.id == 'p_chain')
+          .registeredName,
+      'Chain',
+    );
+    expect(
+      defaultGroups().firstWhere((group) => group.id == 'grp_tire').displayName,
+      'タイヤ',
+    );
+    expect(
+      defaultGroups(locale: 'en')
+          .firstWhere((group) => group.id == 'grp_tire')
+          .displayName,
+      'Tires',
     );
   });
 }

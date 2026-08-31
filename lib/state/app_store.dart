@@ -5,22 +5,31 @@ import 'package:http/http.dart' as http;
 import '../data/app_database.dart';
 import '../data/app_repository.dart';
 import '../data/seed.dart';
+import '../data/strava_secret_vault.dart';
 import '../domain/dates.dart';
 import '../domain/replacement_csv.dart';
 import '../domain/settings_csv.dart';
 import '../domain/usage.dart';
+import '../l10n/app_localizations.dart';
 import '../models/models.dart';
 import '../strava/strava_api.dart';
 import '../strava/strava_config.dart';
 import '../strava/strava_oauth.dart';
 
 class AppStore extends ChangeNotifier {
-  AppStore({AppDatabase? database, DateTime? now})
-      : _database = database ?? AppDatabase(),
-        _nowOverride = now;
+  AppStore({
+    AppDatabase? database,
+    DateTime? now,
+    this.deviceLocale = 'ja',
+    StravaSecretVault? secretVault,
+  })  : _database = database ?? AppDatabase(),
+        _nowOverride = now,
+        _secretVault = secretVault ?? platformStravaSecretVault();
 
   final AppDatabase _database;
   final DateTime? _nowOverride;
+  final String deviceLocale;
+  final StravaSecretVault? _secretVault;
 
   AppRepository? _repo;
   bool loading = true;
@@ -35,6 +44,14 @@ class AppStore extends ChangeNotifier {
 
   DateTime get now => dateOnly(_nowOverride ?? DateTime.now());
 
+  String get catalogLocale {
+    final code = settings.localeCode;
+    if (code == 'en' || code == 'ja') {
+      return code!;
+    }
+    return deviceLocale == 'en' ? 'en' : 'ja';
+  }
+
   bool get usingDemoRides => rides.any((ride) => isDemoRideId(ride.id));
 
   Future<void> load() async {
@@ -43,11 +60,12 @@ class AppStore extends ChangeNotifier {
     notifyListeners();
     try {
       final db = await _database.instance;
-      _repo = AppRepository(db);
+      _repo = AppRepository(db, secretVault: _secretVault);
       if (!await _repo!.hasParts()) {
-        await seedDemoData(_repo!);
+        await seedDemoData(_repo!, locale: catalogLocale);
       } else {
         final existingSettings = await _repo!.loadSettings();
+        settings = existingSettings;
         await ensureMissingDefaultParts(
           _repo!,
           now: now,
@@ -57,6 +75,7 @@ class AppStore extends ChangeNotifier {
               ) ??
               now,
           gearId: existingSettings.selectedGearId,
+          locale: catalogLocale,
         );
       }
       await refresh();
@@ -141,12 +160,16 @@ class AppStore extends ChangeNotifier {
     return resolveLimit(part, previousCycle: previousCycleOf(part));
   }
 
-  String limitModeLabelOf(Part part) {
+  String limitModeLabelOf(Part part, AppLocalizations l10n) {
     if (part.limitMode == LimitMode.previousCycle &&
         previousCycleOf(part) == null) {
-      return '自動（推奨）';
+      return l10n.limitModeAutoFallback;
     }
-    return part.limitMode.label;
+    return switch (part.limitMode) {
+      LimitMode.recommended => l10n.limitModeRecommended,
+      LimitMode.previousCycle => l10n.limitModeAuto,
+      LimitMode.custom => l10n.limitModeCustom,
+    };
   }
 
   List<HistoryRow> historyOf(Part part) {
@@ -426,6 +449,14 @@ class AppStore extends ChangeNotifier {
     await refresh();
   }
 
+  Future<void> setLocaleCode(String? code) async {
+    settings = code == null || code.isEmpty
+        ? settings.copyWith(clearLocale: true)
+        : settings.copyWith(localeCode: code);
+    notifyListeners();
+    await _requireRepo().saveSettings(settings);
+  }
+
   Future<void> saveStravaCredentials({
     required String clientId,
     required String clientSecret,
@@ -463,8 +494,10 @@ class AppStore extends ChangeNotifier {
 
   Future<void> resetToDemo() async {
     final repo = _requireRepo();
+    final locale = catalogLocale;
+    final localeCode = settings.localeCode;
     await repo.clearAllTables();
-    await seedDemoData(repo);
+    await seedDemoData(repo, locale: locale, localeCode: localeCode);
     await refresh();
   }
 
@@ -593,6 +626,7 @@ class AppStore extends ChangeNotifier {
         repo,
         bike.id,
         startDate: oldestRideOn(rides: rides, gearId: bike.id) ?? now,
+        locale: catalogLocale,
       );
     }
     if (bikes.isEmpty) {

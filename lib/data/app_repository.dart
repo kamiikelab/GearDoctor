@@ -2,11 +2,14 @@ import 'package:sqflite/sqflite.dart';
 
 import '../domain/dates.dart';
 import '../models/models.dart';
+import 'strava_secret_vault.dart';
 
 class AppRepository {
-  AppRepository(this._db);
+  AppRepository(this._db, {StravaSecretVault? secretVault})
+      : _secretVault = secretVault;
 
   final Database _db;
+  final StravaSecretVault? _secretVault;
 
   Future<bool> hasParts() async {
     final rows = await _db.rawQuery('SELECT COUNT(*) AS c FROM parts');
@@ -180,6 +183,7 @@ class AppRepository {
     await _db.delete('rides');
     await _db.delete('gears');
     await _db.delete('settings');
+    await _secretVault?.clear();
   }
 
   Future<void> upsertRide(Ride ride) async {
@@ -208,6 +212,10 @@ class AppRepository {
         isUtc: true,
       );
     }
+    final secrets = await _loadClientSecrets(
+      sqliteClientId: map['strava_client_id'],
+      sqliteClientSecret: map['strava_client_secret'],
+    );
     return AppSettings(
       selectedGearId: map['selected_gear_id'],
       lastSyncAt: map['last_sync_at'] == null
@@ -216,13 +224,14 @@ class AppRepository {
       lastSyncFrom: map['last_sync_from'] == null
           ? null
           : parseDate(map['last_sync_from']!),
-      stravaClientId: map['strava_client_id'],
-      stravaClientSecret: map['strava_client_secret'],
+      stravaClientId: secrets.clientId,
+      stravaClientSecret: secrets.clientSecret,
       stravaAccessToken: map['strava_access_token'],
       stravaRefreshToken: map['strava_refresh_token'],
       stravaExpiresAt: expiresAt,
       stravaAthleteId: map['strava_athlete_id'],
       stravaAthleteName: map['strava_athlete_name'],
+      localeCode: map['locale_code'],
     );
   }
 
@@ -247,8 +256,17 @@ class AppRepository {
       'last_sync_from',
       settings.lastSyncFrom == null ? null : formatDate(settings.lastSyncFrom!),
     );
-    await put('strava_client_id', settings.stravaClientId);
-    await put('strava_client_secret', settings.stravaClientSecret);
+    if (_secretVault != null) {
+      await _secretVault.write(
+        clientId: settings.stravaClientId,
+        clientSecret: settings.stravaClientSecret,
+      );
+      await put('strava_client_id', null);
+      await put('strava_client_secret', null);
+    } else {
+      await put('strava_client_id', settings.stravaClientId);
+      await put('strava_client_secret', settings.stravaClientSecret);
+    }
     await put('strava_access_token', settings.stravaAccessToken);
     await put('strava_refresh_token', settings.stravaRefreshToken);
     await put(
@@ -260,6 +278,44 @@ class AppRepository {
     await put('strava_athlete_id', settings.stravaAthleteId);
     await put('strava_athlete_name', settings.stravaAthleteName);
     await put('strava_connected', settings.stravaConnected ? '1' : '0');
+    await put('locale_code', settings.localeCode);
+  }
+
+  Future<({String? clientId, String? clientSecret})> _loadClientSecrets({
+    required String? sqliteClientId,
+    required String? sqliteClientSecret,
+  }) async {
+    final vault = _secretVault;
+    if (vault == null) {
+      return (clientId: sqliteClientId, clientSecret: sqliteClientSecret);
+    }
+    final clientId =
+        _nonEmpty(await vault.readClientId()) ?? _nonEmpty(sqliteClientId);
+    final clientSecret = _nonEmpty(await vault.readClientSecret()) ??
+        _nonEmpty(sqliteClientSecret);
+    final sqliteHas = _nonEmpty(sqliteClientId) != null ||
+        _nonEmpty(sqliteClientSecret) != null;
+    if (sqliteHas) {
+      await vault.write(clientId: clientId, clientSecret: clientSecret);
+      await _db.delete(
+        'settings',
+        where: 'key = ?',
+        whereArgs: ['strava_client_id'],
+      );
+      await _db.delete(
+        'settings',
+        where: 'key = ?',
+        whereArgs: ['strava_client_secret'],
+      );
+    }
+    return (clientId: clientId, clientSecret: clientSecret);
+  }
+
+  String? _nonEmpty(String? value) {
+    if (value == null || value.isEmpty) {
+      return null;
+    }
+    return value;
   }
 
   Part _partFromRow(Map<String, Object?> row) {

@@ -2,6 +2,8 @@ import '../models/models.dart';
 import 'replacement_csv.dart';
 
 const settingsCsvHeader = '登録名,周期,目安,推奨の値,設定の値,しきい値,まとめ,位置';
+const settingsCsvHeaderEn =
+    'Registered name,Interval,Target,Recommended,Custom,Threshold,Group,Position';
 
 enum SettingsSide { front, rear }
 
@@ -90,7 +92,9 @@ SettingsCsvParseResult parseSettingsCsv(String raw) {
     final fields = parseCsvLine(line);
     if (!sawHeader) {
       if (!_isSettingsHeader(fields)) {
-        errors.add('1行目は $settingsCsvHeader にしてください。');
+        errors.add(
+          '1行目は $settingsCsvHeader または $settingsCsvHeaderEn にしてください。',
+        );
         return SettingsCsvParseResult(rows: const [], errors: errors);
       }
       sawHeader = true;
@@ -238,9 +242,10 @@ SettingsImportPlan planSettingsImport({
 String exportSettingsCsv({
   required List<Part> parts,
   required List<DisplayGroup> groups,
+  String header = settingsCsvHeader,
 }) {
   final ordered = [...parts]..sort((a, b) => a.sortOrder.compareTo(b.sortOrder));
-  final buffer = StringBuffer('$settingsCsvHeader\n');
+  final buffer = StringBuffer('$header\n');
   for (final part in ordered) {
     final group = groupForExport(groups, part.id);
     buffer.write(csvEscape(part.registeredName));
@@ -275,16 +280,23 @@ bool _isSettingsHeader(List<String> fields) {
   if (fields.length < 6) {
     return false;
   }
-  return fields[0].trim() == '登録名' && fields[1].trim() == '周期';
+  final name = fields[0].trim().toLowerCase();
+  final cycle = fields[1].trim().toLowerCase();
+  final japanese = name == '登録名' && cycle == '周期';
+  final english = name == 'registered name' && cycle == 'interval';
+  return japanese || english;
 }
 
 CycleKind? _parseCycle(String raw) {
-  switch (raw) {
+  switch (raw.toLowerCase()) {
     case '距離':
     case 'km':
+    case 'distance':
       return CycleKind.distance;
     case '月':
     case 'か月':
+    case 'months':
+    case 'month':
       return CycleKind.months;
     default:
       return null;
@@ -292,12 +304,15 @@ CycleKind? _parseCycle(String raw) {
 }
 
 LimitMode? _parseLimitMode(String raw) {
-  switch (raw) {
+  switch (raw.toLowerCase()) {
     case '推奨':
+    case 'recommended':
       return LimitMode.recommended;
     case '自動':
+    case 'auto':
       return LimitMode.previousCycle;
     case '設定':
+    case 'custom':
       return LimitMode.custom;
     default:
       return null;

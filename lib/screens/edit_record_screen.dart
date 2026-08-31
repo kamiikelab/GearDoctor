@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../domain/dates.dart';
+import '../l10n/app_localizations.dart';
 import '../models/models.dart';
 import '../state/app_store.dart';
 import '../widgets/widgets.dart';
@@ -44,12 +45,13 @@ class _EditRecordScreenState extends State<EditRecordScreen> {
     return ListenableBuilder(
       listenable: widget.store,
       builder: (context, _) {
+        final l10n = AppLocalizations.of(context);
         final part = widget.store.partById(widget.partId);
         final replacement = _find();
         if (part == null || replacement == null || _date == null) {
           return Scaffold(
-            appBar: AppBar(title: const Text('記録を編集')),
-            body: const Center(child: Text('記録が見つかりません')),
+            appBar: AppBar(title: Text(l10n.editRecord)),
+            body: Center(child: Text(l10n.recordNotFound)),
           );
         }
         final row = widget.store.historyOf(part).firstWhere(
@@ -57,16 +59,16 @@ class _EditRecordScreenState extends State<EditRecordScreen> {
         );
         final name = widget.store.titleOf(part);
         return Scaffold(
-          appBar: AppBar(title: const Text('記録を編集')),
+          appBar: AppBar(title: Text(l10n.editRecord)),
           body: ListView(
             padding: const EdgeInsets.all(16),
             children: [
               Text(
-                '$name · ${formatUsed(row.used, CycleKind.distance, demo: widget.store.usingDemoRides)}',
+                '$name · ${formatUsed(row.used, CycleKind.distance, l10n, demo: widget.store.usingDemoRides)}',
                 style: Theme.of(context).textTheme.bodySmall,
               ),
               const SizedBox(height: 16),
-              Text('交換日', style: Theme.of(context).textTheme.bodySmall),
+              Text(l10n.replacedOn, style: Theme.of(context).textTheme.bodySmall),
               const SizedBox(height: 4),
               OutlinedButton(
                 onPressed: () => _pickDate(context),
@@ -76,20 +78,20 @@ class _EditRecordScreenState extends State<EditRecordScreen> {
                 ),
               ),
               const SizedBox(height: 16),
-              Text('メモ', style: Theme.of(context).textTheme.bodySmall),
+              Text(l10n.memo, style: Theme.of(context).textTheme.bodySmall),
               const SizedBox(height: 4),
               TextField(
                 controller: _memo,
                 minLines: 2,
                 maxLines: 4,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  hintText: '製品名、交換理由など（空でも可）',
+                decoration: InputDecoration(
+                  border: const OutlineInputBorder(),
+                  hintText: l10n.memoHint,
                 ),
               ),
               const SizedBox(height: 8),
               Text(
-                '日付を変えると、その期間の走行距離を数え直す',
+                l10n.editRecordHelp,
                 style: Theme.of(context).textTheme.bodySmall,
               ),
               const SizedBox(height: 16),
@@ -102,7 +104,7 @@ class _EditRecordScreenState extends State<EditRecordScreen> {
                     Navigator.of(context).pop();
                   }
                 },
-                child: const Text('保存'),
+                child: Text(l10n.save),
               ),
               const SizedBox(height: 8),
               OutlinedButton(
@@ -112,7 +114,7 @@ class _EditRecordScreenState extends State<EditRecordScreen> {
                   if (lastOne) {
                     if (context.mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('最後の記録は削除できません')),
+                        SnackBar(content: Text(l10n.cannotDeleteLastRecord)),
                       );
                     }
                     return;
@@ -122,12 +124,12 @@ class _EditRecordScreenState extends State<EditRecordScreen> {
                     Navigator.of(context).pop();
                   }
                 },
-                child: const Text('この記録を削除'),
+                child: Text(l10n.deleteThisRecord),
               ),
               const SizedBox(height: 8),
               OutlinedButton(
                 onPressed: () => Navigator.of(context).pop(),
-                child: const Text('キャンセル'),
+                child: Text(l10n.cancel),
               ),
             ],
           ),

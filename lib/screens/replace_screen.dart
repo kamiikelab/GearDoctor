@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../domain/dates.dart';
+import '../l10n/app_localizations.dart';
 import '../state/app_store.dart';
 import '../widgets/widgets.dart';
 import 'edit_record_screen.dart';
@@ -36,26 +37,27 @@ class _ReplaceScreenState extends State<ReplaceScreen> {
     return ListenableBuilder(
       listenable: widget.store,
       builder: (context, _) {
+        final l10n = AppLocalizations.of(context);
         final part = widget.store.partById(widget.partId);
         if (part == null) {
           return Scaffold(
-            appBar: AppBar(title: const Text('交換を記録')),
-            body: const Center(child: Text('部品が見つかりません')),
+            appBar: AppBar(title: Text(l10n.recordReplace)),
+            body: Center(child: Text(l10n.partNotFound)),
           );
         }
         final name = widget.store.titleOf(part).replaceAll(' · ', '（') +
             (widget.store.groupOf(part.id) == null ? '' : '）');
         final history = widget.store.historyOf(part);
         return Scaffold(
-          appBar: AppBar(title: const Text('交換を記録')),
+          appBar: AppBar(title: Text(l10n.recordReplace)),
           body: ListView(
             padding: const EdgeInsets.all(16),
             children: [
               Text(
-                '$nameを交換した日付を記録すると、この位置の${part.cycle.usageNoun}だけゼロから始まります。',
+                l10n.replaceResetHelp(name, usageNounOf(part.cycle, l10n)),
               ),
               const SizedBox(height: 16),
-              Text('交換日', style: Theme.of(context).textTheme.bodySmall),
+              Text(l10n.replacedOn, style: Theme.of(context).textTheme.bodySmall),
               const SizedBox(height: 4),
               OutlinedButton(
                 onPressed: () => _pickDate(context),
@@ -66,19 +68,19 @@ class _ReplaceScreenState extends State<ReplaceScreen> {
               ),
               const SizedBox(height: 4),
               Text(
-                '初期値は今日。記録し忘れのときは、実際に交換した日に直す',
+                l10n.replaceDateHelp,
                 style: Theme.of(context).textTheme.bodySmall,
               ),
               const SizedBox(height: 16),
-              Text('メモ', style: Theme.of(context).textTheme.bodySmall),
+              Text(l10n.memo, style: Theme.of(context).textTheme.bodySmall),
               const SizedBox(height: 4),
               TextField(
                 controller: _memo,
                 minLines: 2,
                 maxLines: 4,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  hintText: '製品名、交換理由など（空でも可）',
+                decoration: InputDecoration(
+                  border: const OutlineInputBorder(),
+                  hintText: l10n.memoHint,
                 ),
               ),
               const SizedBox(height: 16),
@@ -95,7 +97,7 @@ class _ReplaceScreenState extends State<ReplaceScreen> {
                         }
                       }
                     : null,
-                child: const Text('記録する'),
+                child: Text(l10n.logReplacement),
               ),
               const SizedBox(height: 20),
               ReplacementHistoryTable(
@@ -118,7 +120,7 @@ class _ReplaceScreenState extends State<ReplaceScreen> {
               const SizedBox(height: 20),
               OutlinedButton(
                 onPressed: () => Navigator.of(context).pop(),
-                child: const Text('キャンセル'),
+                child: Text(l10n.cancel),
               ),
             ],
           ),

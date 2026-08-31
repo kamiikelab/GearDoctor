@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../l10n/app_localizations.dart';
 import '../models/models.dart';
 import '../state/app_store.dart';
 import '../widgets/widgets.dart';
@@ -32,13 +33,14 @@ class _DisplayGroupScreenState extends State<DisplayGroupScreen> {
     return ListenableBuilder(
       listenable: widget.store,
       builder: (context, _) {
+        final l10n = AppLocalizations.of(context);
         return Scaffold(
-          appBar: AppBar(title: const Text('表示のまとめ')),
+          appBar: AppBar(title: Text(l10n.groupTitle)),
           body: ListView(
             padding: const EdgeInsets.all(16),
             children: [
               Text(
-                'ホームでは1行にまとめます。部品そのものは分かれています。',
+                l10n.groupHelp,
                 style: Theme.of(context).textTheme.bodySmall,
               ),
               const SizedBox(height: 12),
@@ -47,7 +49,7 @@ class _DisplayGroupScreenState extends State<DisplayGroupScreen> {
                   Expanded(
                     child: SelectTile(
                       selected: _combine,
-                      title: 'まとめて表示',
+                      title: l10n.groupTogether,
                       onTap: () => setState(() => _combine = true),
                     ),
                   ),
@@ -55,7 +57,7 @@ class _DisplayGroupScreenState extends State<DisplayGroupScreen> {
                   Expanded(
                     child: SelectTile(
                       selected: !_combine,
-                      title: '分けて表示',
+                      title: l10n.groupSplit,
                       onTap: () => setState(() => _combine = false),
                     ),
                   ),
@@ -73,7 +75,7 @@ class _DisplayGroupScreenState extends State<DisplayGroupScreen> {
               const SizedBox(height: 16),
               OutlinedButton(
                 onPressed: () => Navigator.of(context).pop(),
-                child: const Text('キャンセル'),
+                child: Text(l10n.cancel),
               ),
             ],
           ),
@@ -83,25 +85,25 @@ class _DisplayGroupScreenState extends State<DisplayGroupScreen> {
   }
 
   Widget _combineForm() {
+    final l10n = AppLocalizations.of(context);
     final candidates = widget.store.ungroupedParts;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text('1. 2つの部品を選ぶ', style: Theme.of(context).textTheme.bodySmall),
+        Text(l10n.pickTwoParts, style: Theme.of(context).textTheme.bodySmall),
         const SizedBox(height: 8),
-        if (candidates.length < 2)
-          const Text('まとめられる部品が足りません。先に登録名で2件追加してください。'),
+        if (candidates.length < 2) Text(l10n.groupNeedTwo),
         for (final part in candidates) ...[
           SelectTile(
             selected: _picked.contains(part.id),
             title: _picked.contains(part.id)
-                ? '${part.registeredName}（選択）'
+                ? '${part.registeredName}${l10n.pickedSuffix}'
                 : part.registeredName,
             onTap: () => _toggle(part.id),
           ),
           const SizedBox(height: 8),
         ],
-        Text('2. どちらが F か', style: Theme.of(context).textTheme.bodySmall),
+        Text(l10n.pickFront, style: Theme.of(context).textTheme.bodySmall),
         const SizedBox(height: 8),
         Row(
           children: [
@@ -109,7 +111,7 @@ class _DisplayGroupScreenState extends State<DisplayGroupScreen> {
               Expanded(
                 child: SelectTile(
                   selected: _frontId == id,
-                  title: '${_nameOf(id)} が F',
+                  title: l10n.partIsFront(_nameOf(id)),
                   onTap: () => setState(() => _frontId = id),
                 ),
               ),
@@ -118,39 +120,42 @@ class _DisplayGroupScreenState extends State<DisplayGroupScreen> {
           ],
         ),
         const SizedBox(height: 16),
-        Text('3. まとめた名前', style: Theme.of(context).textTheme.bodySmall),
+        Text(l10n.groupedNameStep, style: Theme.of(context).textTheme.bodySmall),
         const SizedBox(height: 4),
         TextField(
           controller: _name,
-          decoration: const InputDecoration(
-            border: OutlineInputBorder(),
-            hintText: 'タイヤ',
+          decoration: InputDecoration(
+            border: const OutlineInputBorder(),
+            hintText: l10n.groupNameHint,
           ),
           onChanged: (_) => setState(() {}),
         ),
         const SizedBox(height: 4),
         Text(
-          'ホームは「${_name.text.isEmpty ? '（名前）' : _name.text}」。左が R、右が F',
+          l10n.groupPreview(
+            _name.text.isEmpty ? l10n.groupNamePlaceholder : _name.text,
+          ),
           style: Theme.of(context).textTheme.bodySmall,
         ),
         const SizedBox(height: 16),
         FilledButton(
           onPressed: _saveCombine,
-          child: const Text('まとめて表示'),
+          child: Text(l10n.groupTogether),
         ),
       ],
     );
   }
 
   Widget _separateForm() {
+    final l10n = AppLocalizations.of(context);
     final groups = widget.store.groups;
     if (groups.isEmpty) {
-      return const Text('まとめ表示はありません。');
+      return Text(l10n.noGroups);
     }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text('解除するまとめ', style: Theme.of(context).textTheme.bodySmall),
+        Text(l10n.groupToRemove, style: Theme.of(context).textTheme.bodySmall),
         const SizedBox(height: 8),
         for (final group in groups) ...[
           SelectTile(
@@ -163,11 +168,9 @@ class _DisplayGroupScreenState extends State<DisplayGroupScreen> {
           const SizedBox(height: 8),
         ],
         if (_selectedGroup != null) ...[
-          Text(
-            '「${_selectedGroup!.displayName}」のまとめ表示をやめます。各カードは登録名で出します。',
-          ),
+          Text(l10n.stopGrouping(_selectedGroup!.displayName)),
           const SizedBox(height: 8),
-          Text('分かれたあとの表示（登録名）', style: Theme.of(context).textTheme.bodySmall),
+          Text(l10n.afterSplit, style: Theme.of(context).textTheme.bodySmall),
           const SizedBox(height: 4),
           Text(
             _nameOf(_selectedGroup!.rearPartId),
@@ -179,14 +182,14 @@ class _DisplayGroupScreenState extends State<DisplayGroupScreen> {
           ),
           const SizedBox(height: 4),
           Text(
-            '登録名は変えない。末尾に F/R を付ける合わせこみはしない',
+            l10n.groupSplitHelp,
             style: Theme.of(context).textTheme.bodySmall,
           ),
           const SizedBox(height: 16),
         ],
         FilledButton(
           onPressed: _saveSeparate,
-          child: const Text('分けて表示'),
+          child: Text(l10n.groupSplit),
         ),
       ],
     );
@@ -226,24 +229,25 @@ class _DisplayGroupScreenState extends State<DisplayGroupScreen> {
   }
 
   Future<void> _saveCombine() async {
+    final l10n = AppLocalizations.of(context);
     if (_picked.length != 2 || _frontId == null) {
-      setState(() => _error = '2つの部品と、どちらが F かを選んでください');
+      setState(() => _error = l10n.pickTwoAndFront);
       return;
     }
     final name = _name.text.trim();
     if (name.isEmpty) {
-      setState(() => _error = 'まとめた名前を入力してください');
+      setState(() => _error = l10n.enterGroupName);
       return;
     }
     final rearId = _picked.firstWhere((id) => id != _frontId);
     final front = widget.store.partById(_frontId!);
     final rear = widget.store.partById(rearId);
     if (front == null || rear == null) {
-      setState(() => _error = '部品が見つかりません');
+      setState(() => _error = l10n.partsNotFound);
       return;
     }
     if (front.cycle != rear.cycle) {
-      setState(() => _error = '同じ交換周期の部品だけをまとめられます');
+      setState(() => _error = l10n.sameCycleOnly);
       return;
     }
     await widget.store.combineDisplay(
@@ -257,9 +261,10 @@ class _DisplayGroupScreenState extends State<DisplayGroupScreen> {
   }
 
   Future<void> _saveSeparate() async {
+    final l10n = AppLocalizations.of(context);
     final group = _selectedGroup;
     if (group == null) {
-      setState(() => _error = '解除するまとめを選んでください');
+      setState(() => _error = l10n.selectGroupToSplit);
       return;
     }
     await widget.store.dissolveGroup(group.id);

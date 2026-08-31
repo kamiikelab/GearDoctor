@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 
+import 'l10n/app_localizations.dart';
 import 'screens/home_screen.dart';
 import 'state/app_store.dart';
 import 'theme.dart';
@@ -22,7 +22,14 @@ class _GearDoctorAppState extends State<GearDoctorApp> {
   void initState() {
     super.initState();
     _ownsStore = widget.store == null;
-    _store = widget.store ?? AppStore();
+    _store = widget.store ??
+        AppStore(
+          deviceLocale:
+              WidgetsBinding.instance.platformDispatcher.locale.languageCode ==
+                      'ja'
+                  ? 'ja'
+                  : 'en',
+        );
     if (_ownsStore) {
       _store.load();
     }
@@ -38,32 +45,52 @@ class _GearDoctorAppState extends State<GearDoctorApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'GearDoctor',
-      theme: buildAppTheme(),
-      locale: const Locale('ja'),
-      supportedLocales: const [Locale('ja')],
-      localizationsDelegates: const [
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      home: ListenableBuilder(
-        listenable: _store,
-        builder: (context, _) {
-          if (_store.loading) {
-            return const Scaffold(
-              body: Center(child: CircularProgressIndicator()),
-            );
-          }
-          if (_store.error != null) {
-            return Scaffold(
-              body: Center(child: Text('起動に失敗しました\n${_store.error}')),
-            );
-          }
-          return HomeScreen(store: _store);
-        },
-      ),
+    return ListenableBuilder(
+      listenable: _store,
+      builder: (context, _) {
+        final code = _store.settings.localeCode;
+        return MaterialApp(
+          title: 'GearDoctor',
+          theme: buildAppTheme(),
+          locale: switch (code) {
+            'ja' => const Locale('ja'),
+            'en' => const Locale('en'),
+            _ => null,
+          },
+          supportedLocales: AppLocalizations.supportedLocales,
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          localeResolutionCallback: (locale, _) {
+            if (code == 'ja') {
+              return const Locale('ja');
+            }
+            if (code == 'en') {
+              return const Locale('en');
+            }
+            if (locale?.languageCode == 'ja') {
+              return const Locale('ja');
+            }
+            return const Locale('en');
+          },
+          home: Builder(
+            builder: (context) {
+              if (_store.loading) {
+                return const Scaffold(
+                  body: Center(child: CircularProgressIndicator()),
+                );
+              }
+              if (_store.error != null) {
+                final l10n = AppLocalizations.of(context);
+                return Scaffold(
+                  body: Center(
+                    child: Text(l10n.startupFailed(_store.error!)),
+                  ),
+                );
+              }
+              return HomeScreen(store: _store);
+            },
+          ),
+        );
+      },
     );
   }
 }

@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 
 import '../app_version.dart';
+import '../l10n/app_localizations.dart';
 import '../state/app_store.dart';
+import '../strava/open_browser.dart';
+import '../widgets/widgets.dart';
 import 'gear_screen.dart';
 import 'strava_connect_screen.dart';
 import 'sync_screen.dart';
@@ -24,22 +27,44 @@ class _SettingsScreenState extends State<SettingsScreen> {
     return ListenableBuilder(
       listenable: widget.store,
       builder: (context, _) {
+        final l10n = AppLocalizations.of(context);
         final connected = widget.store.settings.stravaConnected;
         final athlete = widget.store.settings.stravaAthleteName;
+        final localeCode = widget.store.settings.localeCode;
         return Scaffold(
-          appBar: AppBar(title: const Text('設定')),
+          appBar: AppBar(title: Text(l10n.settings)),
           body: ListView(
             padding: const EdgeInsets.all(16),
             children: [
+              Text(l10n.language, style: Theme.of(context).textTheme.bodySmall),
+              const SizedBox(height: 8),
+              SelectTile(
+                selected: localeCode == null,
+                title: l10n.languageSystem,
+                onTap: () => widget.store.setLocaleCode(null),
+              ),
+              const SizedBox(height: 8),
+              SelectTile(
+                selected: localeCode == 'ja',
+                title: l10n.languageJapanese,
+                onTap: () => widget.store.setLocaleCode('ja'),
+              ),
+              const SizedBox(height: 8),
+              SelectTile(
+                selected: localeCode == 'en',
+                title: l10n.languageEnglish,
+                onTap: () => widget.store.setLocaleCode('en'),
+              ),
+              const SizedBox(height: 16),
               Text('Strava', style: Theme.of(context).textTheme.bodySmall),
               Text(
-                connected ? '連携済み' : '未連携',
+                connected ? l10n.connected : l10n.notConnected,
                 style: Theme.of(context).textTheme.titleMedium,
               ),
               if (athlete != null && athlete.isNotEmpty)
                 Text(athlete, style: Theme.of(context).textTheme.bodySmall),
               Text(
-                '連携すると走行を取れます。手順は次の画面。',
+                l10n.stravaHint,
                 style: Theme.of(context).textTheme.bodySmall,
               ),
               const SizedBox(height: 8),
@@ -51,7 +76,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     ),
                   );
                 },
-                child: const Text('Strava 連携'),
+                child: Text(l10n.stravaConnect),
               ),
               const SizedBox(height: 8),
               OutlinedButton(
@@ -62,12 +87,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     ),
                   );
                 },
-                child: const Text('Strava同期'),
+                child: Text(l10n.stravaSync),
               ),
               const SizedBox(height: 16),
-              Text('ギア', style: Theme.of(context).textTheme.bodySmall),
+              Text(l10n.gear, style: Theme.of(context).textTheme.bodySmall),
               Text(
-                '距離を足す自転車と、そのギアの交換記録です。',
+                l10n.gearHint,
                 style: Theme.of(context).textTheme.bodySmall,
               ),
               const SizedBox(height: 8),
@@ -79,18 +104,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     ),
                   );
                 },
-                child: const Text('ギア'),
+                child: Text(l10n.gear),
               ),
               const SizedBox(height: 16),
-              Text('初期化', style: Theme.of(context).textTheme.bodySmall),
               Text(
-                'Strava の連携と走行、部品の設定と交換記録を消し、初回と同じデモ状態に戻します。',
+                l10n.resetSection,
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+              Text(
+                l10n.resetHint,
                 style: Theme.of(context).textTheme.bodySmall,
               ),
               const SizedBox(height: 8),
               OutlinedButton(
                 onPressed: _busy ? null : _confirmResetToDemo,
-                child: const Text('初期状態に戻す'),
+                child: Text(l10n.resetToDemo),
               ),
               if (_message != null) ...[
                 const SizedBox(height: 12),
@@ -101,6 +129,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 appVersionLabel,
                 style: Theme.of(context).textTheme.bodySmall,
               ),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: TextButton(
+                  style: TextButton.styleFrom(
+                    padding: EdgeInsets.zero,
+                    minimumSize: Size.zero,
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  ),
+                  onPressed: _openPrivacyPolicy,
+                  child: Text(l10n.privacyPolicy),
+                ),
+              ),
             ],
           ),
         );
@@ -108,24 +148,33 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
+  Future<void> _openPrivacyPolicy() async {
+    final l10n = AppLocalizations.of(context);
+    final lang = Localizations.localeOf(context).languageCode;
+    final opened = await openInBrowser(privacyPolicyUri(lang));
+    if (!opened && mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.couldNotOpenBrowser)),
+      );
+    }
+  }
+
   Future<void> _confirmResetToDemo() async {
+    final l10n = AppLocalizations.of(context);
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text('初期状態に戻しますか？'),
-          content: const Text(
-            'Strava の連携と走行、部品の設定と交換記録をすべて消します。\n\n'
-            '初回起動と同じデモ状態に戻ります。',
-          ),
+          title: Text(l10n.resetConfirmTitle),
+          content: Text(l10n.resetConfirmBody),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(false),
-              child: const Text('キャンセル'),
+              child: Text(l10n.cancel),
             ),
             FilledButton(
               onPressed: () => Navigator.of(context).pop(true),
-              child: const Text('消して戻す'),
+              child: Text(l10n.resetConfirmAction),
             ),
           ],
         );
@@ -144,7 +193,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     }
     setState(() {
       _busy = false;
-      _message = '初期状態に戻しました。';
+      _message = AppLocalizations.of(context).resetDone;
     });
   }
 }

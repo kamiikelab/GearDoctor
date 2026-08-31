@@ -146,4 +146,15 @@ void main() {
       ['2025-11-12', '2025-06-01', '2025-07-03'],
     );
   });
+
+  test('parses English header', () {
+    final parsed = parseReplacementCsv('''
+Registered name,Date,Memo
+チェーン,2024/01/01,old
+''');
+    expect(parsed.errors, isEmpty);
+    expect(parsed.rows, hasLength(1));
+    expect(parsed.rows.single.registeredName, 'チェーン');
+    expect(parsed.rows.single.memo, 'old');
+  });
 }

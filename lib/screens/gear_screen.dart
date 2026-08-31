@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../data/seed.dart';
+import '../l10n/app_localizations.dart';
 import '../state/app_store.dart';
 import '../widgets/widgets.dart';
 import 'display_group_screen.dart';
@@ -19,13 +20,18 @@ class GearScreen extends StatelessWidget {
     return ListenableBuilder(
       listenable: store,
       builder: (context, _) {
+        final l10n = AppLocalizations.of(context);
         final selected = store.selectedGear;
         final selectedName = selected == null
-            ? '未選択'
-            : demoGearLabel(selected.name, demo: isDemoGearId(selected.id));
+            ? l10n.gearUnselected
+            : demoGearLabel(
+                selected.name,
+                l10n,
+                demo: isDemoGearId(selected.id),
+              );
         final canManage = store.canManageRecords;
         return Scaffold(
-          appBar: AppBar(title: const Text('ギア')),
+          appBar: AppBar(title: Text(l10n.gear)),
           body: ListView(
             padding: const EdgeInsets.all(16),
             children: [
@@ -37,19 +43,19 @@ class GearScreen extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               Text(
-                'Strava から取った自転車だけ選べます。部品の追加・設定、交換記録、CSV は選んだギアだけです。初期の部品は同じです。',
+                l10n.gearBikesHelp,
                 style: Theme.of(context).textTheme.bodySmall,
               ),
               if (store.usingDemoRides) ...[
                 const SizedBox(height: 8),
                 Text(
-                  'デモのあいだは部品の追加と CSV は使えません。先に Strava を同期してください。',
+                  l10n.gearDemoCsvHint,
                   style: Theme.of(context).textTheme.bodySmall,
                 ),
               ],
               const SizedBox(height: 16),
               if (store.gears.isEmpty) ...[
-                const Text('先に Strava を同期すると、ここに自転車が並びます。'),
+                Text(l10n.gearEmptyHint),
                 const SizedBox(height: 8),
                 FilledButton(
                   onPressed: () {
@@ -59,7 +65,7 @@ class GearScreen extends StatelessWidget {
                       ),
                     );
                   },
-                  child: const Text('Strava同期'),
+                  child: Text(l10n.stravaSync),
                 ),
                 const SizedBox(height: 16),
               ] else ...[
@@ -68,6 +74,7 @@ class GearScreen extends StatelessWidget {
                     selected: store.settings.selectedGearId == gear.id,
                     title: demoGearLabel(
                       gear.name,
+                      l10n,
                       demo: isDemoGearId(gear.id),
                       selected: store.settings.selectedGearId == gear.id,
                     ),
@@ -80,7 +87,7 @@ class GearScreen extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.only(bottom: 12),
                   child: Text(
-                    '上で自転車を選ぶと、部品の追加と交換記録が使えます。',
+                    l10n.gearSelectHint,
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
                 ),
@@ -99,7 +106,7 @@ class GearScreen extends StatelessWidget {
                     ),
                   );
                 },
-                child: const Text('部品を追加'),
+                child: Text(l10n.addPart),
               ),
               const SizedBox(height: 8),
               OutlinedButton(
@@ -117,7 +124,7 @@ class GearScreen extends StatelessWidget {
                     ),
                   );
                 },
-                child: const Text('記録の CSV'),
+                child: Text(l10n.recordsCsv),
               ),
               const SizedBox(height: 8),
               OutlinedButton(
@@ -135,7 +142,7 @@ class GearScreen extends StatelessWidget {
                     ),
                   );
                 },
-                child: const Text('部品の CSV'),
+                child: Text(l10n.settingsCsv),
               ),
               const SizedBox(height: 8),
               OutlinedButton(
@@ -148,7 +155,7 @@ class GearScreen extends StatelessWidget {
                         );
                       }
                     : null,
-                child: const Text('表示をまとめる / 分ける'),
+                child: Text(l10n.displayGroups),
               ),
             ],
           ),

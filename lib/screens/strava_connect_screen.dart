@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 
+import '../l10n/app_localizations.dart';
 import '../state/app_store.dart';
 import '../strava/open_browser.dart';
 import '../strava/strava_config.dart';
@@ -74,58 +75,58 @@ class _StravaConnectScreenState extends State<StravaConnectScreen> {
     return ListenableBuilder(
       listenable: widget.store,
       builder: (context, _) {
+        final l10n = AppLocalizations.of(context);
         final connected = widget.store.settings.stravaConnected;
         final athlete = widget.store.settings.stravaAthleteName;
         return Scaffold(
-          appBar: AppBar(title: const Text('Strava 連携')),
+          appBar: AppBar(title: Text(l10n.stravaConnect)),
           body: ListView(
             padding: const EdgeInsets.all(16),
             children: [
               Text(
-                connected ? '連携済み' : '未連携',
+                connected ? l10n.connected : l10n.notConnected,
                 style: Theme.of(context).textTheme.titleMedium,
               ),
               if (athlete != null && athlete.isNotEmpty)
                 Text(athlete, style: Theme.of(context).textTheme.bodySmall),
               const SizedBox(height: 12),
-              Text('Client ID', style: Theme.of(context).textTheme.bodySmall),
+              Text(l10n.clientId, style: Theme.of(context).textTheme.bodySmall),
               const SizedBox(height: 4),
               TextField(
                 controller: _clientId,
                 keyboardType: TextInputType.number,
                 inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  hintText: 'Strava のアプリ登録で発行される番号',
+                decoration: InputDecoration(
+                  border: const OutlineInputBorder(),
+                  hintText: l10n.clientIdHint,
                 ),
               ),
               const SizedBox(height: 12),
-              Text('Client Secret', style: Theme.of(context).textTheme.bodySmall),
+              Text(
+                l10n.clientSecret,
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
               const SizedBox(height: 4),
               TextField(
                 controller: _clientSecret,
                 obscureText: true,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  hintText: 'Strava のアプリ登録で Show すると出る値',
+                decoration: InputDecoration(
+                  border: const OutlineInputBorder(),
+                  hintText: l10n.clientSecretHint,
                 ),
               ),
               const SizedBox(height: 12),
               FilledButton(
                 onPressed: _busy ? null : _connect,
-                child: Text(connected ? '再連携' : '連携する'),
+                child: Text(connected ? l10n.connectAgain : l10n.connect),
               ),
               if (_waitingBrowser) ...[
                 const SizedBox(height: 12),
-                const Text(
-                  'Chrome に案内が出たら、その画面を必ず閉じてください。'
-                  '閉じると、上の連携ボタンが再び緑になります。'
-                  'アプリが手前に切り替わることはありません。',
-                ),
+                Text(l10n.waitingBrowser),
                 if (_browserFailedToOpen && _authorizeUrl != null) ...[
                   const SizedBox(height: 12),
                   Text(
-                    'Chrome が自動では開きませんでした。次の URL をコピーして Chrome で開いてください。',
+                    l10n.browserDidNotOpen,
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
                   const SizedBox(height: 8),
@@ -141,77 +142,73 @@ class _StravaConnectScreenState extends State<StravaConnectScreen> {
                       );
                       if (mounted) {
                         setState(
-                          () => _message = '許可用の URL をコピーしました。Chrome のアドレス欄に貼って開いてください。',
+                          () => _message =
+                              AppLocalizations.of(context).copiedAuthorizeUrl,
                         );
                       }
                     },
-                    child: const Text('許可用 URL をコピー'),
+                    child: Text(l10n.copyAuthorizeUrl),
                   ),
                 ],
               ],
               const SizedBox(height: 8),
               OutlinedButton(
                 onPressed: _busy || !connected ? null : _disconnect,
-                child: const Text('連携を解除'),
+                child: Text(l10n.disconnect),
               ),
               if (_message != null) ...[
                 const SizedBox(height: 12),
                 Text(_message!),
               ],
               const SizedBox(height: 24),
-              Text('連携方法', style: Theme.of(context).textTheme.titleMedium),
+              Text(l10n.howToConnect, style: Theme.of(context).textTheme.titleMedium),
               const SizedBox(height: 8),
               Text(
-                '1. Strava の API 設定でアプリを作る',
+                l10n.connectStep1,
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
                   fontWeight: FontWeight.w600,
                 ),
               ),
               const SelectableText('https://www.strava.com/settings/api'),
               Text(
-                'Authorization Callback Domain は 127.0.0.1。'
-                'http もポートもパスも付けない。この画面の戻り先を自分で開く必要はありません。',
+                l10n.callbackDomainHelp,
                 style: Theme.of(context).textTheme.bodySmall,
               ),
               Text(
-                'Standard Tier の API は、Strava の有料サブスクが必要です。',
+                l10n.stravaPaidApi,
                 style: Theme.of(context).textTheme.bodySmall,
               ),
               const SizedBox(height: 12),
               Text(
-                '2. Client ID と Client Secret を上に入れる',
+                l10n.connectStep2,
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
                   fontWeight: FontWeight.w600,
                 ),
               ),
               Text(
-                'このアプリでは Access Token は使いません。',
+                l10n.noAccessToken,
                 style: Theme.of(context).textTheme.bodySmall,
               ),
               const SizedBox(height: 12),
               Text(
-                '3. 「連携する」を押す',
+                l10n.connectStep3,
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
                   fontWeight: FontWeight.w600,
                 ),
               ),
               Text(
-                'Chrome が自動で開きます。許可すると 127.0.0.1 に案内が出ます。'
-                'その画面を閉じることが必須です。閉じないと、連携ボタンは灰色のままです。'
-                'アプリが手前に切り替わることはありません。この画面を見て、連携ボタンが緑に戻り「連携済み」になれば成功です。'
-                '走行の取得はホームの「Strava同期」から。',
+                l10n.connectStep3Help,
                 style: Theme.of(context).textTheme.bodySmall,
               ),
               const SizedBox(height: 12),
               Text(
-                '4. Chrome が自動で開かないとき',
+                l10n.connectStep4,
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
                   fontWeight: FontWeight.w600,
                 ),
               ),
               Text(
-                '「連携する」のあとに出る「許可用 URL をコピー」を Chrome のアドレス欄に貼って開きます。'
-                'あとは 3 と同じく、案内の画面を閉じると連携ボタンが緑に戻ります。',
+                l10n.connectStep4Help,
                 style: Theme.of(context).textTheme.bodySmall,
               ),
             ],
@@ -222,15 +219,16 @@ class _StravaConnectScreenState extends State<StravaConnectScreen> {
   }
 
   Future<void> _connect() async {
+    final l10n = AppLocalizations.of(context);
     final clientId = _clientId.text.trim();
     final clientSecret = _clientSecret.text.trim();
     if (clientId.isEmpty || clientSecret.isEmpty) {
-      setState(() => _message = 'Client ID と Client Secret を入力してください。');
+      setState(() => _message = l10n.enterClientIdSecret);
       return;
     }
     setState(() {
       _busy = true;
-      _message = 'Chrome で Strava の許可を待っています…';
+      _message = l10n.waitingForChrome;
       _waitingBrowser = true;
       _browserFailedToOpen = false;
     });
@@ -248,7 +246,7 @@ class _StravaConnectScreenState extends State<StravaConnectScreen> {
       setState(() {
         _busy = false;
         _waitingBrowser = false;
-        _message = 'ポート $stravaListenPort を開けませんでした。他のプロセスを終了して、もう一度連携してください。';
+        _message = l10n.portBusy(stravaListenPort);
       });
       return;
     }
@@ -256,9 +254,7 @@ class _StravaConnectScreenState extends State<StravaConnectScreen> {
     if (mounted) {
       setState(() {
         _browserFailedToOpen = !opened;
-        _message = opened
-            ? 'Chrome に案内が出たら、その画面を閉じてください。連携ボタンが緑に戻れば成功です。'
-            : 'Chrome が自動では開きませんでした。下の URL をコピーして Chrome で開いてください。';
+        _message = opened ? l10n.closeChromeSuccess : l10n.browserDidNotOpen;
       });
     }
     try {
@@ -305,7 +301,7 @@ class _StravaConnectScreenState extends State<StravaConnectScreen> {
       _busy = false;
       _waitingBrowser = false;
       _browserFailedToOpen = false;
-      _message = 'トークンを端末に保存しました（${result.athleteName}）。';
+      _message = AppLocalizations.of(context).tokenSaved(result.athleteName);
     });
   }
 
@@ -327,7 +323,7 @@ class _StravaConnectScreenState extends State<StravaConnectScreen> {
       _busy = false;
       _waitingBrowser = false;
       _browserFailedToOpen = false;
-      _message = '連携を解除し、トークンを消しました。';
+      _message = AppLocalizations.of(context).disconnected;
     });
   }
 }

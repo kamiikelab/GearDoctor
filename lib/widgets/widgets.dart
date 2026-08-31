@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import '../data/seed.dart';
 import '../domain/dates.dart';
 import '../domain/usage.dart';
+import '../l10n/app_localizations.dart';
 import '../models/models.dart';
 
 String formatAmount(num value) {
@@ -17,10 +17,31 @@ String formatAmount(num value) {
   return value.round() < 0 ? '-$buffer' : buffer.toString();
 }
 
-String formatUsed(num value, CycleKind cycle, {bool demo = false}) {
-  final text = '${formatAmount(value)}${cycle.unitLabel}';
+String unitLabelOf(CycleKind cycle, AppLocalizations l10n) {
+  return cycle == CycleKind.months ? l10n.unitMonths : l10n.unitKm;
+}
+
+String usageNounOf(CycleKind cycle, AppLocalizations l10n) {
+  return cycle == CycleKind.months ? l10n.usageMonths : l10n.usageDistance;
+}
+
+String wearStatusLabel(WearStatus status, AppLocalizations l10n) {
+  return switch (status) {
+    WearStatus.overdue => l10n.statusOverdue,
+    WearStatus.soon => l10n.statusSoon,
+    WearStatus.ok => l10n.statusOk,
+  };
+}
+
+String formatUsed(
+  num value,
+  CycleKind cycle,
+  AppLocalizations l10n, {
+  bool demo = false,
+}) {
+  final text = '${formatAmount(value)}${unitLabelOf(cycle, l10n)}';
   if (demo && cycle == CycleKind.distance) {
-    return '$text（デモ）';
+    return '$text${l10n.demoSuffix}';
   }
   return text;
 }
@@ -28,61 +49,69 @@ String formatUsed(num value, CycleKind cycle, {bool demo = false}) {
 String formatElapsedAndDue(
   num used,
   int limit,
-  CycleKind cycle, {
+  CycleKind cycle,
+  AppLocalizations l10n, {
   String? modeLabel,
   bool demo = false,
 }) {
   final buffer = StringBuffer(
-    '${formatAmount(used)} / ${formatAmount(limit)} ${cycle.unitLabel}',
+    '${formatAmount(used)} / ${formatAmount(limit)} ${unitLabelOf(cycle, l10n)}',
   );
   if (modeLabel != null && modeLabel.isNotEmpty) {
     buffer.write(' $modeLabel');
   }
   if (demo && cycle == CycleKind.distance) {
-    buffer.write('（デモ）');
+    buffer.write(l10n.demoSuffix);
   }
   return buffer.toString();
 }
 
-String formatTodayUsed(num value, CycleKind cycle, {bool demo = false}) {
-  return '${formatUsed(value, cycle, demo: demo)}（今日）';
+String formatTodayUsed(
+  num value,
+  CycleKind cycle,
+  AppLocalizations l10n, {
+  bool demo = false,
+}) {
+  return '${formatUsed(value, cycle, l10n, demo: demo)}${l10n.todaySuffix}';
 }
 
-String markDemo(String text, {required bool demo}) {
+String markDemo(String text, AppLocalizations l10n, {required bool demo}) {
   if (!demo) {
     return text;
   }
-  return '$text（デモ）';
+  return '$text${l10n.demoSuffix}';
 }
 
 String demoGearLabel(
-  String name, {
+  String name,
+  AppLocalizations l10n, {
   required bool demo,
   bool selected = false,
 }) {
   if (demo && selected) {
-    return '$name（デモ・選択中）';
+    return '$name${l10n.demoSelectedSuffix}';
   }
   if (demo) {
-    return '$name（デモ）';
+    return '$name${l10n.demoSuffix}';
   }
   if (selected) {
-    return '$name（選択中）';
+    return '$name${l10n.selectedSuffix}';
   }
   return name;
 }
 
 Future<void> showDemoRequiresSyncDialog(BuildContext context) {
+  final l10n = AppLocalizations.of(context);
   return showDialog<void>(
     context: context,
     builder: (context) {
       return AlertDialog(
-        title: const Text(DemoRequiresSyncException.title),
-        content: const Text(DemoRequiresSyncException.message),
+        title: Text(l10n.demoRequiresSyncTitle),
+        content: Text(l10n.demoRequiresSyncMessage),
         actions: [
           FilledButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('OK'),
+            child: Text(l10n.ok),
           ),
         ],
       );
@@ -276,11 +305,13 @@ class SideUsage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final percent = usagePercent(used, limit);
     final status = wearStatus(used, limit, part.thresholdPct);
+    final statusText = wearStatusLabel(status, l10n);
     final statusLine = positionLabel == null
-        ? '${statusLabel(status)}・$percent％'
-        : '$positionLabel：${statusLabel(status)}・$percent％';
+        ? l10n.statusLine(statusText, percent)
+        : l10n.statusLineSide(positionLabel!, statusText, percent);
     return InkWell(
       onTap: onTap,
       child: Column(
@@ -298,6 +329,7 @@ class SideUsage extends StatelessWidget {
               used,
               limit,
               part.cycle,
+              l10n,
               modeLabel: modeLabel,
               demo: demoDistance,
             ),
@@ -327,10 +359,9 @@ class ReplacementHistoryTable extends StatelessWidget {
   final bool demoDistance;
   final ValueChanged<HistoryRow>? onRowTap;
 
-  String get _usageHeader => 'ギアの走行距離';
-
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final past = [...rows]
       ..sort(
         (a, b) => a.replacement.replacedOn.compareTo(b.replacement.replacedOn),
@@ -338,10 +369,10 @@ class ReplacementHistoryTable extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('過去の交換記録', style: Theme.of(context).textTheme.bodySmall),
+        Text(l10n.historyTitle, style: Theme.of(context).textTheme.bodySmall),
         if (onRowTap != null)
           Text(
-            '行をタップして日付・コメントの修正や削除',
+            l10n.historyHint,
             style: Theme.of(context).textTheme.bodySmall,
           ),
         const SizedBox(height: 8),
@@ -357,9 +388,9 @@ class ReplacementHistoryTable extends StatelessWidget {
                 color: Theme.of(context).colorScheme.surfaceContainerHighest,
               ),
               children: [
-                _cell(context, _usageHeader, header: true),
-                _cell(context, '交換日', header: true),
-                _cell(context, 'コメント', header: true),
+                _cell(context, l10n.historyDistanceHeader, header: true),
+                _cell(context, l10n.replacedOn, header: true),
+                _cell(context, l10n.comment, header: true),
               ],
             ),
             for (final row in past)
@@ -370,6 +401,7 @@ class ReplacementHistoryTable extends StatelessWidget {
                     formatUsed(
                       row.used,
                       CycleKind.distance,
+                      l10n,
                       demo: demoDistance,
                     ),
                     onTap: onRowTap == null ? null : () => onRowTap!(row),
@@ -382,7 +414,7 @@ class ReplacementHistoryTable extends StatelessWidget {
                   _cell(
                     context,
                     row.replacement.memo.isEmpty
-                        ? '—'
+                        ? l10n.emDash
                         : row.replacement.memo,
                     muted: row.replacement.memo.isEmpty,
                     onTap: onRowTap == null ? null : () => onRowTap!(row),
@@ -396,6 +428,7 @@ class ReplacementHistoryTable extends StatelessWidget {
                   formatTodayUsed(
                     todayUsed,
                     CycleKind.distance,
+                    l10n,
                     demo: demoDistance,
                   ),
                 ),

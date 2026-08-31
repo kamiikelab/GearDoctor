@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import '../data/seed.dart';
 import '../domain/dates.dart';
 import '../domain/recommendations.dart';
+import '../l10n/app_localizations.dart';
 import '../models/models.dart';
 import '../state/app_store.dart';
 import '../widgets/widgets.dart';
@@ -70,7 +70,8 @@ class _EditPartScreenState extends State<EditPartScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final unit = _cycle.unitLabel;
+    final l10n = AppLocalizations.of(context);
+    final unit = unitLabelOf(_cycle, l10n);
     final existing = widget.partId == null
         ? null
         : widget.store.partById(widget.partId!);
@@ -80,38 +81,40 @@ class _EditPartScreenState extends State<EditPartScreen> {
             existing.copyWith(cycle: _cycle),
           );
     return Scaffold(
-      appBar: AppBar(title: Text(_isNew ? '部品を追加' : '部品を編集')),
+      appBar: AppBar(title: Text(_isNew ? l10n.addPart : l10n.editPart)),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          Text('登録名', style: Theme.of(context).textTheme.bodySmall),
+          Text(l10n.registeredName, style: Theme.of(context).textTheme.bodySmall),
           const SizedBox(height: 4),
           TextField(
             controller: _name,
-            decoration: const InputDecoration(
-              border: OutlineInputBorder(),
-              hintText: '登録名（前タイヤ、心拍計電池など）',
+            decoration: InputDecoration(
+              border: const OutlineInputBorder(),
+              hintText: l10n.registeredNameHint,
             ),
           ),
           const SizedBox(height: 4),
           Text(
-            'ホームに出す名前。前と後ろは別々に登録します。',
+            l10n.registeredNameHelp,
             style: Theme.of(context).textTheme.bodySmall,
           ),
           if (_isNew) ...[
             const SizedBox(height: 4),
             Text(
               widget.store.oldestSelectedRideOn == null
-                  ? '最初の交換日は、このギアのいちばん古い走行日です。走行がまだ無いときは今日になります。'
-                  : '最初の交換日は、このギアのいちばん古い走行日（${formatDate(widget.store.oldestSelectedRideOn!)}）です。入力しません。',
+                  ? l10n.firstReplacementNoRide
+                  : l10n.firstReplacementWithRide(
+                      formatDate(widget.store.oldestSelectedRideOn!),
+                    ),
               style: Theme.of(context).textTheme.bodySmall,
             ),
           ],
           const SizedBox(height: 16),
-          Text('交換周期', style: Theme.of(context).textTheme.bodySmall),
+          Text(l10n.cycle, style: Theme.of(context).textTheme.bodySmall),
           const SizedBox(height: 4),
           Text(
-            '距離か月のどちらか。',
+            l10n.cycleHelp,
             style: Theme.of(context).textTheme.bodySmall,
           ),
           const SizedBox(height: 8),
@@ -120,7 +123,7 @@ class _EditPartScreenState extends State<EditPartScreen> {
               Expanded(
                 child: SelectTile(
                   selected: _cycle == CycleKind.distance,
-                  title: '距離',
+                  title: l10n.cycleDistance,
                   onTap: () => _setCycle(CycleKind.distance),
                 ),
               ),
@@ -128,35 +131,38 @@ class _EditPartScreenState extends State<EditPartScreen> {
               Expanded(
                 child: SelectTile(
                   selected: _cycle == CycleKind.months,
-                  title: '月',
+                  title: l10n.cycleMonths,
                   onTap: () => _setCycle(CycleKind.months),
                 ),
               ),
             ],
           ),
           const SizedBox(height: 16),
-          Text('交換目安', style: Theme.of(context).textTheme.bodySmall),
+          Text(l10n.limit, style: Theme.of(context).textTheme.bodySmall),
           const SizedBox(height: 8),
           SelectTile(
             selected: _mode == LimitMode.recommended,
-            title: '推奨  ${formatAmount(_recommended)} $unit',
-            subtitle: '名前から自動で決まります。',
+            title: l10n.limitRecommended(formatAmount(_recommended), unit),
+            subtitle: l10n.limitRecommendedHelp,
             onTap: () => setState(() => _mode = LimitMode.recommended),
           ),
           const SizedBox(height: 8),
           SelectTile(
             selected: _mode == LimitMode.previousCycle,
             title: previous == null
-                ? '自動  —'
-                : '自動  ${formatAmount(previous)} $unit',
-            subtitle: '直近の2回の間隔。毎回計算',
+                ? l10n.limitAutoEmpty
+                : l10n.limitAuto(formatAmount(previous), unit),
+            subtitle: l10n.limitAutoHelp,
             onTap: () => setState(() => _mode = LimitMode.previousCycle),
           ),
           const SizedBox(height: 8),
           SelectTile(
             selected: _mode == LimitMode.custom,
-            title: '設定  ${_custom.text.isEmpty ? '—' : _custom.text} $unit',
-            subtitle: '自分で入力します。',
+            title: l10n.limitCustom(
+              _custom.text.isEmpty ? l10n.emDash : _custom.text,
+              unit,
+            ),
+            subtitle: l10n.limitCustomHelp,
             onTap: () => setState(() => _mode = LimitMode.custom),
           ),
           if (_mode == LimitMode.custom) ...[
@@ -168,13 +174,13 @@ class _EditPartScreenState extends State<EditPartScreen> {
               decoration: InputDecoration(
                 border: const OutlineInputBorder(),
                 suffixText: unit,
-                labelText: '設定値',
+                labelText: l10n.customValue,
               ),
               onChanged: (_) => setState(() {}),
             ),
           ],
           const SizedBox(height: 16),
-          Text('通知しきい値', style: Theme.of(context).textTheme.bodySmall),
+          Text(l10n.threshold, style: Theme.of(context).textTheme.bodySmall),
           const SizedBox(height: 4),
           TextField(
             controller: _threshold,
@@ -193,7 +199,7 @@ class _EditPartScreenState extends State<EditPartScreen> {
             ),
           ],
           const SizedBox(height: 20),
-          FilledButton(onPressed: _save, child: const Text('保存')),
+          FilledButton(onPressed: _save, child: Text(l10n.save)),
         ],
       ),
     );
@@ -218,15 +224,16 @@ class _EditPartScreenState extends State<EditPartScreen> {
   }
 
   Future<void> _save() async {
+    final l10n = AppLocalizations.of(context);
     final name = _name.text.trim();
     var custom = int.tryParse(_custom.text);
     final threshold = int.tryParse(_threshold.text);
     if (name.isEmpty) {
-      setState(() => _error = '登録名を入力してください');
+      setState(() => _error = l10n.nameRequired);
       return;
     }
     if (_mode == LimitMode.custom && (custom == null || custom <= 0)) {
-      setState(() => _error = '設定の目安は 1 以上の数値にしてください');
+      setState(() => _error = l10n.customLimitInvalid);
       return;
     }
     custom ??= _recommended;
@@ -234,7 +241,7 @@ class _EditPartScreenState extends State<EditPartScreen> {
       custom = _recommended;
     }
     if (threshold == null || threshold < 1 || threshold > 100) {
-      setState(() => _error = 'しきい値は 1 から 100 の整数です');
+      setState(() => _error = l10n.thresholdInvalid);
       return;
     }
     final existing = widget.partId == null
@@ -252,12 +259,12 @@ class _EditPartScreenState extends State<EditPartScreen> {
       sortOrder: existing?.sortOrder ?? widget.store.nextSortOrder(),
     );
     if (_isNew && widget.store.usingDemoRides) {
-      setState(() => _error = DemoRequiresSyncException.message);
+      setState(() => _error = l10n.demoRequiresSyncMessage);
       await showDemoRequiresSyncDialog(context);
       return;
     }
     if (_isNew && !widget.store.canManageRecords) {
-      setState(() => _error = 'ギアを選んでから部品を追加してください');
+      setState(() => _error = l10n.selectGearFirstPart);
       return;
     }
     await widget.store.savePart(part, isNew: _isNew);

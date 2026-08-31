@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:gear_doctor/data/app_database.dart';
 import 'package:gear_doctor/data/app_repository.dart';
 import 'package:gear_doctor/data/seed.dart';
+import 'package:gear_doctor/data/strava_secret_vault.dart';
 import 'package:gear_doctor/domain/dates.dart';
 import 'package:gear_doctor/domain/replacement_csv.dart';
 import 'package:gear_doctor/domain/settings_csv.dart';
@@ -306,6 +307,92 @@ $settingsCsvHeader
     expect(store.settings.stravaClientId, isNull);
     expect(store.gears.any((gear) => gear.id == 'g_aeroad'), isTrue);
     expect(store.gears.any((gear) => gear.id == 'b1'), isFalse);
+  });
+
+  test('vault keeps client secrets out of sqlite', () async {
+    final vault = MemoryStravaSecretVault();
+    final dbPath = '${dir.path}/app.db';
+    final store = AppStore(
+      database: AppDatabase(overridePath: dbPath),
+      now: parseDate('2026-08-23'),
+      secretVault: vault,
+    );
+    await store.load();
+    await store.saveStravaCredentials(clientId: '123', clientSecret: 's3cret');
+    expect(store.settings.stravaClientId, '123');
+    expect(await vault.readClientSecret(), 's3cret');
+
+    final withoutVault = AppStore(
+      database: AppDatabase(overridePath: dbPath),
+      now: parseDate('2026-08-23'),
+    );
+    await withoutVault.load();
+    expect(withoutVault.settings.stravaClientId, isNull);
+    expect(withoutVault.settings.stravaClientSecret, isNull);
+
+    final withVault = AppStore(
+      database: AppDatabase(overridePath: dbPath),
+      now: parseDate('2026-08-23'),
+      secretVault: vault,
+    );
+    await withVault.load();
+    expect(withVault.settings.stravaClientId, '123');
+    expect(withVault.settings.stravaClientSecret, 's3cret');
+  });
+
+  test('vault migrates client secrets out of sqlite and reset clears them', () async {
+    final dbPath = '${dir.path}/app.db';
+    final store = await openStore();
+    await store.saveStravaCredentials(clientId: '123', clientSecret: 's3cret');
+    expect(store.settings.stravaClientSecret, 's3cret');
+
+    final vault = MemoryStravaSecretVault();
+    final migrated = AppStore(
+      database: AppDatabase(overridePath: dbPath),
+      now: parseDate('2026-08-23'),
+      secretVault: vault,
+    );
+    await migrated.load();
+    expect(migrated.settings.stravaClientId, '123');
+    expect(await vault.readClientSecret(), 's3cret');
+
+    final leftover = AppStore(
+      database: AppDatabase(overridePath: dbPath),
+      now: parseDate('2026-08-23'),
+    );
+    await leftover.load();
+    expect(leftover.settings.stravaClientId, isNull);
+    expect(leftover.settings.stravaClientSecret, isNull);
+
+    await migrated.resetToDemo();
+    expect(migrated.settings.stravaClientId, isNull);
+    expect(await vault.readClientId(), isNull);
+    expect(await vault.readClientSecret(), isNull);
+  });
+
+  test('english device locale seeds english registered names', () async {
+    final store = AppStore(
+      database: AppDatabase(overridePath: '${dir.path}/app.db'),
+      now: parseDate('2026-08-23'),
+      deviceLocale: 'en',
+    );
+    await store.load();
+    expect(store.cards.map((card) => card.title).toList(), contains('Tires'));
+    expect(store.partById(aeroadPart('p_chain'))!.registeredName, 'Chain');
+    expect(
+      store.groups.any((group) => group.displayName == 'Tires'),
+      isTrue,
+    );
+  });
+
+  test('resetToDemo writes catalog names for the selected language', () async {
+    final store = await openStore();
+    expect(store.partById(aeroadPart('p_chain'))!.registeredName, 'チェーン');
+    await store.setLocaleCode('en');
+    await store.resetToDemo();
+    expect(store.settings.localeCode, 'en');
+    expect(store.partById(aeroadPart('p_chain'))!.registeredName, 'Chain');
+    expect(store.cards.any((card) => card.title == 'Tires'), isTrue);
   });
 
   test('changing sync start deletes rides so coverage can restart', () async {

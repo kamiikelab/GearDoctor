@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../domain/dates.dart';
 import '../domain/usage.dart';
+import '../l10n/app_localizations.dart';
 import '../models/models.dart';
 import '../state/app_store.dart';
 import '../widgets/widgets.dart';
@@ -24,11 +25,12 @@ class PartDetailScreen extends StatelessWidget {
     return ListenableBuilder(
       listenable: store,
       builder: (context, _) {
+        final l10n = AppLocalizations.of(context);
         final part = store.partById(partId);
         if (part == null) {
           return Scaffold(
-            appBar: AppBar(title: const Text('部品の詳細')),
-            body: const Center(child: Text('部品が見つかりません')),
+            appBar: AppBar(title: Text(l10n.partDetail)),
+            body: Center(child: Text(l10n.partNotFound)),
           );
         }
         final used = store.usedOf(part);
@@ -36,10 +38,10 @@ class PartDetailScreen extends StatelessWidget {
         final last = latestReplacement(store.replacementsFor(part.id));
         final percent = usagePercent(used, limit);
         final status = wearStatus(used, limit, part.thresholdPct);
-        final modeLabel = store.limitModeLabelOf(part);
+        final modeLabel = store.limitModeLabelOf(part, l10n);
         final heading = part.cycle == CycleKind.months
-            ? '交換後の経過'
-            : '交換後の走行距離';
+            ? l10n.afterMonths
+            : l10n.afterDistance;
         return Scaffold(
           appBar: AppBar(title: Text(store.titleOf(part))),
           body: ListView(
@@ -52,6 +54,7 @@ class PartDetailScreen extends StatelessWidget {
                   used,
                   limit,
                   part.cycle,
+                  l10n,
                   modeLabel: modeLabel,
                   demo: store.usingDemoRides,
                 ),
@@ -62,12 +65,17 @@ class PartDetailScreen extends StatelessWidget {
                 used: used,
                 limit: limit,
                 status: status,
-                topLeft: '$percent% · ${statusLabel(status)}',
-                topRight: 'しきい値 ${part.thresholdPct}%',
+                topLeft: l10n.statusPercent(
+                  percent,
+                  wearStatusLabel(status, l10n),
+                ),
+                topRight: l10n.thresholdPct(part.thresholdPct),
               ),
               const SizedBox(height: 12),
               Text(
-                last == null ? '最終交換 未記録' : '最終交換 ${formatDate(last.replacedOn)}',
+                last == null
+                    ? l10n.lastReplacementNone
+                    : l10n.lastReplacement(formatDate(last.replacedOn)),
                 style: Theme.of(context).textTheme.bodySmall,
               ),
               const SizedBox(height: 20),
@@ -87,7 +95,7 @@ class PartDetailScreen extends StatelessWidget {
                               );
                             }
                           : null,
-                      child: const Text('交換した'),
+                      child: Text(l10n.replaced),
                     ),
                   ),
                   const SizedBox(width: 8),
@@ -101,7 +109,7 @@ class PartDetailScreen extends StatelessWidget {
                           ),
                         );
                       },
-                      child: const Text('編集'),
+                      child: Text(l10n.edit),
                     ),
                   ),
                 ],

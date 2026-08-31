@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 
 import '../data/seed.dart';
 import '../domain/settings_csv.dart';
+import '../l10n/app_localizations.dart';
 import '../state/app_store.dart';
 import '../widgets/widgets.dart';
 
@@ -51,13 +52,18 @@ class _ImportSettingsScreenState extends State<ImportSettingsScreen> {
     return ListenableBuilder(
       listenable: widget.store,
       builder: (context, _) {
+        final l10n = AppLocalizations.of(context);
         final selected = widget.store.selectedGear;
         final canManage = widget.store.canManageRecords;
         final gearLabel = selected == null
-            ? '未選択'
-            : demoGearLabel(selected.name, demo: isDemoGearId(selected.id));
+            ? l10n.gearUnselected
+            : demoGearLabel(
+                selected.name,
+                l10n,
+                demo: isDemoGearId(selected.id),
+              );
         return Scaffold(
-          appBar: AppBar(title: const Text('部品の CSV')),
+          appBar: AppBar(title: Text(l10n.settingsCsv)),
           body: ListView(
             padding: const EdgeInsets.all(16),
             children: [
@@ -69,29 +75,27 @@ class _ImportSettingsScreenState extends State<ImportSettingsScreen> {
               ),
               const SizedBox(height: 8),
               Text(
-                canManage
-                    ? 'このギアの部品設定だけを出し入れします。他のギアはそのままです。'
-                    : 'Strava から自転車を取って選ぶと、この画面が使えます。',
+                canManage ? l10n.settingsCsvScope : l10n.csvNeedGear,
                 style: Theme.of(context).textTheme.bodySmall,
               ),
               const SizedBox(height: 16),
-              const Text('入力欄に出してコピーします。'),
+              Text(l10n.csvCopyHint),
               const SizedBox(height: 8),
               OutlinedButton(
                 onPressed: canManage ? _export : null,
-                child: const Text('いまの設定を書き出す'),
+                child: Text(l10n.exportCurrentSettings),
               ),
               const SizedBox(height: 16),
-              Text('CSV', style: Theme.of(context).textTheme.bodySmall),
+              Text(l10n.csvLabel, style: Theme.of(context).textTheme.bodySmall),
               const SizedBox(height: 4),
               TextField(
                 controller: _csv,
                 enabled: canManage,
                 minLines: 8,
                 maxLines: 8,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  hintText: settingsCsvHeader,
+                decoration: InputDecoration(
+                  border: const OutlineInputBorder(),
+                  hintText: l10n.settingsCsvHint,
                 ),
               ),
               const SizedBox(height: 8),
@@ -103,12 +107,17 @@ class _ImportSettingsScreenState extends State<ImportSettingsScreen> {
                         }
                         setState(() {
                           _csv.text = exportSettingsCsv(
-                            parts: defaultParts()
+                            parts: defaultParts(
+                              locale: widget.store.catalogLocale,
+                            )
                                 .map((part) => partForGear(part, 'example'))
                                 .toList(),
-                            groups: defaultGroups()
+                            groups: defaultGroups(
+                              locale: widget.store.catalogLocale,
+                            )
                                 .map((group) => groupForGear(group, 'example'))
                                 .toList(),
+                            header: l10n.settingsCsvHint,
                           );
                           _parsed = null;
                           _plan = null;
@@ -116,35 +125,33 @@ class _ImportSettingsScreenState extends State<ImportSettingsScreen> {
                         });
                       }
                     : null,
-                child: const Text('例を入れる'),
+                child: Text(l10n.insertExample),
               ),
               const SizedBox(height: 8),
-              const Text(
-                '登録名で結びます。無い登録名は部品を足します。CSV に出た部品の設定とまとめを、このギアだけ差し替えます。交換記録は変わりません。',
-              ),
+              Text(l10n.settingsCsvHelp),
               const SizedBox(height: 8),
               FilledButton(
                 onPressed: canManage && !_readyToConfirm ? _preview : null,
-                child: const Text('CSVを取り込み'),
+                child: Text(l10n.importCsv),
               ),
               if (_readyToConfirm) ...[
                 const SizedBox(height: 8),
                 FilledButton(
                   onPressed: _import,
-                  child: const Text('確定'),
+                  child: Text(l10n.confirm),
                 ),
               ],
               if (_errors.isNotEmpty) ...[
                 const SizedBox(height: 16),
-                Text('直せること', style: Theme.of(context).textTheme.titleMedium),
+                Text(l10n.fixThese, style: Theme.of(context).textTheme.titleMedium),
                 const SizedBox(height: 8),
                 for (final error in _errors) Text(error),
               ],
               if (_plan != null && _errors.isEmpty) ...[
                 const SizedBox(height: 16),
                 Text(
-                  '部品 ${_plan!.toApply.length} 件'
-                  '${_plan!.groups.isEmpty ? '' : '、まとめ ${_plan!.groups.length} 件'}',
+                  '${l10n.partsApplyCount(_plan!.toApply.length)}'
+                  '${_plan!.groups.isEmpty ? '' : l10n.groupsCountPreview(_plan!.groups.length)}',
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
               ],
@@ -167,17 +174,19 @@ class _ImportSettingsScreenState extends State<ImportSettingsScreen> {
   }
 
   Future<void> _export() async {
+    final l10n = AppLocalizations.of(context);
     final csv = exportSettingsCsv(
       parts: widget.store.parts,
       groups: widget.store.groups,
+      header: l10n.settingsCsvHint,
     );
     setState(() {
       _csv.text = csv;
       _parsed = null;
       _plan = null;
       _message = widget.store.parts.isEmpty
-          ? '部品がありません。見出しだけ書き出しました。'
-          : '${widget.store.parts.length} 件を入力欄に出し、コピーしました。';
+          ? l10n.exportedEmptySettings
+          : l10n.exportedCount(widget.store.parts.length);
     });
     await Clipboard.setData(ClipboardData(text: csv));
   }
@@ -186,10 +195,11 @@ class _ImportSettingsScreenState extends State<ImportSettingsScreen> {
     if (!widget.store.usingDemoRides) {
       return false;
     }
+    final l10n = AppLocalizations.of(context);
     setState(() {
       _parsed = null;
       _plan = null;
-      _message = DemoRequiresSyncException.message;
+      _message = l10n.demoRequiresSyncMessage;
     });
     if (mounted) {
       await showDemoRequiresSyncDialog(context);
@@ -229,13 +239,15 @@ class _ImportSettingsScreenState extends State<ImportSettingsScreen> {
     if (!mounted) {
       return;
     }
+    final l10n = AppLocalizations.of(context);
     setState(() {
       _parsed = null;
       _plan = null;
-      _message =
-          '更新 ${result.updated} 件、追加 ${result.created} 件'
-          '${result.grouped == 0 ? '' : '、まとめ ${result.grouped} 件'}'
-          'を、このギアに取り込みました。';
+      _message = l10n.importedSettings(
+        result.updated,
+        result.created,
+        result.grouped == 0 ? '' : l10n.groupsCountPreview(result.grouped),
+      );
     });
   }
 }

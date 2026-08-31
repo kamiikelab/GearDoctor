@@ -154,6 +154,7 @@ class AppSettings {
     this.stravaExpiresAt,
     this.stravaAthleteId,
     this.stravaAthleteName,
+    this.localeCode,
   });
 
   final String? selectedGearId;
@@ -166,6 +167,9 @@ class AppSettings {
   final DateTime? stravaExpiresAt;
   final String? stravaAthleteId;
   final String? stravaAthleteName;
+
+  /// `null` follows the device language. `ja` or `en` forces that language.
+  final String? localeCode;
 
   bool get stravaConnected =>
       stravaAccessToken != null && stravaAccessToken!.isNotEmpty;
@@ -181,10 +185,12 @@ class AppSettings {
     DateTime? stravaExpiresAt,
     String? stravaAthleteId,
     String? stravaAthleteName,
+    String? localeCode,
     bool clearGear = false,
     bool clearSync = false,
     bool clearTokens = false,
     bool clearClient = false,
+    bool clearLocale = false,
   }) {
     return AppSettings(
       selectedGearId: clearGear ? null : (selectedGearId ?? this.selectedGearId),
@@ -211,6 +217,7 @@ class AppSettings {
       stravaAthleteName: clearTokens
           ? null
           : (stravaAthleteName ?? this.stravaAthleteName),
+      localeCode: clearLocale ? null : (localeCode ?? this.localeCode),
     );
   }
 }

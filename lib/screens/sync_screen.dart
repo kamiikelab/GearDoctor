@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 import '../domain/dates.dart';
+import '../l10n/app_localizations.dart';
 import '../state/app_store.dart';
 import '../strava/strava_oauth.dart';
 import '../widgets/widgets.dart';
@@ -31,11 +32,12 @@ class _SyncScreenState extends State<SyncScreen> {
     return ListenableBuilder(
       listenable: widget.store,
       builder: (context, _) {
+        final l10n = AppLocalizations.of(context);
         final from = widget.store.settings.lastSyncFrom;
         final to = widget.store.newestSyncedOn;
         final hasStart = from != null;
         return Scaffold(
-          appBar: AppBar(title: const Text('Strava 同期')),
+          appBar: AppBar(title: Text(l10n.syncTitle)),
           body: ListView(
             padding: const EdgeInsets.all(16),
             children: [
@@ -46,35 +48,37 @@ class _SyncScreenState extends State<SyncScreen> {
               ),
               const SizedBox(height: 8),
               Text(
-                '何日までは、Strava開始日以降で入っているいちばん新しい走行の日です。',
+                l10n.untilDateHelp,
                 style: Theme.of(context).textTheme.bodySmall,
               ),
               const SizedBox(height: 12),
-              const Text('期間を選んで取得します。自動では取りに行きません。'),
+              Text(l10n.syncManualHelp),
               const SizedBox(height: 16),
               FilledButton(
                 onPressed: _busy ? null : () => _syncForward(months: 3),
-                child: const Text('前回から 3 か月'),
+                child: Text(l10n.sync3months),
               ),
               const SizedBox(height: 8),
               OutlinedButton(
                 onPressed: _busy ? null : () => _syncForward(months: 6),
-                child: const Text('前回から 6 か月'),
+                child: Text(l10n.sync6months),
               ),
               const SizedBox(height: 8),
               OutlinedButton(
                 onPressed: _busy ? null : () => _syncForward(months: 12),
-                child: const Text('前回から 1 年'),
+                child: Text(l10n.sync1year),
               ),
               const SizedBox(height: 32),
               Text(
-                'Strava開始日を変えると、取り込んだ走行は消えて初期化されます。新しい日から取り直します。',
+                l10n.startDateHelp,
                 style: Theme.of(context).textTheme.bodySmall,
               ),
               const SizedBox(height: 8),
               OutlinedButton(
                 onPressed: _busy ? null : _changeStartDate,
-                child: Text(hasStart ? 'Strava開始日を変更' : 'Strava開始日を指定'),
+                child: Text(
+                  hasStart ? l10n.changeStartDate : l10n.specifyStartDate,
+                ),
               ),
               if (_message != null) ...[
                 const SizedBox(height: 16),
@@ -88,12 +92,13 @@ class _SyncScreenState extends State<SyncScreen> {
   }
 
   Future<void> _syncForward({required int months}) async {
+    final l10n = AppLocalizations.of(context);
     if (widget.store.settings.lastSyncFrom == null) {
-      setState(() => _message = '先にStrava開始日を指定してください。');
+      setState(() => _message = l10n.needStartDate);
       return;
     }
     if (!widget.store.settings.stravaConnected) {
-      setState(() => _message = '先に Strava 連携の画面から連携してください。');
+      setState(() => _message = l10n.needConnect);
       return;
     }
     setState(() {
@@ -112,8 +117,16 @@ class _SyncScreenState extends State<SyncScreen> {
       setState(() {
         _busy = false;
         _message = newest == null
-            ? '${formatDate(summary.from)} から ${formatDate(summary.to)} まで取得しました。この期間に自転車の走行はありませんでした。'
-            : '${formatDate(summary.from)} から ${formatDate(summary.to)} まで取得しました。自転車の走行 ${summary.savedCount} 件。いちばん新しい走行は ${formatDate(newest)} です。';
+            ? l10n.syncFetchedEmpty(
+                formatDate(summary.from),
+                formatDate(summary.to),
+              )
+            : l10n.syncFetched(
+                formatDate(summary.from),
+                formatDate(summary.to),
+                summary.savedCount,
+                formatDate(newest),
+              );
       });
     } catch (error) {
       if (!mounted) {
@@ -127,6 +140,7 @@ class _SyncScreenState extends State<SyncScreen> {
   }
 
   Future<void> _changeStartDate() async {
+    final l10n = AppLocalizations.of(context);
     final picked = await showAppDatePicker(
       context: context,
       initialDate:
@@ -140,28 +154,23 @@ class _SyncScreenState extends State<SyncScreen> {
     final next = DateTime.utc(picked.year, picked.month, picked.day);
     final current = widget.store.settings.lastSyncFrom;
     if (current != null && dateOnly(current) == next) {
-      setState(() => _message = 'Strava開始日は同じです。');
+      setState(() => _message = l10n.startDateUnchanged);
       return;
     }
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text('Strava開始日を変えますか？'),
-          content: Text(
-            'Strava開始日を ${formatDate(next)} にします。\n\n'
-            'Strava開始日から、入っているいちばん新しい走行まで、抜けなく取れている必要があります。'
-            '途中でStrava開始日だけ変えると、取得に抜けが出ることがあります。\n\n'
-            'いま入っている走行データをすべて消してから、新しいStrava開始日から取り直します。',
-          ),
+          title: Text(l10n.changeStartTitle),
+          content: Text(l10n.changeStartConfirm(formatDate(next))),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(false),
-              child: const Text('キャンセル'),
+              child: Text(l10n.cancel),
             ),
             FilledButton(
               onPressed: () => Navigator.of(context).pop(true),
-              child: const Text('消して続ける'),
+              child: Text(l10n.deleteAndContinue),
             ),
           ],
         );
@@ -180,7 +189,7 @@ class _SyncScreenState extends State<SyncScreen> {
     }
     setState(() {
       _busy = false;
-      _message = 'Strava開始日を ${formatDate(next)} にしました。走行データは消してあります。ここから取り直してください。';
+      _message = AppLocalizations.of(context).startDateChanged(formatDate(next));
     });
   }
 }
@@ -194,17 +203,19 @@ class _RangeSummary extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     if (from == null && to == null) {
-      return Text('未同期', style: Theme.of(context).textTheme.titleMedium);
+      return Text(l10n.notSynced, style: Theme.of(context).textTheme.titleMedium);
     }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('データの範囲', style: Theme.of(context).textTheme.bodySmall),
+        Text(l10n.dataRange, style: Theme.of(context).textTheme.bodySmall),
         const SizedBox(height: 6),
         Text(
           markDemo(
-            'Strava開始日  ${from == null ? '—' : formatDate(from!)}',
+            l10n.stravaStartDate(from == null ? l10n.emDash : formatDate(from!)),
+            l10n,
             demo: demo,
           ),
           style: Theme.of(context).textTheme.titleMedium,
@@ -212,7 +223,8 @@ class _RangeSummary extends StatelessWidget {
         const SizedBox(height: 4),
         Text(
           markDemo(
-            '何日まで  ${to == null ? '—' : formatDate(to!)}',
+            l10n.untilDate(to == null ? l10n.emDash : formatDate(to!)),
+            l10n,
             demo: demo,
           ),
           style: Theme.of(context).textTheme.titleMedium,

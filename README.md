@@ -8,8 +8,8 @@
 
 Play ストアはまだ使いません。Android の Chrome で、次の順に進めてください。
 
-1. [GearDoctor 1.0.3](https://github.com/kamiikelab/GearDoctor/releases/tag/v1.0.3) を開く
-2. `GearDoctor-1.0.3.apk` をタップしてダウンロードする
+1. [GearDoctor 1.0.4](https://github.com/kamiikelab/GearDoctor/releases/tag/v1.0.4) を開く
+2. `GearDoctor-1.0.4.apk` をタップしてダウンロードする
 3. ダウンロードが終わったら開く
 4. 「このアプリをインストールしますか？」で **インストール** を押す
 5. 「デバイスを保護するため、アプリをブロックしました」と出たら **詳細** を押し、続けて **インストールする** を押す

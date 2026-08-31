@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:gear_doctor/app.dart';
 import 'package:gear_doctor/app_version.dart';
 import 'package:gear_doctor/data/app_database.dart';
 import 'package:gear_doctor/data/seed.dart';
@@ -12,6 +13,8 @@ import 'package:gear_doctor/screens/part_detail_screen.dart';
 import 'package:gear_doctor/screens/settings_screen.dart';
 import 'package:gear_doctor/state/app_store.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+
+import 'l10n_harness.dart';
 
 void main() {
   late Directory dir;
@@ -38,7 +41,7 @@ void main() {
     );
     await tester.runAsync(store.load);
 
-    await tester.pumpWidget(MaterialApp(home: HomeScreen(store: store)));
+    await tester.pumpWidget(l10nApp(home: HomeScreen(store: store)));
 
     expect(find.text('GearDoctor'), findsOneWidget);
     expect(
@@ -85,7 +88,7 @@ void main() {
     await tester.tap(find.text('OK'));
     await tester.pumpAndSettle();
 
-    await tester.pageBack();
+    await tester.tap(find.byType(BackButton));
     await tester.pumpAndSettle();
 
     await tester.tap(find.text('Strava同期'));
@@ -115,7 +118,12 @@ void main() {
     await tester.runAsync(store.load);
 
     await tester.pumpWidget(
-      MaterialApp(home: PartDetailScreen(store: store, partId: partIdOnGear('p_chain', 'g_aeroad'))),
+      l10nApp(
+        home: PartDetailScreen(
+          store: store,
+          partId: partIdOnGear('p_chain', 'g_aeroad'),
+        ),
+      ),
     );
     await tester.pumpAndSettle();
     expect(find.textContaining(' / '), findsOneWidget);
@@ -142,11 +150,12 @@ void main() {
     );
     await tester.runAsync(store.load);
 
-    await tester.pumpWidget(MaterialApp(home: SettingsScreen(store: store)));
+    await tester.pumpWidget(l10nApp(home: SettingsScreen(store: store)));
     await tester.pumpAndSettle();
     expect(find.text('Strava同期'), findsOneWidget);
     expect(find.text('ギア'), findsWidgets);
     expect(find.text(appVersionLabel), findsOneWidget);
+    expect(find.text('プライバシーポリシー'), findsOneWidget);
     expect(find.text('部品を追加'), findsNothing);
     expect(find.text('記録の CSV'), findsNothing);
     await tester.tap(find.text('初期状態に戻す'));
@@ -169,7 +178,7 @@ void main() {
     );
     await tester.runAsync(store.load);
 
-    await tester.pumpWidget(MaterialApp(home: SettingsScreen(store: store)));
+    await tester.pumpWidget(l10nApp(home: SettingsScreen(store: store)));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Strava 連携'));
     await tester.pumpAndSettle();
@@ -183,7 +192,7 @@ void main() {
     expect(find.textContaining('Chrome が自動で開かないとき'), findsOneWidget);
     expect(find.textContaining('許可用 URL をコピー'), findsOneWidget);
 
-    await tester.pageBack();
+    await tester.tap(find.byType(BackButton));
     await tester.pumpAndSettle();
     await tester.tap(find.widgetWithText(OutlinedButton, 'ギア'));
     await tester.pumpAndSettle();
@@ -206,7 +215,7 @@ void main() {
     await tester.runAsync(store.load);
 
     await tester.pumpWidget(
-      MaterialApp(
+      l10nApp(
         home: EditPartScreen(
           store: store,
           partId: partIdOnGear('p_bar_tape', 'g_aeroad'),
@@ -223,5 +232,75 @@ void main() {
     expect(find.textContaining('設定  24 か月'), findsOneWidget);
     expect(find.textContaining('5,000'), findsNothing);
     expect(find.textContaining('5000'), findsNothing);
+  });
+
+  testWidgets('settings language picker switches the app to English', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(800, 4000);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    final store = AppStore(
+      database: AppDatabase(overridePath: '${dir.path}/app.db'),
+      now: parseDate('2026-08-23'),
+    );
+    await tester.runAsync(store.load);
+    await tester.runAsync(() => store.setLocaleCode('ja'));
+
+    await tester.pumpWidget(GearDoctorApp(store: store));
+    await tester.pumpAndSettle();
+    expect(find.text('設定'), findsOneWidget);
+
+    await tester.tap(find.text('設定'));
+    await tester.pumpAndSettle();
+    expect(find.text('端末に合わせる'), findsOneWidget);
+
+    await tester.tap(find.text('English'));
+    await tester.pumpAndSettle();
+    expect(find.text('Settings'), findsWidgets);
+    expect(find.text('Match device'), findsOneWidget);
+    expect(find.text('Strava sync'), findsOneWidget);
+    expect(find.text('設定'), findsNothing);
+
+    await tester.tap(find.byType(BackButton));
+    await tester.pumpAndSettle();
+    expect(find.text('タイヤ'), findsOneWidget);
+    expect(find.text('チェーン'), findsOneWidget);
+    expect(find.text('Tires'), findsNothing);
+    await tester.runAsync(() => store.setLocaleCode('en'));
+  });
+
+  testWidgets('english catalog is stored when demo is seeded in English', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(800, 4000);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    final store = AppStore(
+      database: AppDatabase(overridePath: '${dir.path}/app.db'),
+      now: parseDate('2026-08-23'),
+      deviceLocale: 'en',
+    );
+    await tester.runAsync(store.load);
+
+    await tester.pumpWidget(
+      l10nApp(home: HomeScreen(store: store), locale: const Locale('en')),
+    );
+    expect(find.text('Tires'), findsOneWidget);
+    expect(find.text('Chain'), findsOneWidget);
+    expect(find.text('Bar tape'), findsOneWidget);
+    expect(
+      find.textContaining('Sync Strava to leave the demo'),
+      findsOneWidget,
+    );
+    expect(find.text('タイヤ'), findsNothing);
+    expect(
+      store.partById(partIdOnGear('p_chain', 'g_aeroad'))!.registeredName,
+      'Chain',
+    );
   });
 }

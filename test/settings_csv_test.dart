@@ -89,4 +89,23 @@ $settingsCsvHeader
     expect(plan.toApply, hasLength(18));
     expect(plan.groups, hasLength(5));
   });
+
+  test('parses English header and values', () {
+    final parsed = parseSettingsCsv('''
+Registered name,Interval,Target,Recommended,Custom,Threshold,Group,Position
+チェーン,Distance,Recommended,4000,4000,80,,
+前タイヤ,Distance,Recommended,6000,5000,80,タイヤ,F
+後タイヤ,Distance,Recommended,6000,5000,80,タイヤ,R
+''');
+    expect(parsed.errors, isEmpty);
+    expect(parsed.rows, hasLength(3));
+    expect(parsed.rows.first.cycle, CycleKind.distance);
+    expect(parsed.rows.first.limitMode, LimitMode.recommended);
+    final plan = planSettingsImport(
+      rows: parsed.rows,
+      parts: const [chain, front, rear],
+    );
+    expect(plan.canImport, isTrue);
+    expect(plan.groups.single.displayName, 'タイヤ');
+  });
 }

@@ -6,5 +6,13 @@ void main() {
     expect(appName, 'GearDoctor');
     expect(appVersionLabel, 'GearDoctor $appVersion');
     expect(RegExp(r'^\d+\.\d+\.\d+$').hasMatch(appVersion), isTrue);
+    expect(
+      privacyPolicyUri('ja').toString(),
+      'https://kamiikelab.github.io/GearDoctor/privacy-policy.html?lang=ja',
+    );
+    expect(
+      privacyPolicyUri('en').toString(),
+      'https://kamiikelab.github.io/GearDoctor/privacy-policy.html?lang=en',
+    );
   });
 }

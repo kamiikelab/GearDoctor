@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../data/seed.dart';
 import '../domain/dates.dart';
 import '../domain/usage.dart';
+import '../l10n/app_localizations.dart';
 import '../models/models.dart';
 import '../state/app_store.dart';
 import '../widgets/widgets.dart';
@@ -11,17 +12,17 @@ import 'settings_screen.dart';
 import 'sync_screen.dart';
 import 'gear_screen.dart';
 
-String _homeSyncLabel(AppStore store) {
+String _homeSyncLabel(AppStore store, AppLocalizations l10n) {
   final from = store.settings.lastSyncFrom;
   final to = store.newestSyncedOn;
   if (from == null && to == null) {
-    return '未同期';
+    return l10n.notSynced;
   }
   if (from != null && to != null) {
-    return '${formatDate(from)}〜${formatDate(to)}';
+    return l10n.syncRange(formatDate(from), formatDate(to));
   }
   if (from != null) {
-    return '${formatDate(from)}〜—';
+    return l10n.syncRangeOpen(formatDate(from));
   }
   return formatDate(to!);
 }
@@ -36,24 +37,29 @@ class HomeScreen extends StatelessWidget {
     return ListenableBuilder(
       listenable: store,
       builder: (context, _) {
+        final l10n = AppLocalizations.of(context);
         final alerts = store.alerts;
         final gearName = store.selectedGear == null
-            ? 'ギア: 未選択'
-            : 'ギア: ${demoGearLabel(
-                store.selectedGear!.name,
-                demo: isDemoGearId(store.selectedGear!.id),
-              )}';
+            ? l10n.gearNone
+            : l10n.gearLabel(
+                demoGearLabel(
+                  store.selectedGear!.name,
+                  l10n,
+                  demo: isDemoGearId(store.selectedGear!.id),
+                ),
+              );
         final lastSync = markDemo(
-          _homeSyncLabel(store),
+          _homeSyncLabel(store, l10n),
+          l10n,
           demo: store.usingDemoRides,
         );
         return Scaffold(
           appBar: AppBar(
-            title: const Text('GearDoctor'),
+            title: Text(l10n.appTitle),
             actions: [
               TextButton(
                 onPressed: () => _openSettings(context),
-                child: const Text('設定'),
+                child: Text(l10n.settings),
               ),
             ],
           ),
@@ -90,7 +96,7 @@ class HomeScreen extends StatelessWidget {
                       child: InkWell(
                         onTap: () => _openSync(context),
                         child: Text(
-                          '最終同期 $lastSync',
+                          l10n.lastSync(lastSync),
                           textAlign: TextAlign.end,
                           style: Theme.of(context).textTheme.bodySmall,
                         ),
@@ -134,7 +140,7 @@ class HomeScreen extends StatelessWidget {
                         ),
                       );
                     },
-                    child: const Text('Strava同期'),
+                    child: Text(l10n.stravaSync),
                   ),
                 ),
               ),
@@ -179,6 +185,7 @@ class _DemoClearBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final scheme = Theme.of(context).colorScheme;
     return Material(
       color: scheme.secondaryContainer,
@@ -192,7 +199,7 @@ class _DemoClearBanner extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.all(10),
           child: Text(
-            'デモを解除するには Strava を同期します。最初の取得でデモ走行は消えます。',
+            l10n.demoBanner,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
               fontWeight: FontWeight.w600,
             ),
@@ -211,6 +218,7 @@ class _AlertBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final scheme = Theme.of(context).colorScheme;
     return Container(
       width: double.infinity,
@@ -224,7 +232,7 @@ class _AlertBanner extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'しきい値 ${alerts.length}件',
+            l10n.alertCount(alerts.length),
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
               fontWeight: FontWeight.w600,
             ),
@@ -260,6 +268,7 @@ class _PartCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final scheme = Theme.of(context).colorScheme;
     return Container(
       padding: const EdgeInsets.all(12),
@@ -287,7 +296,7 @@ class _PartCard extends StatelessWidget {
                       used: store.usedOf(card.rear!),
                       limit: store.limitOf(card.rear!),
                       positionLabel: 'R',
-                      modeLabel: store.limitModeLabelOf(card.rear!),
+                      modeLabel: store.limitModeLabelOf(card.rear!, l10n),
                       demoDistance: store.usingDemoRides,
                       onTap: () => onOpen(card.rear!.id),
                     ),
@@ -303,7 +312,7 @@ class _PartCard extends StatelessWidget {
                       used: store.usedOf(card.front!),
                       limit: store.limitOf(card.front!),
                       positionLabel: 'F',
-                      modeLabel: store.limitModeLabelOf(card.front!),
+                      modeLabel: store.limitModeLabelOf(card.front!, l10n),
                       demoDistance: store.usingDemoRides,
                       onTap: () => onOpen(card.front!.id),
                     ),
@@ -316,7 +325,7 @@ class _PartCard extends StatelessWidget {
               part: card.part!,
               used: store.usedOf(card.part!),
               limit: store.limitOf(card.part!),
-              modeLabel: store.limitModeLabelOf(card.part!),
+              modeLabel: store.limitModeLabelOf(card.part!, l10n),
               demoDistance: store.usingDemoRides,
               onTap: () => onOpen(card.part!.id),
             ),

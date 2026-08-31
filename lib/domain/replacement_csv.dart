@@ -67,7 +67,7 @@ ReplacementCsvParseResult parseReplacementCsv(
     final fields = parseCsvLine(line);
     if (!sawHeader) {
       if (!_isHeader(fields)) {
-        errors.add('1行目は 登録名,交換日,メモ にしてください。');
+        errors.add('1行目は 登録名,交換日,メモ または Registered name,Date,Memo にしてください。');
         return ReplacementCsvParseResult(rows: const [], errors: errors);
       }
       sawHeader = true;
@@ -206,7 +206,8 @@ bool _isHeader(List<String> fields) {
   if (fields.isEmpty) {
     return false;
   }
-  return fields.first.trim() == '登録名';
+  final first = fields.first.trim().toLowerCase();
+  return first == '登録名' || first == 'registered name';
 }
 
 String formatCsvDate(DateTime value) {
@@ -232,13 +233,15 @@ DateTime? parseCsvDate(String value) {
 }
 
 const replacementCsvHeader = '登録名,交換日,メモ';
+const replacementCsvHeaderEn = 'Registered name,Date,Memo';
 
 String replacementCsvExample(
   List<String> registeredNames, {
   DateTime? startDate,
+  String header = replacementCsvHeader,
 }) {
   final date = startDate == null ? '' : formatCsvDate(startDate);
-  final buffer = StringBuffer('$replacementCsvHeader\n');
+  final buffer = StringBuffer('$header\n');
   for (final name in registeredNames) {
     buffer.write(csvEscape(name));
     buffer.writeln(',$date,');
@@ -260,6 +263,7 @@ String exportReplacementCsv({
   required List<Part> parts,
   required List<Replacement> replacements,
   String? gearId,
+  String header = replacementCsvHeader,
 }) {
   final byId = {for (final part in parts) part.id: part};
   final rows = [
@@ -275,7 +279,7 @@ String exportReplacementCsv({
     }
     return a.replacedOn.compareTo(b.replacedOn);
   });
-  final buffer = StringBuffer('登録名,交換日,メモ\n');
+  final buffer = StringBuffer('$header\n');
   for (final replacement in rows) {
     final part = byId[replacement.partId];
     if (part == null) {
