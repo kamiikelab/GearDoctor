@@ -309,7 +309,7 @@ $settingsCsvHeader
     expect(store.gears.any((gear) => gear.id == 'b1'), isFalse);
   });
 
-  test('vault keeps client secrets out of sqlite', () async {
+  test('vault keeps secrets and tokens out of sqlite', () async {
     final vault = MemoryStravaSecretVault();
     final dbPath = '${dir.path}/app.db';
     final store = AppStore(
@@ -319,8 +319,20 @@ $settingsCsvHeader
     );
     await store.load();
     await store.saveStravaCredentials(clientId: '123', clientSecret: 's3cret');
+    await store.saveStravaAuth(
+      StravaAuthResult(
+        accessToken: 'access-1',
+        refreshToken: 'refresh-1',
+        expiresAt: DateTime.utc(2030, 1, 1),
+        athleteId: '42',
+        athleteName: 'Ken Rider',
+        bikes: const [Gear(id: 'b1', name: 'Tarmac')],
+      ),
+    );
     expect(store.settings.stravaClientId, '123');
     expect(await vault.readClientSecret(), 's3cret');
+    expect(await vault.readAccessToken(), 'access-1');
+    expect(await vault.readRefreshToken(), 'refresh-1');
 
     final withoutVault = AppStore(
       database: AppDatabase(overridePath: dbPath),
@@ -329,6 +341,8 @@ $settingsCsvHeader
     await withoutVault.load();
     expect(withoutVault.settings.stravaClientId, isNull);
     expect(withoutVault.settings.stravaClientSecret, isNull);
+    expect(withoutVault.settings.stravaAccessToken, isNull);
+    expect(withoutVault.settings.stravaRefreshToken, isNull);
 
     final withVault = AppStore(
       database: AppDatabase(overridePath: dbPath),
@@ -338,12 +352,30 @@ $settingsCsvHeader
     await withVault.load();
     expect(withVault.settings.stravaClientId, '123');
     expect(withVault.settings.stravaClientSecret, 's3cret');
+    expect(withVault.settings.stravaAccessToken, 'access-1');
+    expect(withVault.settings.stravaRefreshToken, 'refresh-1');
+
+    await withVault.disconnectStrava();
+    expect(await vault.readAccessToken(), isNull);
+    expect(await vault.readRefreshToken(), isNull);
+    expect(await vault.readClientId(), '123');
+    expect(await vault.readClientSecret(), 's3cret');
   });
 
-  test('vault migrates client secrets out of sqlite and reset clears them', () async {
+  test('vault migrates secrets and tokens out of sqlite and reset clears them', () async {
     final dbPath = '${dir.path}/app.db';
     final store = await openStore();
     await store.saveStravaCredentials(clientId: '123', clientSecret: 's3cret');
+    await store.saveStravaAuth(
+      StravaAuthResult(
+        accessToken: 'access-1',
+        refreshToken: 'refresh-1',
+        expiresAt: DateTime.utc(2030, 1, 1),
+        athleteId: '42',
+        athleteName: 'Ken Rider',
+        bikes: const [Gear(id: 'b1', name: 'Tarmac')],
+      ),
+    );
     expect(store.settings.stravaClientSecret, 's3cret');
 
     final vault = MemoryStravaSecretVault();
@@ -355,6 +387,8 @@ $settingsCsvHeader
     await migrated.load();
     expect(migrated.settings.stravaClientId, '123');
     expect(await vault.readClientSecret(), 's3cret');
+    expect(await vault.readAccessToken(), 'access-1');
+    expect(await vault.readRefreshToken(), 'refresh-1');
 
     final leftover = AppStore(
       database: AppDatabase(overridePath: dbPath),
@@ -363,11 +397,16 @@ $settingsCsvHeader
     await leftover.load();
     expect(leftover.settings.stravaClientId, isNull);
     expect(leftover.settings.stravaClientSecret, isNull);
+    expect(leftover.settings.stravaAccessToken, isNull);
+    expect(leftover.settings.stravaRefreshToken, isNull);
 
     await migrated.resetToDemo();
     expect(migrated.settings.stravaClientId, isNull);
+    expect(migrated.settings.stravaAccessToken, isNull);
     expect(await vault.readClientId(), isNull);
     expect(await vault.readClientSecret(), isNull);
+    expect(await vault.readAccessToken(), isNull);
+    expect(await vault.readRefreshToken(), isNull);
   });
 
   test('english device locale seeds english registered names', () async {

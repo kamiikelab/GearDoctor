@@ -1,5 +1,5 @@
 const appName = 'GearDoctor';
-const appVersion = '1.0.4';
+const appVersion = '1.0.5';
 const privacyPolicyPage =
     'https://kamiikelab.github.io/GearDoctor/privacy-policy.html';
 

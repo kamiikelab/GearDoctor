@@ -212,9 +212,11 @@ class AppRepository {
         isUtc: true,
       );
     }
-    final secrets = await _loadClientSecrets(
+    final secrets = await _loadVaultSecrets(
       sqliteClientId: map['strava_client_id'],
       sqliteClientSecret: map['strava_client_secret'],
+      sqliteAccessToken: map['strava_access_token'],
+      sqliteRefreshToken: map['strava_refresh_token'],
     );
     return AppSettings(
       selectedGearId: map['selected_gear_id'],
@@ -226,8 +228,8 @@ class AppRepository {
           : parseDate(map['last_sync_from']!),
       stravaClientId: secrets.clientId,
       stravaClientSecret: secrets.clientSecret,
-      stravaAccessToken: map['strava_access_token'],
-      stravaRefreshToken: map['strava_refresh_token'],
+      stravaAccessToken: secrets.accessToken,
+      stravaRefreshToken: secrets.refreshToken,
       stravaExpiresAt: expiresAt,
       stravaAthleteId: map['strava_athlete_id'],
       stravaAthleteName: map['strava_athlete_name'],
@@ -260,15 +262,19 @@ class AppRepository {
       await _secretVault.write(
         clientId: settings.stravaClientId,
         clientSecret: settings.stravaClientSecret,
+        accessToken: settings.stravaAccessToken,
+        refreshToken: settings.stravaRefreshToken,
       );
       await put('strava_client_id', null);
       await put('strava_client_secret', null);
+      await put('strava_access_token', null);
+      await put('strava_refresh_token', null);
     } else {
       await put('strava_client_id', settings.stravaClientId);
       await put('strava_client_secret', settings.stravaClientSecret);
+      await put('strava_access_token', settings.stravaAccessToken);
+      await put('strava_refresh_token', settings.stravaRefreshToken);
     }
-    await put('strava_access_token', settings.stravaAccessToken);
-    await put('strava_refresh_token', settings.stravaRefreshToken);
     await put(
       'strava_expires_at',
       settings.stravaExpiresAt == null
@@ -281,34 +287,61 @@ class AppRepository {
     await put('locale_code', settings.localeCode);
   }
 
-  Future<({String? clientId, String? clientSecret})> _loadClientSecrets({
+  Future<
+      ({
+        String? clientId,
+        String? clientSecret,
+        String? accessToken,
+        String? refreshToken,
+      })> _loadVaultSecrets({
     required String? sqliteClientId,
     required String? sqliteClientSecret,
+    required String? sqliteAccessToken,
+    required String? sqliteRefreshToken,
   }) async {
     final vault = _secretVault;
     if (vault == null) {
-      return (clientId: sqliteClientId, clientSecret: sqliteClientSecret);
+      return (
+        clientId: sqliteClientId,
+        clientSecret: sqliteClientSecret,
+        accessToken: sqliteAccessToken,
+        refreshToken: sqliteRefreshToken,
+      );
     }
     final clientId =
         _nonEmpty(await vault.readClientId()) ?? _nonEmpty(sqliteClientId);
     final clientSecret = _nonEmpty(await vault.readClientSecret()) ??
         _nonEmpty(sqliteClientSecret);
+    final accessToken =
+        _nonEmpty(await vault.readAccessToken()) ?? _nonEmpty(sqliteAccessToken);
+    final refreshToken = _nonEmpty(await vault.readRefreshToken()) ??
+        _nonEmpty(sqliteRefreshToken);
     final sqliteHas = _nonEmpty(sqliteClientId) != null ||
-        _nonEmpty(sqliteClientSecret) != null;
+        _nonEmpty(sqliteClientSecret) != null ||
+        _nonEmpty(sqliteAccessToken) != null ||
+        _nonEmpty(sqliteRefreshToken) != null;
     if (sqliteHas) {
-      await vault.write(clientId: clientId, clientSecret: clientSecret);
-      await _db.delete(
-        'settings',
-        where: 'key = ?',
-        whereArgs: ['strava_client_id'],
+      await vault.write(
+        clientId: clientId,
+        clientSecret: clientSecret,
+        accessToken: accessToken,
+        refreshToken: refreshToken,
       );
-      await _db.delete(
-        'settings',
-        where: 'key = ?',
-        whereArgs: ['strava_client_secret'],
-      );
+      for (final key in [
+        'strava_client_id',
+        'strava_client_secret',
+        'strava_access_token',
+        'strava_refresh_token',
+      ]) {
+        await _db.delete('settings', where: 'key = ?', whereArgs: [key]);
+      }
     }
-    return (clientId: clientId, clientSecret: clientSecret);
+    return (
+      clientId: clientId,
+      clientSecret: clientSecret,
+      accessToken: accessToken,
+      refreshToken: refreshToken,
+    );
   }
 
   String? _nonEmpty(String? value) {
