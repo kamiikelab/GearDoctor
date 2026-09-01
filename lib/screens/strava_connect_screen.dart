@@ -132,7 +132,9 @@ class _StravaConnectScreenState extends State<StravaConnectScreen> {
               if (_waitingBrowser) ...[
                 const SizedBox(height: 12),
                 Text(
-                  stravaUsesAppCallback
+                  Platform.isIOS
+                      ? l10n.waitingBrowserIos
+                      : stravaUsesAppCallback
                       ? l10n.waitingBrowserMobile
                       : l10n.waitingBrowser,
                 ),
@@ -212,20 +214,22 @@ class _StravaConnectScreenState extends State<StravaConnectScreen> {
                 ),
               ),
               Text(
-                l10n.connectStep3Help,
+                Platform.isIOS ? l10n.connectStep3HelpIos : l10n.connectStep3Help,
                 style: Theme.of(context).textTheme.bodySmall,
               ),
-              const SizedBox(height: 12),
-              Text(
-                l10n.connectStep4,
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  fontWeight: FontWeight.w600,
+              if (!Platform.isIOS) ...[
+                const SizedBox(height: 12),
+                Text(
+                  l10n.connectStep4,
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
-              ),
-              Text(
-                l10n.connectStep4Help,
-                style: Theme.of(context).textTheme.bodySmall,
-              ),
+                Text(
+                  l10n.connectStep4Help,
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
+              ],
             ],
           ),
         );
@@ -243,7 +247,9 @@ class _StravaConnectScreenState extends State<StravaConnectScreen> {
     }
     setState(() {
       _busy = true;
-      _message = stravaUsesAppCallback
+      _message = Platform.isIOS
+          ? l10n.waitingBrowserIos
+          : stravaUsesAppCallback
           ? l10n.waitingBrowserMobile
           : l10n.waitingForChrome;
       _waitingBrowser = true;

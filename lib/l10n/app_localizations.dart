@@ -782,6 +782,12 @@ abstract class AppLocalizations {
   /// **'Strava’s approval screen opens. After you approve, you return to this app.'**
   String get waitingBrowserMobile;
 
+  /// No description provided for @waitingBrowserIos.
+  ///
+  /// In en, this message translates to:
+  /// **'If iPhone asks to open the web, tap Continue. Safari the app does not open. If you are signed out, Strava’s login appears. If you are already signed in and have approved this app, it may return right away.'**
+  String get waitingBrowserIos;
+
   /// No description provided for @browserDidNotOpen.
   ///
   /// In en, this message translates to:
@@ -841,6 +847,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'On a phone, you return to the app after you approve. On a computer, Chrome opens. After you approve, a 127.0.0.1 page appears. You must close that page. If you don\'t, the connect button stays gray. On a computer the app will not come to the front. When this screen shows Connected and the button is green again, it worked. Import rides from Strava sync on Home.'**
   String get connectStep3Help;
+
+  /// No description provided for @connectStep3HelpIos.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap Connect, then Continue when iPhone asks to open the web. Safari the app does not open. If you are signed out, Strava’s login appears. If you are already signed in and have approved this app, the screen may close right away. Success is when this screen shows Connected and the button is green again. Import rides from Strava sync on Home.'**
+  String get connectStep3HelpIos;
 
   /// No description provided for @connectStep4.
   ///

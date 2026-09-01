@@ -396,6 +396,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'Strava’s approval screen opens. After you approve, you return to this app.';
 
   @override
+  String get waitingBrowserIos =>
+      'If iPhone asks to open the web, tap Continue. Safari the app does not open. If you are signed out, Strava’s login appears. If you are already signed in and have approved this app, it may return right away.';
+
+  @override
   String get browserDidNotOpen =>
       'Chrome didn\'t open by itself. Copy the URL below and open it in Chrome.';
 
@@ -429,6 +433,10 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get connectStep3Help =>
       'On a phone, you return to the app after you approve. On a computer, Chrome opens. After you approve, a 127.0.0.1 page appears. You must close that page. If you don\'t, the connect button stays gray. On a computer the app will not come to the front. When this screen shows Connected and the button is green again, it worked. Import rides from Strava sync on Home.';
+
+  @override
+  String get connectStep3HelpIos =>
+      'Tap Connect, then Continue when iPhone asks to open the web. Safari the app does not open. If you are signed out, Strava’s login appears. If you are already signed in and have approved this app, the screen may close right away. Success is when this screen shows Connected and the button is green again. Import rides from Strava sync on Home.';
 
   @override
   String get connectStep4 => '4. If Chrome doesn\'t open';
