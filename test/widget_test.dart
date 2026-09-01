@@ -187,7 +187,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('連携を解除'), findsOneWidget);
     expect(find.text('連携方法'), findsOneWidget);
-    expect(find.textContaining('Authorization Callback Domain は 127.0.0.1'), findsOneWidget);
+    expect(find.textContaining('Strava の API 設定でアプリを作る'), findsOneWidget);
     expect(find.textContaining('このアプリでは Access Token は使いません'), findsOneWidget);
     expect(find.textContaining('スマホでは許可するとアプリに戻ります'), findsOneWidget);
     expect(find.textContaining('Chrome が自動で開きます'), findsOneWidget);

@@ -179,7 +179,7 @@ abstract class AppLocalizations {
   /// No description provided for @gearHint.
   ///
   /// In en, this message translates to:
-  /// **'The bike whose distance is added, and its replacement records.'**
+  /// **'The bike whose distance is calculated, and its replacement records.'**
   String get gearHint;
 
   /// No description provided for @resetSection.
@@ -335,7 +335,7 @@ abstract class AppLocalizations {
   /// No description provided for @limitModeRecommended.
   ///
   /// In en, this message translates to:
-  /// **'Recommended'**
+  /// **'Default'**
   String get limitModeRecommended;
 
   /// No description provided for @limitModeAuto.
@@ -353,7 +353,7 @@ abstract class AppLocalizations {
   /// No description provided for @limitModeAutoFallback.
   ///
   /// In en, this message translates to:
-  /// **'Auto (recommended)'**
+  /// **'Auto (default)'**
   String get limitModeAutoFallback;
 
   /// No description provided for @statusOk.
@@ -515,7 +515,7 @@ abstract class AppLocalizations {
   /// No description provided for @limitRecommended.
   ///
   /// In en, this message translates to:
-  /// **'Recommended  {amount} {unit}'**
+  /// **'Default  {amount} {unit}'**
   String limitRecommended(String amount, String unit);
 
   /// No description provided for @limitRecommendedHelp.
@@ -785,7 +785,7 @@ abstract class AppLocalizations {
   /// No description provided for @waitingBrowserIos.
   ///
   /// In en, this message translates to:
-  /// **'If iPhone asks to open the web, tap Continue. Safari the app does not open. If you are signed out, Strava’s login appears. If you are already signed in and have approved this app, it may return right away.'**
+  /// **'If iPhone asks to open the web, tap Continue. If you are signed out, Strava’s login appears. If you are already signed in and have approved this app, it may return right away.'**
   String get waitingBrowserIos;
 
   /// No description provided for @browserDidNotOpen.
@@ -811,12 +811,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'1. Create an app in Strava API settings'**
   String get connectStep1;
-
-  /// No description provided for @callbackDomainHelp.
-  ///
-  /// In en, this message translates to:
-  /// **'Authorization Callback Domain is 127.0.0.1. Don\'t add http, a port, or a path. You don\'t need to open this screen\'s return URL yourself.'**
-  String get callbackDomainHelp;
 
   /// No description provided for @stravaPaidApi.
   ///
@@ -851,7 +845,7 @@ abstract class AppLocalizations {
   /// No description provided for @connectStep3HelpIos.
   ///
   /// In en, this message translates to:
-  /// **'Tap Connect, then Continue when iPhone asks to open the web. Safari the app does not open. If you are signed out, Strava’s login appears. If you are already signed in and have approved this app, the screen may close right away. Success is when this screen shows Connected and the button is green again. Import rides from Strava sync on Home.'**
+  /// **'Tap Connect, then Continue when iPhone asks to open the web. If you are signed out, Strava’s login appears. If you are already signed in and have approved this app, it may return right away. Success is when this screen shows Connected and the button is green again. Import rides from Strava sync on Home.'**
   String get connectStep3HelpIos;
 
   /// No description provided for @connectStep4.
@@ -1013,7 +1007,7 @@ abstract class AppLocalizations {
   /// No description provided for @settingsCsvHint.
   ///
   /// In en, this message translates to:
-  /// **'Registered name,Interval,Target,Recommended,Custom,Threshold,Group,Position'**
+  /// **'Registered name,Interval,Target,Default,Custom,Threshold,Group,Position'**
   String get settingsCsvHint;
 
   /// No description provided for @exportCurrentRecords.

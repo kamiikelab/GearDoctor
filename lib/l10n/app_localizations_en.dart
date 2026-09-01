@@ -53,7 +53,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get gearHint =>
-      'The bike whose distance is added, and its replacement records.';
+      'The bike whose distance is calculated, and its replacement records.';
 
   @override
   String get resetSection => 'Reset';
@@ -144,7 +144,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get unitMonths => 'mo';
 
   @override
-  String get limitModeRecommended => 'Recommended';
+  String get limitModeRecommended => 'Default';
 
   @override
   String get limitModeAuto => 'Auto';
@@ -153,7 +153,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get limitModeCustom => 'Custom';
 
   @override
-  String get limitModeAutoFallback => 'Auto (recommended)';
+  String get limitModeAutoFallback => 'Auto (default)';
 
   @override
   String get statusOk => 'OK';
@@ -246,7 +246,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String limitRecommended(String amount, String unit) {
-    return 'Recommended  $amount $unit';
+    return 'Default  $amount $unit';
   }
 
   @override
@@ -397,7 +397,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get waitingBrowserIos =>
-      'If iPhone asks to open the web, tap Continue. Safari the app does not open. If you are signed out, Strava’s login appears. If you are already signed in and have approved this app, it may return right away.';
+      'If iPhone asks to open the web, tap Continue. If you are signed out, Strava’s login appears. If you are already signed in and have approved this app, it may return right away.';
 
   @override
   String get browserDidNotOpen =>
@@ -412,10 +412,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get connectStep1 => '1. Create an app in Strava API settings';
-
-  @override
-  String get callbackDomainHelp =>
-      'Authorization Callback Domain is 127.0.0.1. Don\'t add http, a port, or a path. You don\'t need to open this screen\'s return URL yourself.';
 
   @override
   String get stravaPaidApi =>
@@ -436,7 +432,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get connectStep3HelpIos =>
-      'Tap Connect, then Continue when iPhone asks to open the web. Safari the app does not open. If you are signed out, Strava’s login appears. If you are already signed in and have approved this app, the screen may close right away. Success is when this screen shows Connected and the button is green again. Import rides from Strava sync on Home.';
+      'Tap Connect, then Continue when iPhone asks to open the web. If you are signed out, Strava’s login appears. If you are already signed in and have approved this app, it may return right away. Success is when this screen shows Connected and the button is green again. Import rides from Strava sync on Home.';
 
   @override
   String get connectStep4 => '4. If Chrome doesn\'t open';
@@ -531,7 +527,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settingsCsvHint =>
-      'Registered name,Interval,Target,Recommended,Custom,Threshold,Group,Position';
+      'Registered name,Interval,Target,Default,Custom,Threshold,Group,Position';
 
   @override
   String get exportCurrentRecords => 'Export current records';

@@ -1307,7 +1307,7 @@ function SettingsScreen({
             ギア
           </Text>
           <Text size="small" tone="tertiary">
-            距離を足す自転車と、そのギアの交換記録です。
+            距離を計算する自転車と、そのギアの交換記録です。
           </Text>
         </Stack>
         <PhoneButton label="ギア" variant="ghost" onClick={() => go("gear")} />

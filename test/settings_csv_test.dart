@@ -92,10 +92,10 @@ $settingsCsvHeader
 
   test('parses English header and values', () {
     final parsed = parseSettingsCsv('''
-Registered name,Interval,Target,Recommended,Custom,Threshold,Group,Position
-チェーン,Distance,Recommended,4000,4000,80,,
-前タイヤ,Distance,Recommended,6000,5000,80,タイヤ,F
-後タイヤ,Distance,Recommended,6000,5000,80,タイヤ,R
+Registered name,Interval,Target,Default,Custom,Threshold,Group,Position
+チェーン,Distance,Default,4000,4000,80,,
+前タイヤ,Distance,Default,6000,5000,80,タイヤ,F
+後タイヤ,Distance,Default,6000,5000,80,タイヤ,R
 ''');
     expect(parsed.errors, isEmpty);
     expect(parsed.rows, hasLength(3));

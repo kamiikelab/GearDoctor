@@ -3,7 +3,7 @@ import 'replacement_csv.dart';
 
 const settingsCsvHeader = '登録名,周期,目安,推奨の値,設定の値,しきい値,まとめ,位置';
 const settingsCsvHeaderEn =
-    'Registered name,Interval,Target,Recommended,Custom,Threshold,Group,Position';
+    'Registered name,Interval,Target,Default,Custom,Threshold,Group,Position';
 
 enum SettingsSide { front, rear }
 
@@ -306,6 +306,7 @@ CycleKind? _parseCycle(String raw) {
 LimitMode? _parseLimitMode(String raw) {
   switch (raw.toLowerCase()) {
     case '推奨':
+    case 'default':
     case 'recommended':
       return LimitMode.recommended;
     case '自動':

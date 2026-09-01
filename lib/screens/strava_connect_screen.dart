@@ -188,10 +188,6 @@ class _StravaConnectScreenState extends State<StravaConnectScreen> {
               ),
               const SelectableText('https://www.strava.com/settings/api'),
               Text(
-                l10n.callbackDomainHelp,
-                style: Theme.of(context).textTheme.bodySmall,
-              ),
-              Text(
                 l10n.stravaPaidApi,
                 style: Theme.of(context).textTheme.bodySmall,
               ),

@@ -51,7 +51,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get gear => 'ギア';
 
   @override
-  String get gearHint => '距離を足す自転車と、そのギアの交換記録です。';
+  String get gearHint => '距離を計算する自転車と、そのギアの交換記録です。';
 
   @override
   String get resetSection => '初期化';
@@ -385,7 +385,7 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get waitingBrowserIos =>
-      '「Webを開きます」と出たら続けてください。Safariアプリは開きません。ログインしていないときは Strava のログインが出ます。すでにログインして許可済みだと、すぐ戻ることがあります。';
+      '「Webを開きます」と出たら続けてください。ログインしていないときは Strava のログインが出ます。すでにログインして許可済みだと、すぐ戻ることがあります。';
 
   @override
   String get browserDidNotOpen =>
@@ -400,10 +400,6 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get connectStep1 => '1. Strava の API 設定でアプリを作る';
-
-  @override
-  String get callbackDomainHelp =>
-      'Authorization Callback Domain は 127.0.0.1。http もポートもパスも付けない。この画面の戻り先を自分で開く必要はありません。';
 
   @override
   String get stravaPaidApi => 'Standard Tier の API は、Strava の有料サブスクが必要です。';
@@ -423,7 +419,7 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get connectStep3HelpIos =>
-      '「連携する」を押すと、「Webを開きます」と出ます。続けてください。Safariアプリは開きません。ログインしていないときは Strava のログイン画面が出ます。すでにログインしてこのアプリを許可していると、画面がすぐ閉じて戻ることがあります。この画面が「連携済み」になり、連携ボタンが緑に戻れば成功です。走行の取得はホームの「Strava同期」から。';
+      '「連携する」を押すと、「Webを開きます」と出ます。続けてください。ログインしていないときは Strava のログインが出ます。すでにログインしてこのアプリを許可していると、すぐ戻ることがあります。この画面が「連携済み」になり、連携ボタンが緑に戻れば成功です。走行の取得はホームの「Strava同期」から。';
 
   @override
   String get connectStep4 => '4. Chrome が自動で開かないとき';
