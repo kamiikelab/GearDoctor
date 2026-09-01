@@ -5,6 +5,8 @@ import '../domain/usage.dart';
 import '../l10n/app_localizations.dart';
 import '../models/models.dart';
 
+export 'app_text_field.dart';
+
 String formatAmount(num value) {
   final digits = value.round().abs().toString();
   final buffer = StringBuffer();

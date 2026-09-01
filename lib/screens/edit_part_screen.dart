@@ -84,10 +84,11 @@ class _EditPartScreenState extends State<EditPartScreen> {
       appBar: AppBar(title: Text(_isNew ? l10n.addPart : l10n.editPart)),
       body: ListView(
         padding: const EdgeInsets.all(16),
+        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
         children: [
           Text(l10n.registeredName, style: Theme.of(context).textTheme.bodySmall),
           const SizedBox(height: 4),
-          TextField(
+          AppTextField(
             controller: _name,
             decoration: InputDecoration(
               border: const OutlineInputBorder(),
@@ -167,7 +168,7 @@ class _EditPartScreenState extends State<EditPartScreen> {
           ),
           if (_mode == LimitMode.custom) ...[
             const SizedBox(height: 8),
-            TextField(
+            AppTextField(
               controller: _custom,
               keyboardType: TextInputType.number,
               inputFormatters: [FilteringTextInputFormatter.digitsOnly],
@@ -182,7 +183,7 @@ class _EditPartScreenState extends State<EditPartScreen> {
           const SizedBox(height: 16),
           Text(l10n.threshold, style: Theme.of(context).textTheme.bodySmall),
           const SizedBox(height: 4),
-          TextField(
+          AppTextField(
             controller: _threshold,
             keyboardType: TextInputType.number,
             inputFormatters: [FilteringTextInputFormatter.digitsOnly],

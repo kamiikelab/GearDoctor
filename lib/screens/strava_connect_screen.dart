@@ -10,6 +10,7 @@ import '../strava/open_browser.dart';
 import '../strava/strava_app_auth.dart';
 import '../strava/strava_config.dart';
 import '../strava/strava_oauth.dart';
+import '../widgets/app_text_field.dart';
 
 class StravaConnectScreen extends StatefulWidget {
   const StravaConnectScreen({super.key, required this.store});
@@ -83,6 +84,7 @@ class _StravaConnectScreenState extends State<StravaConnectScreen> {
           appBar: AppBar(title: Text(l10n.stravaConnect)),
           body: ListView(
             padding: const EdgeInsets.all(16),
+            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
             children: [
               Text(
                 connected ? l10n.connected : l10n.notConnected,
@@ -93,13 +95,16 @@ class _StravaConnectScreenState extends State<StravaConnectScreen> {
               const SizedBox(height: 12),
               Text(l10n.clientId, style: Theme.of(context).textTheme.bodySmall),
               const SizedBox(height: 4),
-              TextField(
+              AppTextField(
                 controller: _clientId,
                 keyboardType: TextInputType.number,
                 inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                 decoration: InputDecoration(
                   border: const OutlineInputBorder(),
                   hintText: l10n.clientIdHint,
+                  hintStyle: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: Theme.of(context).colorScheme.outline,
+                  ),
                 ),
               ),
               const SizedBox(height: 12),
@@ -108,12 +113,15 @@ class _StravaConnectScreenState extends State<StravaConnectScreen> {
                 style: Theme.of(context).textTheme.bodySmall,
               ),
               const SizedBox(height: 4),
-              TextField(
+              AppTextField(
                 controller: _clientSecret,
                 obscureText: true,
                 decoration: InputDecoration(
                   border: const OutlineInputBorder(),
                   hintText: l10n.clientSecretHint,
+                  hintStyle: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: Theme.of(context).colorScheme.outline,
+                  ),
                 ),
               ),
               const SizedBox(height: 12),

@@ -69,6 +69,10 @@ void main() {
     expect(store.partById(aeroadPart('p_battery')), isNull);
     expect(store.partById(aeroadPart('p_front_oil'))!.cycle, CycleKind.distance);
     expect(store.usedOf(store.partById(aeroadPart('p_speed_batt'))!), 7);
+    expect(
+      store.alerts.map((alert) => alert.label).toList(),
+      ['タイヤ F', 'ブレーキパッド F'],
+    );
   });
 
   test('demo blocks new parts and CSV import until Strava sync', () async {

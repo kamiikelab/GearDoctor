@@ -38,6 +38,7 @@ class _DisplayGroupScreenState extends State<DisplayGroupScreen> {
           appBar: AppBar(title: Text(l10n.groupTitle)),
           body: ListView(
             padding: const EdgeInsets.all(16),
+            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
             children: [
               Text(
                 l10n.groupHelp,
@@ -122,7 +123,7 @@ class _DisplayGroupScreenState extends State<DisplayGroupScreen> {
         const SizedBox(height: 16),
         Text(l10n.groupedNameStep, style: Theme.of(context).textTheme.bodySmall),
         const SizedBox(height: 4),
-        TextField(
+        AppTextField(
           controller: _name,
           decoration: InputDecoration(
             border: const OutlineInputBorder(),

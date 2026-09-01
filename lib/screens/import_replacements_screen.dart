@@ -67,6 +67,7 @@ class _ImportReplacementsScreenState extends State<ImportReplacementsScreen> {
           appBar: AppBar(title: Text(l10n.recordsCsv)),
           body: ListView(
             padding: const EdgeInsets.all(16),
+            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
             children: [
               Text(
                 gearLabel,
@@ -89,7 +90,7 @@ class _ImportReplacementsScreenState extends State<ImportReplacementsScreen> {
               const SizedBox(height: 16),
               Text(l10n.csvLabel, style: Theme.of(context).textTheme.bodySmall),
               const SizedBox(height: 4),
-              TextField(
+              AppTextField(
                 controller: _csv,
                 enabled: canManage,
                 minLines: 8,

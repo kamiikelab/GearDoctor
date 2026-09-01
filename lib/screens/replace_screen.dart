@@ -52,6 +52,7 @@ class _ReplaceScreenState extends State<ReplaceScreen> {
           appBar: AppBar(title: Text(l10n.recordReplace)),
           body: ListView(
             padding: const EdgeInsets.all(16),
+            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
             children: [
               Text(
                 l10n.replaceResetHelp(name, usageNounOf(part.cycle, l10n)),
@@ -74,7 +75,7 @@ class _ReplaceScreenState extends State<ReplaceScreen> {
               const SizedBox(height: 16),
               Text(l10n.memo, style: Theme.of(context).textTheme.bodySmall),
               const SizedBox(height: 4),
-              TextField(
+              AppTextField(
                 controller: _memo,
                 minLines: 2,
                 maxLines: 4,

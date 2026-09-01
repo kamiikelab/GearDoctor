@@ -53,6 +53,9 @@ void main() {
     expect(find.textContaining(' / '), findsWidgets);
     expect(find.textContaining('推奨'), findsWidgets);
     expect(find.text('Strava同期'), findsOneWidget);
+    expect(find.text('しきい値 2件'), findsOneWidget);
+    expect(find.text('タイヤ F'), findsOneWidget);
+    expect(find.text('ブレーキパッド F'), findsOneWidget);
     expect(find.textContaining('ギア: Aeroad（デモ）'), findsOneWidget);
     expect(
       find.textContaining('最終同期 2025-07-17〜2026-07-15（デモ）'),

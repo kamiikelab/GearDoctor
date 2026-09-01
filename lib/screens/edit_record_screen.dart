@@ -62,6 +62,7 @@ class _EditRecordScreenState extends State<EditRecordScreen> {
           appBar: AppBar(title: Text(l10n.editRecord)),
           body: ListView(
             padding: const EdgeInsets.all(16),
+            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
             children: [
               Text(
                 '$name · ${formatUsed(row.used, CycleKind.distance, l10n, demo: widget.store.usingDemoRides)}',
@@ -80,7 +81,7 @@ class _EditRecordScreenState extends State<EditRecordScreen> {
               const SizedBox(height: 16),
               Text(l10n.memo, style: Theme.of(context).textTheme.bodySmall),
               const SizedBox(height: 4),
-              TextField(
+              AppTextField(
                 controller: _memo,
                 minLines: 2,
                 maxLines: 4,
