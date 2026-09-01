@@ -37,17 +37,24 @@ class StravaAuthException implements Exception {
 Uri stravaAuthorizeUrl({
   required String clientId,
   required String state,
-  String redirectUri = stravaRedirectUri,
+  String? redirectUri,
   String scope = stravaAuthScope,
+  bool mobile = false,
 }) {
-  return Uri.https('www.strava.com', '/oauth/authorize', {
-    'client_id': clientId,
-    'response_type': 'code',
-    'redirect_uri': redirectUri,
-    'approval_prompt': 'auto',
-    'scope': scope,
-    'state': state,
-  });
+  final redirect = redirectUri ??
+      (mobile ? stravaAppRedirectUri : stravaRedirectUri);
+  return Uri.https(
+    'www.strava.com',
+    mobile ? '/oauth/mobile/authorize' : '/oauth/authorize',
+    {
+      'client_id': clientId,
+      'response_type': 'code',
+      'redirect_uri': redirect,
+      'approval_prompt': 'auto',
+      'scope': scope,
+      'state': state,
+    },
+  );
 }
 
 String newOAuthState() {

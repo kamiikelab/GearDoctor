@@ -7,6 +7,7 @@ import 'package:http/http.dart' as http;
 import '../l10n/app_localizations.dart';
 import '../state/app_store.dart';
 import '../strava/open_browser.dart';
+import '../strava/strava_app_auth.dart';
 import '../strava/strava_config.dart';
 import '../strava/strava_oauth.dart';
 
@@ -122,8 +123,14 @@ class _StravaConnectScreenState extends State<StravaConnectScreen> {
               ),
               if (_waitingBrowser) ...[
                 const SizedBox(height: 12),
-                Text(l10n.waitingBrowser),
-                if (_browserFailedToOpen && _authorizeUrl != null) ...[
+                Text(
+                  stravaUsesAppCallback
+                      ? l10n.waitingBrowserMobile
+                      : l10n.waitingBrowser,
+                ),
+                if (!stravaUsesAppCallback &&
+                    _browserFailedToOpen &&
+                    _authorizeUrl != null) ...[
                   const SizedBox(height: 12),
                   Text(
                     l10n.browserDidNotOpen,
@@ -228,7 +235,9 @@ class _StravaConnectScreenState extends State<StravaConnectScreen> {
     }
     setState(() {
       _busy = true;
-      _message = l10n.waitingForChrome;
+      _message = stravaUsesAppCallback
+          ? l10n.waitingBrowserMobile
+          : l10n.waitingForChrome;
       _waitingBrowser = true;
       _browserFailedToOpen = false;
     });
@@ -237,8 +246,42 @@ class _StravaConnectScreenState extends State<StravaConnectScreen> {
       clientSecret: clientSecret,
     );
     _state = newOAuthState();
-    final url = stravaAuthorizeUrl(clientId: clientId, state: _state!);
+    final mobile = stravaUsesAppCallback;
+    final url = stravaAuthorizeUrl(
+      clientId: clientId,
+      state: _state!,
+      mobile: mobile,
+    );
     _authorizeUrl = url;
+    if (mobile) {
+      try {
+        final redirected = await authenticateStravaInAppBrowser(url);
+        final code = extractAuthorizationCode(
+          redirected,
+          expectedState: _state!,
+        );
+        await _finishWithCode(code, clientId, clientSecret);
+      } on StravaAuthException catch (e) {
+        if (!mounted) {
+          return;
+        }
+        setState(() {
+          _busy = false;
+          _waitingBrowser = false;
+          _message = e.message;
+        });
+      } catch (e) {
+        if (!mounted) {
+          return;
+        }
+        setState(() {
+          _busy = false;
+          _waitingBrowser = false;
+          _message = '$e';
+        });
+      }
+      return;
+    }
     _listener = StravaLoopbackListener();
     try {
       await _listener!.start();

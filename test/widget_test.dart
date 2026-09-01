@@ -186,6 +186,7 @@ void main() {
     expect(find.text('連携方法'), findsOneWidget);
     expect(find.textContaining('Authorization Callback Domain は 127.0.0.1'), findsOneWidget);
     expect(find.textContaining('このアプリでは Access Token は使いません'), findsOneWidget);
+    expect(find.textContaining('スマホでは許可するとアプリに戻ります'), findsOneWidget);
     expect(find.textContaining('Chrome が自動で開きます'), findsOneWidget);
     expect(find.textContaining('その画面を閉じることが必須です'), findsOneWidget);
     expect(find.textContaining('連携ボタンが緑に戻り「連携済み」になれば成功です'), findsOneWidget);

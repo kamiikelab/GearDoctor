@@ -6,7 +6,14 @@ import 'package:path/path.dart' as p;
 /// PC 上の認可で使う固定の戻り先。Strava の Callback Domain は `127.0.0.1`。
 const stravaRedirectUri = 'http://127.0.0.1:8742/callback';
 const stravaListenPort = 8742;
+
+/// スマホの認可。host を Callback Domain（127.0.0.1）に合わせる。
+const stravaCallbackScheme = 'geardoctor';
+const stravaAppRedirectUri = 'geardoctor://127.0.0.1/callback';
 const stravaAuthScope = 'read,activity:read_all,profile:read_all';
+
+bool get stravaUsesAppCallback =>
+    Platform.isIOS || Platform.isAndroid;
 
 class StravaAppCredentials {
   const StravaAppCredentials({required this.clientId, required this.clientSecret});

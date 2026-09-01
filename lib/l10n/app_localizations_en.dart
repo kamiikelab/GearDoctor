@@ -392,6 +392,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'When Chrome shows a page, close that page. Closing it turns the connect button green again. The app will not come to the front.';
 
   @override
+  String get waitingBrowserMobile =>
+      'Strava’s approval screen opens. After you approve, you return to this app.';
+
+  @override
   String get browserDidNotOpen =>
       'Chrome didn\'t open by itself. Copy the URL below and open it in Chrome.';
 
@@ -424,7 +428,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get connectStep3Help =>
-      'Chrome opens. After you approve, a 127.0.0.1 page appears. You must close that page. If you don\'t, the connect button stays gray. The app will not come to the front. When this screen shows Connected and the button is green again, it worked. Import rides from Strava sync on Home.';
+      'On a phone, you return to the app after you approve. On a computer, Chrome opens. After you approve, a 127.0.0.1 page appears. You must close that page. If you don\'t, the connect button stays gray. On a computer the app will not come to the front. When this screen shows Connected and the button is green again, it worked. Import rides from Strava sync on Home.';
 
   @override
   String get connectStep4 => '4. If Chrome doesn\'t open';

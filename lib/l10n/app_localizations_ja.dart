@@ -381,6 +381,9 @@ class AppLocalizationsJa extends AppLocalizations {
       'Chrome に案内が出たら、その画面を必ず閉じてください。閉じると、上の連携ボタンが再び緑になります。アプリが手前に切り替わることはありません。';
 
   @override
+  String get waitingBrowserMobile => 'Strava の許可画面が開きます。許可するとこのアプリに戻ります。';
+
+  @override
   String get browserDidNotOpen =>
       'Chrome が自動では開きませんでした。次の URL をコピーして Chrome で開いてください。';
 
@@ -412,7 +415,7 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get connectStep3Help =>
-      'Chrome が自動で開きます。許可すると 127.0.0.1 に案内が出ます。その画面を閉じることが必須です。閉じないと、連携ボタンは灰色のままです。アプリが手前に切り替わることはありません。この画面を見て、連携ボタンが緑に戻り「連携済み」になれば成功です。走行の取得はホームの「Strava同期」から。';
+      'スマホでは許可するとアプリに戻ります。パソコンでは Chrome が自動で開きます。許可すると 127.0.0.1 に案内が出ます。その画面を閉じることが必須です。閉じないと、連携ボタンは灰色のままです。パソコンではアプリが手前に切り替わることはありません。この画面を見て、連携ボタンが緑に戻り「連携済み」になれば成功です。走行の取得はホームの「Strava同期」から。';
 
   @override
   String get connectStep4 => '4. Chrome が自動で開かないとき';

@@ -8,10 +8,26 @@ void main() {
   test('authorize URL uses localhost callback and state', () {
     final url = stravaAuthorizeUrl(clientId: '99', state: 'abc');
     expect(url.host, 'www.strava.com');
+    expect(url.path, '/oauth/authorize');
     expect(url.queryParameters['client_id'], '99');
     expect(url.queryParameters['redirect_uri'], stravaRedirectUri);
     expect(url.queryParameters['state'], 'abc');
     expect(url.queryParameters['scope'], contains('activity:read_all'));
+  });
+
+  test('mobile authorize URL uses app callback scheme', () {
+    final url = stravaAuthorizeUrl(clientId: '99', state: 'abc', mobile: true);
+    expect(url.path, '/oauth/mobile/authorize');
+    expect(url.queryParameters['redirect_uri'], stravaAppRedirectUri);
+    expect(Uri.parse(stravaAppRedirectUri).scheme, stravaCallbackScheme);
+    expect(Uri.parse(stravaAppRedirectUri).host, '127.0.0.1');
+  });
+
+  test('extracts code from app callback URI', () {
+    final uri = Uri.parse(
+      '$stravaAppRedirectUri?state=s1&code=CODE123&scope=read,activity:read_all',
+    );
+    expect(extractAuthorizationCode(uri, expectedState: 's1'), 'CODE123');
   });
 
   test('extracts code from redirect and rejects mismatch', () {

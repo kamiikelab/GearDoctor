@@ -776,6 +776,12 @@ abstract class AppLocalizations {
   /// **'When Chrome shows a page, close that page. Closing it turns the connect button green again. The app will not come to the front.'**
   String get waitingBrowser;
 
+  /// No description provided for @waitingBrowserMobile.
+  ///
+  /// In en, this message translates to:
+  /// **'Strava’s approval screen opens. After you approve, you return to this app.'**
+  String get waitingBrowserMobile;
+
   /// No description provided for @browserDidNotOpen.
   ///
   /// In en, this message translates to:
@@ -833,7 +839,7 @@ abstract class AppLocalizations {
   /// No description provided for @connectStep3Help.
   ///
   /// In en, this message translates to:
-  /// **'Chrome opens. After you approve, a 127.0.0.1 page appears. You must close that page. If you don\'t, the connect button stays gray. The app will not come to the front. When this screen shows Connected and the button is green again, it worked. Import rides from Strava sync on Home.'**
+  /// **'On a phone, you return to the app after you approve. On a computer, Chrome opens. After you approve, a 127.0.0.1 page appears. You must close that page. If you don\'t, the connect button stays gray. On a computer the app will not come to the front. When this screen shows Connected and the button is green again, it worked. Import rides from Strava sync on Home.'**
   String get connectStep3Help;
 
   /// No description provided for @connectStep4.
