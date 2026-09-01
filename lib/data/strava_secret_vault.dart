@@ -21,7 +21,7 @@ abstract class StravaSecretVault {
 }
 
 StravaSecretVault? platformStravaSecretVault() {
-  if (Platform.isAndroid) {
+  if (Platform.isAndroid || Platform.isIOS) {
     return FlutterStravaSecretVault();
   }
   return null;
