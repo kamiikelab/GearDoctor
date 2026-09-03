@@ -105,6 +105,11 @@ class _SyncScreenState extends State<SyncScreen> {
                 l10n.importFromStrava,
                 style: Theme.of(context).textTheme.titleMedium,
               ),
+              const SizedBox(height: 4),
+              Text(
+                l10n.stravaHint,
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
               const SizedBox(height: 8),
               if (connected) ...[
                 _RangeSummary(
@@ -145,11 +150,6 @@ class _SyncScreenState extends State<SyncScreen> {
                   ),
                 ),
               ] else ...[
-                Text(
-                  l10n.notConnectedImportHint,
-                  style: Theme.of(context).textTheme.bodySmall,
-                ),
-                const SizedBox(height: 12),
                 FilledButton(
                   onPressed: null,
                   child: Text(l10n.sync3months),
@@ -164,19 +164,19 @@ class _SyncScreenState extends State<SyncScreen> {
                   onPressed: null,
                   child: Text(l10n.sync1year),
                 ),
-                const SizedBox(height: 8),
-                OutlinedButton(
-                  onPressed: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute<void>(
-                        builder: (_) =>
-                            StravaConnectScreen(store: widget.store),
-                      ),
-                    );
-                  },
-                  child: Text(l10n.goToStravaConnect),
-                ),
               ],
+              const SizedBox(height: 8),
+              OutlinedButton(
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute<void>(
+                      builder: (_) =>
+                          StravaConnectScreen(store: widget.store),
+                    ),
+                  );
+                },
+                child: Text(l10n.stravaConnect),
+              ),
               if (_message != null) ...[
                 const SizedBox(height: 16),
                 Text(_message!),

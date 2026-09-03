@@ -175,7 +175,7 @@ class _EditPartScreenState extends State<EditPartScreen> {
               decoration: InputDecoration(
                 border: const OutlineInputBorder(),
                 suffixText: unit,
-                labelText: l10n.customValue,
+                hintText: l10n.customValue,
               ),
               onChanged: (_) => setState(() {}),
             ),
@@ -201,6 +201,13 @@ class _EditPartScreenState extends State<EditPartScreen> {
           ],
           const SizedBox(height: 20),
           FilledButton(onPressed: _save, child: Text(l10n.save)),
+          if (!_isNew) ...[
+            const SizedBox(height: 8),
+            OutlinedButton(
+              onPressed: _delete,
+              child: Text(l10n.deleteThisPart),
+            ),
+          ],
         ],
       ),
     );
@@ -272,5 +279,44 @@ class _EditPartScreenState extends State<EditPartScreen> {
     if (mounted) {
       Navigator.of(context).pop();
     }
+  }
+
+  Future<void> _delete() async {
+    final l10n = AppLocalizations.of(context);
+    if (widget.store.usingDemoRides) {
+      await showDemoRequiresSyncDialog(context);
+      return;
+    }
+    final part = widget.store.partById(widget.partId!);
+    if (part == null) {
+      return;
+    }
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(l10n.deletePartTitle),
+          content: Text(l10n.deletePartConfirm(part.registeredName)),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: Text(l10n.cancel),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: Text(l10n.deleteThisPart),
+            ),
+          ],
+        );
+      },
+    );
+    if (confirmed != true || !mounted) {
+      return;
+    }
+    await widget.store.deletePart(part.id);
+    if (!mounted) {
+      return;
+    }
+    Navigator.of(context).popUntil((route) => route.isFirst);
   }
 }

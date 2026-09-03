@@ -42,7 +42,7 @@ type Part = {
   sides: readonly Side[];
 };
 
-const GEARS = ["Aeroad", "Endurace", "Grail"] as const;
+const GEARS = ["ロード", "シクロクロス", "TTバイク"] as const;
 
 const PARTS: readonly Part[] = [
   {
@@ -157,7 +157,7 @@ function historyFor(
     return [
       { date: "2023-04-02", km: "5,800km（デモ）", memo: "" },
       { date: "2024-01-15", km: "11,900km（デモ）", memo: "パンク後に交換" },
-      { date: "2025-03-01", km: "16,700km（デモ）", memo: "GP5000" },
+      { date: "2025-03-01", km: "16,700km（デモ）", memo: "" },
     ];
   }
   if (partId === "tire" && position === "rear") {
@@ -500,7 +500,7 @@ function HomeScreen({
           }}
         >
           <Text size="small" weight="semibold">
-            デモを解除するには走行を追加します。手入力か Strava の最初の実走行でデモは消えます。
+            デモを解除するには走行を追加します。
           </Text>
         </div>
         <div
@@ -958,6 +958,7 @@ function AddScreen({
           <Text>80 %</Text>
         </Stack>
         <PhoneButton label="保存" variant="primary" onClick={() => go("home")} />
+        <PhoneButton label="この部品を削除" variant="ghost" onClick={() => go("home")} />
       </Stack>
     </Phone>
   );
@@ -1218,6 +1219,9 @@ function SyncScreen({
         <PhoneButton label="記録する" variant="primary" onClick={() => go("home")} />
         <div style={{ height: 8 }} />
         <Text weight="semibold">Strava から取り込む</Text>
+        <Text size="small" tone="tertiary">
+          連携は任意です。走行は手入力でも入れられます。
+        </Text>
         <div
           onClick={() => setConnected(!connected)}
           style={{ cursor: "pointer" }}
@@ -1245,16 +1249,14 @@ function SyncScreen({
               Strava開始日を変えると、取り込んだ走行は消えて初期化されます。新しい日から取り直します。
             </Text>
             <PhoneButton label="Strava開始日を変更" variant="ghost" onClick={() => go("home")} />
+            <PhoneButton label="Strava 連携" variant="ghost" onClick={() => go("strava")} />
           </Stack>
         ) : (
           <Stack gap={10}>
-            <Text size="small" tone="tertiary">
-              未連携。設定の Strava 連携から。
-            </Text>
             <PhoneButton label="前回から 3 か月" variant="primary" disabled onClick={() => undefined} />
             <PhoneButton label="前回から 6 か月" variant="ghost" disabled onClick={() => undefined} />
             <PhoneButton label="前回から 1 年" variant="ghost" disabled onClick={() => undefined} />
-            <PhoneButton label="Strava 連携へ" variant="ghost" onClick={() => go("strava")} />
+            <PhoneButton label="Strava 連携" variant="ghost" onClick={() => go("strava")} />
           </Stack>
         )}
       </Stack>
@@ -1264,7 +1266,7 @@ function SyncScreen({
 
 function StravaConnectScreen({ go }: { go: (screen: ScreenId) => void }) {
   return (
-    <Phone title="Strava 連携" onBack={() => go("settings")}>
+    <Phone title="Strava 連携" onBack={() => go("sync")}>
       <Stack gap={14}>
         <Stack gap={4}>
           <Text weight="semibold">未連携</Text>
@@ -1311,7 +1313,7 @@ function GearScreen({
         <Stack gap={4}>
           <Text weight="semibold">{gear}（デモ）</Text>
           <Text size="small" tone="tertiary">
-            Strava から取った自転車も、手で足した自転車も選べます。部品の追加・設定、交換記録、CSV は選んだギアだけです。初期の部品は同じです。デモのあいだは部品の追加と CSV は使えません。先に走行を追加してください。
+            Strava から取った自転車も、手で足した自転車も選べます。部品の追加・設定、交換記録、CSV は選んだギアだけです。初期の部品は同じです。デモのあいだは部品の追加・削除と CSV は使えません。先に走行を追加してください。
           </Text>
         </Stack>
         {GEARS.map((name) => {
@@ -1335,6 +1337,7 @@ function GearScreen({
           );
         })}
         <PhoneButton label="自転車を追加" variant="primary" onClick={() => go("add-gear")} />
+        <PhoneButton label="自転車を削除" variant="ghost" onClick={() => go("gear")} />
         <PhoneButton label="部品を追加" variant="ghost" onClick={() => go("add")} />
         <PhoneButton label="記録の CSV" variant="ghost" onClick={() => go("import-csv")} />
         <PhoneButton label="部品の CSV" variant="ghost" onClick={() => go("import-settings")} />
@@ -1345,7 +1348,7 @@ function GearScreen({
 }
 
 function AddGearScreen({ go }: { go: (screen: ScreenId) => void }) {
-  const [name, setName] = useCanvasState("newGearName", "Aeroad");
+  const [name, setName] = useCanvasState("newGearName", "ロード");
   return (
     <Phone title="自転車を追加" onBack={() => go("gear")}>
       <Stack gap={14}>
@@ -1353,7 +1356,7 @@ function AddGearScreen({ go }: { go: (screen: ScreenId) => void }) {
           <Text size="small" tone="secondary">
             名前
           </Text>
-          <TextInput value={name} onChange={setName} placeholder="Aeroad" />
+          <TextInput value={name} onChange={setName} placeholder="ロード" />
         </Stack>
         <PhoneButton label="追加する" variant="primary" onClick={() => go("gear")} />
       </Stack>
@@ -1369,17 +1372,7 @@ function SettingsScreen({
   return (
     <Phone title="設定" onBack={() => go("home")}>
       <Stack gap={14}>
-        <Stack gap={4}>
-          <Text size="small" tone="secondary">
-            Strava
-          </Text>
-          <Text weight="semibold">未連携</Text>
-          <Text size="small" tone="secondary">
-            連携は任意です。走行は手入力でも入れられます。
-          </Text>
-        </Stack>
-        <PhoneButton label="Strava 連携" variant="primary" onClick={() => go("strava")} />
-        <PhoneButton label="走行を追加" variant="ghost" onClick={() => go("sync")} />
+        <PhoneButton label="走行を追加" variant="primary" onClick={() => go("sync")} />
         <Stack gap={4}>
           <Text size="small" tone="secondary">
             ギア
@@ -1410,16 +1403,16 @@ export default function GearDoctorUiWireframe() {
   const [screen, setScreen] = useCanvasState<ScreenId>("screen", "home");
   const [partId, setPartId] = useCanvasState("partId", "tire");
   const [position, setPosition] = useCanvasState<Position>("position", "front");
-  const [gear, setGear] = useCanvasState("gear", "Aeroad");
+  const [gear, setGear] = useCanvasState("gear", "ロード");
   const [limitMode, setLimitMode] = useCanvasState<LimitMode>("limitMode", "recommended");
   const [cycleKind, setCycleKind] = useCanvasState<CycleKind>("cycleKind", "distance");
   const [historyRow, setHistoryRow] = useCanvasState<HistoryRow>("historyRow", {
     date: "2025-03-01",
     km: "4,800 km",
-    memo: "GP5000",
+    memo: "パンク後に交換",
   });
   const [editRecordDate, setEditRecordDate] = useCanvasState("editRecordDate", "2025-03-01");
-  const [editRecordMemo, setEditRecordMemo] = useCanvasState("editRecordMemo", "GP5000");
+  const [editRecordMemo, setEditRecordMemo] = useCanvasState("editRecordMemo", "パンク後に交換");
   const customLimitKm = 5000;
   const recommendedKm = 6000;
   const customLimitMonths = 12;
@@ -1559,7 +1552,7 @@ export default function GearDoctorUiWireframe() {
         <Stack gap={16}>
           <H2>決まったこと</H2>
           <Text>
-            下部タブなし。交換したは詳細画面。ホームの主ボタンは「走行を追加」。部品は登録名だけで管理し、追加に F/R の種別は付けない。左右の合体は表示のまとめだけ。走行は手入力が常に使え、Strava は連携したときだけ。デモのあいだは部品の追加と CSV はエラーにし、先に走行を追加する。
+            下部タブなし。交換したは詳細画面。ホームの主ボタンは「走行を追加」。部品は登録名だけで管理し、追加に F/R の種別は付けない。左右の合体は表示のまとめだけ。走行は手入力が常に使え、Strava は連携したときだけ。デモのあいだは部品の追加・削除と CSV はエラーにし、先に走行を追加する。自転車の削除はギア画面。部品の削除は編集画面（解除後は初期18件も可）。
           </Text>
           <Table
             headers={["画面", "上から下", "横並び"]}
@@ -1567,14 +1560,14 @@ export default function GearDoctorUiWireframe() {
               ["ホーム", "デモ案内 → ギアと走行の範囲 → 警告 → 部品 → 走行を追加", "ギア | 走行、R | F"],
               ["詳細", "距離 → バー → 交換日 → 操作 → 過去の交換記録", "交換した | 編集"],
               ["記録を編集", "日付 → メモ → 保存 → 削除", "なし（縦のみ）"],
-              ["ギア", "大きなギア名 → 自転車の選択 → 自転車を追加 / 部品追加 / CSV / まとめ", "なし（縦のみ）"],
+              ["ギア", "大きなギア名 → 自転車の選択 → 自転車を追加 / 自転車を削除 / 部品追加 / CSV / まとめ", "なし（縦のみ）"],
               ["自転車を追加", "名前 → 追加する", "なし（縦のみ）"],
-              ["部品を追加", "登録名 → 周期 → 目安 → しきい値", "距離 | 月"],
+              ["部品を追加 / 編集", "登録名 → 周期 → 目安 → しきい値 → 保存 / 削除", "距離 | 月"],
               ["記録の CSV", "ギア名 → 書き出し → 貼り付け → CSVを取り込み → 確定", "なし（縦のみ）"],
               ["部品の CSV", "ギア名 → 書き出し → 貼り付け → CSVを取り込み → 確定", "なし（縦のみ）"],
               ["表示のまとめ", "2件選択 → どちらがF → 表示名", "なし（縦のみ）"],
               ["走行を追加", "手入力 → Strava から取り込む", "なし（縦のみ）"],
-              ["設定", "Strava 連携へ → 走行を追加へ → ギアへ → 初期化 → バージョン", "なし（縦のみ）"],
+              ["設定", "走行を追加へ → ギアへ → 初期化 → バージョン", "なし（縦のみ）"],
               ["Strava 連携", "状態 → ID/Secret → 連携 → 解除 → 連携方法", "なし（縦のみ）"],
             ]}
           />
@@ -1596,7 +1589,7 @@ export default function GearDoctorUiWireframe() {
 
           <H3>走行を追加</H3>
           <Callout tone="info" title="手入力は常に、Strava は連携時だけ">
-            上段は日付と距離。下段の期間ボタンは連携したときだけ押せる。未連携は灰色で、設定の Strava 連携へ案内する。
+            上段は日付と距離。下段の期間ボタンは連携したときだけ押せる。未連携は灰色。連携は任意で、同じ画面の「Strava 連携」から開く。
           </Callout>
 
           <Card>

@@ -97,9 +97,6 @@ class _ImportSettingsScreenState extends State<ImportSettingsScreen> {
                 decoration: InputDecoration(
                   border: const OutlineInputBorder(),
                   hintText: l10n.settingsCsvHint,
-                  hintStyle: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Theme.of(context).colorScheme.outline,
-                  ),
                 ),
               ),
               const SizedBox(height: 8),

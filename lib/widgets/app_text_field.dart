@@ -6,6 +6,13 @@ void hideAppKeyboard() {
   SystemChannels.textInput.invokeMethod<void>('TextInput.hide');
 }
 
+TextStyle? appFieldHintStyle(BuildContext context) {
+  final theme = Theme.of(context);
+  return theme.textTheme.bodySmall?.copyWith(
+    color: theme.colorScheme.outline,
+  );
+}
+
 /// 完了（チェック）で閉じ、欄の外をタップしても閉じる。
 class AppTextField extends StatelessWidget {
   const AppTextField({
@@ -34,9 +41,10 @@ class AppTextField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final multiline = (maxLines ?? 1) > 1 || (minLines ?? 1) > 1;
+    final base = decoration ?? const InputDecoration();
     return TextField(
       controller: controller,
-      decoration: decoration,
+      decoration: base.copyWith(hintStyle: appFieldHintStyle(context)),
       keyboardType: keyboardType,
       inputFormatters: inputFormatters,
       obscureText: obscureText,

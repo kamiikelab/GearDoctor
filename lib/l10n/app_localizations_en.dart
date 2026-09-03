@@ -117,8 +117,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get demoBanner =>
-      'Add a ride to leave the demo. The first real ride, typed or from Strava, replaces demo rides.';
+  String get demoBanner => 'Add a ride to leave the demo.';
 
   @override
   String alertCount(int count) {
@@ -179,11 +178,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get demoRequiresSyncMessage =>
-      'You can\'t add parts or use CSV while the demo is on.';
+      'You can\'t add, delete, or import parts while the demo is on.';
 
   @override
   String get gearDemoCsvHint =>
-      'You can\'t add parts or use CSV during the demo. Add a ride first.';
+      'You can\'t add, delete, or import parts during the demo. Add a ride first.';
 
   @override
   String get gearEmptyHint =>
@@ -197,7 +196,25 @@ class AppLocalizationsEn extends AppLocalizations {
   String get addBike => 'Add bike';
 
   @override
+  String get deleteBike => 'Delete bike';
+
+  @override
+  String get deleteBikeTitle => 'Delete this bike?';
+
+  @override
+  String deleteBikeConfirm(String name) {
+    return 'This also deletes $name\'s parts, replacement records, and rides.';
+  }
+
+  @override
+  String get cannotDeleteStravaBike =>
+      'Bikes imported from Strava can\'t be deleted here.';
+
+  @override
   String get bikeName => 'Name';
+
+  @override
+  String get bikeNameHint => 'Road';
 
   @override
   String get addBikeAction => 'Add';
@@ -381,6 +398,17 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get deleteThisRecord => 'Delete this record';
+
+  @override
+  String get deleteThisPart => 'Delete this part';
+
+  @override
+  String get deletePartTitle => 'Delete this part?';
+
+  @override
+  String deletePartConfirm(String name) {
+    return 'This also deletes replacement records for $name. Any display group is split.';
+  }
 
   @override
   String get connectAgain => 'Reconnect';

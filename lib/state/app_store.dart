@@ -61,7 +61,7 @@ class AppStore extends ChangeNotifier {
     try {
       final db = await _database.instance;
       _repo = AppRepository(db, secretVault: _secretVault);
-      if (!await _repo!.hasParts()) {
+      if (!await _repo!.hasInitialized()) {
         await seedDemoData(_repo!, locale: catalogLocale);
       } else {
         final existingSettings = await _repo!.loadSettings();
@@ -258,6 +258,23 @@ class AppStore extends ChangeNotifier {
         ),
       );
     }
+    await refresh();
+  }
+
+  Future<void> deletePart(String partId) async {
+    _ensureNotDemoForPartsAndCsv();
+    final part = partById(partId);
+    if (part == null) {
+      return;
+    }
+    final repo = _requireRepo();
+    if (isCatalogPartId(part.id)) {
+      await repo.addRemovedCatalogPart(
+        gearId: part.gearId,
+        catalogId: catalogIdOf(part.id),
+      );
+    }
+    await repo.deletePart(part.id);
     await refresh();
   }
 
@@ -511,6 +528,22 @@ class AppStore extends ChangeNotifier {
         distanceKm: distanceKm,
       ),
     );
+    await refresh();
+  }
+
+  Future<void> deleteGear(String gearId) async {
+    if (!isUserDeletableGear(gearId)) {
+      throw StateError('Strava から取った自転車は、ここでは消せません。');
+    }
+    final repo = _requireRepo();
+    await repo.deleteGear(gearId);
+    final remaining = await repo.loadGears();
+    if (remaining.isEmpty) {
+      settings = settings.copyWith(clearGear: true);
+    } else if (settings.selectedGearId == gearId) {
+      settings = settings.copyWith(selectedGearId: remaining.first.id);
+    }
+    await repo.saveSettings(settings);
     await refresh();
   }
 

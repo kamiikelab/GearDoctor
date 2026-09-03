@@ -114,7 +114,7 @@ class AppLocalizationsJa extends AppLocalizations {
   }
 
   @override
-  String get demoBanner => 'デモを解除するには走行を追加します。手入力か Strava の最初の実走行でデモは消えます。';
+  String get demoBanner => 'デモを解除するには走行を追加します。';
 
   @override
   String alertCount(int count) {
@@ -174,10 +174,10 @@ class AppLocalizationsJa extends AppLocalizations {
   String get demoRequiresSyncTitle => '先に走行を追加してください';
 
   @override
-  String get demoRequiresSyncMessage => 'デモのあいだは部品の追加と CSV は使えません。';
+  String get demoRequiresSyncMessage => 'デモのあいだは部品の追加・削除と CSV は使えません。';
 
   @override
-  String get gearDemoCsvHint => 'デモのあいだは部品の追加と CSV は使えません。先に走行を追加してください。';
+  String get gearDemoCsvHint => 'デモのあいだは部品の追加・削除と CSV は使えません。先に走行を追加してください。';
 
   @override
   String get gearEmptyHint => '自転車を追加するか、Strava から取り込むと、ここに並びます。';
@@ -190,7 +190,24 @@ class AppLocalizationsJa extends AppLocalizations {
   String get addBike => '自転車を追加';
 
   @override
+  String get deleteBike => '自転車を削除';
+
+  @override
+  String get deleteBikeTitle => 'この自転車を消しますか？';
+
+  @override
+  String deleteBikeConfirm(String name) {
+    return '$name の部品、交換記録、走行も消えます。';
+  }
+
+  @override
+  String get cannotDeleteStravaBike => 'Strava から取った自転車は、ここでは消せません。';
+
+  @override
   String get bikeName => '名前';
+
+  @override
+  String get bikeNameHint => 'ロード';
 
   @override
   String get addBikeAction => '追加する';
@@ -369,6 +386,17 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get deleteThisRecord => 'この記録を削除';
+
+  @override
+  String get deleteThisPart => 'この部品を削除';
+
+  @override
+  String get deletePartTitle => 'この部品を消しますか？';
+
+  @override
+  String deletePartConfirm(String name) {
+    return '$name の交換記録も消えます。まとめ表示があれば解除します。';
+  }
 
   @override
   String get connectAgain => '再連携';

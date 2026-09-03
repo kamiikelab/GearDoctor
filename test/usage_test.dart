@@ -399,8 +399,8 @@ void main() {
       '走行 2025-07-17〜2026-07-15（デモ）',
     );
     expect(
-      demoGearLabel('Aeroad', l10n, demo: true, selected: true),
-      'Aeroad（デモ・選択中）',
+      demoGearLabel('ロード', l10n, demo: true, selected: true),
+      'ロード（デモ・選択中）',
     );
   });
 
@@ -411,8 +411,8 @@ void main() {
       '4,800km (demo)',
     );
     expect(
-      demoGearLabel('Aeroad', l10n, demo: true, selected: true),
-      'Aeroad (demo, selected)',
+      demoGearLabel('Road', l10n, demo: true, selected: true),
+      'Road (demo, selected)',
     );
   });
 

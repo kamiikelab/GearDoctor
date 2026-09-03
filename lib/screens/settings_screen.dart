@@ -6,7 +6,6 @@ import '../state/app_store.dart';
 import '../strava/open_browser.dart';
 import '../widgets/widgets.dart';
 import 'gear_screen.dart';
-import 'strava_connect_screen.dart';
 import 'sync_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -28,8 +27,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
       listenable: widget.store,
       builder: (context, _) {
         final l10n = AppLocalizations.of(context);
-        final connected = widget.store.settings.stravaConnected;
-        final athlete = widget.store.settings.stravaAthleteName;
         final localeCode = widget.store.settings.localeCode;
         return Scaffold(
           appBar: AppBar(title: Text(l10n.settings)),
@@ -56,29 +53,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 onTap: () => widget.store.setLocaleCode('en'),
               ),
               const SizedBox(height: 16),
-              Text('Strava', style: Theme.of(context).textTheme.bodySmall),
-              Text(
-                connected ? l10n.connected : l10n.notConnected,
-                style: Theme.of(context).textTheme.titleMedium,
-              ),
-              if (athlete != null && athlete.isNotEmpty)
-                Text(athlete, style: Theme.of(context).textTheme.bodySmall),
-              Text(
-                l10n.stravaHint,
-                style: Theme.of(context).textTheme.bodySmall,
-              ),
-              const SizedBox(height: 8),
-              FilledButton(
-                onPressed: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute<void>(
-                      builder: (_) => StravaConnectScreen(store: widget.store),
-                    ),
-                  );
-                },
-                child: Text(l10n.stravaConnect),
-              ),
-              const SizedBox(height: 8),
               OutlinedButton(
                 onPressed: () {
                   Navigator.of(context).push(

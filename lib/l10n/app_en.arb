@@ -57,7 +57,7 @@
       "to": {"type": "String"}
     }
   },
-  "demoBanner": "Add a ride to leave the demo. The first real ride, typed or from Strava, replaces demo rides.",
+  "demoBanner": "Add a ride to leave the demo.",
   "alertCount": "{count} at threshold",
   "@alertCount": {
     "placeholders": {
@@ -93,12 +93,22 @@
     }
   },
   "demoRequiresSyncTitle": "Add a ride first",
-  "demoRequiresSyncMessage": "You can't add parts or use CSV while the demo is on.",
-  "gearDemoCsvHint": "You can't add parts or use CSV during the demo. Add a ride first.",
+  "demoRequiresSyncMessage": "You can't add, delete, or import parts while the demo is on.",
+  "gearDemoCsvHint": "You can't add, delete, or import parts during the demo. Add a ride first.",
   "gearEmptyHint": "Add a bike, or import from Strava, and they will appear here.",
   "gearBikesHelp": "You can pick bikes imported from Strava or added by name. Adding parts, settings, records, and CSV apply to the selected bike. The initial parts are the same.",
   "addBike": "Add bike",
+  "deleteBike": "Delete bike",
+  "deleteBikeTitle": "Delete this bike?",
+  "deleteBikeConfirm": "This also deletes {name}'s parts, replacement records, and rides.",
+  "@deleteBikeConfirm": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "cannotDeleteStravaBike": "Bikes imported from Strava can't be deleted here.",
   "bikeName": "Name",
+  "bikeNameHint": "Road",
   "addBikeAction": "Add",
   "bikeNameRequired": "Enter a name",
   "gearSelectHint": "Select a bike above to add parts and records.",
@@ -187,6 +197,14 @@
   "editRecordHelp": "Changing the date recounts distance for that period",
   "cannotDeleteLastRecord": "The last record can't be deleted",
   "deleteThisRecord": "Delete this record",
+  "deleteThisPart": "Delete this part",
+  "deletePartTitle": "Delete this part?",
+  "deletePartConfirm": "This also deletes replacement records for {name}. Any display group is split.",
+  "@deletePartConfirm": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
   "connectAgain": "Reconnect",
   "connect": "Connect",
   "disconnect": "Disconnect",

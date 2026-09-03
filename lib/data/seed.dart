@@ -5,9 +5,16 @@ import '../domain/usage.dart';
 import '../models/models.dart';
 import 'app_repository.dart';
 
-const demoGearIds = {'g_aeroad', 'g_endurace', 'g_grail'};
+const demoRoadId = 'g_road';
+const demoCxId = 'g_cx';
+const demoTtId = 'g_tt';
+
+const demoGearIds = {demoRoadId, demoCxId, demoTtId};
 
 bool isDemoGearId(String id) => demoGearIds.contains(id);
+
+/// 手で足した自転車とデモの自転車。Strava の ID は `b` で始まる。
+bool isUserDeletableGear(String id) => id.startsWith('g_');
 
 bool isDemoRideId(String id) => id.startsWith('ride_');
 
@@ -17,7 +24,7 @@ class DemoRequiresSyncException implements Exception {
   const DemoRequiresSyncException();
 
   static const title = '先に走行を追加してください';
-  static const message = 'デモのあいだは部品の追加と CSV は使えません。';
+  static const message = 'デモのあいだは部品の追加・削除と CSV は使えません。';
 
   @override
   String toString() => '$title。$message';
@@ -119,6 +126,16 @@ List<Part> defaultParts({String locale = 'ja'}) {
   ];
 }
 
+bool isCatalogPartId(String partId) {
+  final id = catalogIdOf(partId);
+  for (final item in _catalogParts) {
+    if (item.id == id) {
+      return true;
+    }
+  }
+  return false;
+}
+
 List<DisplayGroup> defaultGroups({String locale = 'ja'}) {
   return [
     for (final item in _catalogGroups)
@@ -173,29 +190,38 @@ Future<void> seedDemoData(
   String locale = 'ja',
   String? localeCode,
 }) async {
-  const aeroad = Gear(id: 'g_aeroad', name: 'Aeroad');
-  const endurace = Gear(id: 'g_endurace', name: 'Endurace');
-  const grail = Gear(id: 'g_grail', name: 'Grail');
-  await repo.upsertGear(aeroad);
-  await repo.upsertGear(endurace);
-  await repo.upsertGear(grail);
+  final road = Gear(
+    id: demoRoadId,
+    name: locale == 'en' ? 'Road' : 'ロード',
+  );
+  final cx = Gear(
+    id: demoCxId,
+    name: locale == 'en' ? 'Cyclocross' : 'シクロクロス',
+  );
+  final tt = Gear(
+    id: demoTtId,
+    name: locale == 'en' ? 'TT bike' : 'TTバイク',
+  );
+  await repo.upsertGear(road);
+  await repo.upsertGear(cx);
+  await repo.upsertGear(tt);
 
   final origin = parseDate('2023-04-15');
   await seedDefaultCatalogForGear(
     repo,
-    aeroad.id,
+    road.id,
     startDate: origin,
     locale: locale,
   );
   await seedDefaultCatalogForGear(
     repo,
-    endurace.id,
+    cx.id,
     startDate: origin,
     locale: locale,
   );
   await seedDefaultCatalogForGear(
     repo,
-    grail.id,
+    tt.id,
     startDate: origin,
     locale: locale,
   );
@@ -205,7 +231,7 @@ Future<void> seedDemoData(
   final replacements = <Replacement>[
     _rep('r_ft1', 'p_front_tire', '2023-04-02', ''),
     _rep('r_ft2', 'p_front_tire', '2024-01-15', puncture),
-    _rep('r_ft3', 'p_front_tire', '2025-05-01', 'GP5000'),
+    _rep('r_ft3', 'p_front_tire', '2025-05-01', ''),
     _rep('r_rt1', 'p_rear_tire', '2024-06-20', ''),
     _rep('r_rt2', 'p_rear_tire', '2025-08-01', sidewall),
     _rep('r_ch1', 'p_chain', '2025-11-12', ''),
@@ -240,7 +266,7 @@ Future<void> seedDemoData(
     await repo.upsertRide(
       Ride(
         id: 'ride_$rideIndex',
-        gearId: aeroad.id,
+        gearId: road.id,
         startedOn: month,
         distanceKm: 320,
       ),
@@ -251,7 +277,7 @@ Future<void> seedDemoData(
 
   await repo.saveSettings(
     AppSettings(
-      selectedGearId: aeroad.id,
+      selectedGearId: road.id,
       lastSyncFrom: parseDate('2025-07-17'),
       localeCode: localeCode,
     ),
@@ -271,8 +297,12 @@ Future<void> seedDefaultCatalogForGear(
     await repo.deletePart(partIdOnGear(retired, gearId));
   }
   final existingParts = await repo.loadParts(gearId: gearId);
+  final removed = await repo.removedCatalogIds(gearId);
   final catalogLocale = inferCatalogLocale(existingParts, fallback: locale);
   for (final catalog in defaultParts(locale: catalogLocale)) {
+    if (removed.contains(catalog.id)) {
+      continue;
+    }
     final existing = existingParts.where((part) {
       return matchesCatalogPart(part.id, catalog.id, gearId);
     }).toList();
@@ -426,7 +456,7 @@ Part _part(
 }
 
 Replacement _rep(String id, String partId, String date, String memo) {
-  const gearId = 'g_aeroad';
+  const gearId = demoRoadId;
   return Replacement(
     id: id,
     partId: partIdOnGear(partId, gearId),

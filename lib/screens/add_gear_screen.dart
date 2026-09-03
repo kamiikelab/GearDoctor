@@ -39,7 +39,7 @@ class _AddGearScreenState extends State<AddGearScreen> {
             controller: _name,
             decoration: InputDecoration(
               border: const OutlineInputBorder(),
-              hintText: 'Aeroad',
+              hintText: l10n.bikeNameHint,
             ),
           ),
           const SizedBox(height: 16),

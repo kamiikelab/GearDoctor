@@ -7,7 +7,9 @@ import 'package:gear_doctor/app_version.dart';
 import 'package:gear_doctor/data/app_database.dart';
 import 'package:gear_doctor/data/seed.dart';
 import 'package:gear_doctor/domain/dates.dart';
+import 'package:gear_doctor/screens/add_gear_screen.dart';
 import 'package:gear_doctor/screens/edit_part_screen.dart';
+import 'package:gear_doctor/screens/gear_screen.dart';
 import 'package:gear_doctor/screens/home_screen.dart';
 import 'package:gear_doctor/screens/part_detail_screen.dart';
 import 'package:gear_doctor/screens/settings_screen.dart';
@@ -35,6 +37,11 @@ void main() {
   });
 
   testWidgets('home shows grouped tires and the add-ride button', (tester) async {
+    tester.view.physicalSize = const Size(800, 4000);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
     final store = AppStore(
       database: AppDatabase(overridePath: '${dir.path}/app.db'),
       now: parseDate('2026-08-23'),
@@ -56,15 +63,16 @@ void main() {
     expect(find.text('しきい値 2件'), findsOneWidget);
     expect(find.text('タイヤ F'), findsOneWidget);
     expect(find.text('ブレーキパッド F'), findsOneWidget);
-    expect(find.textContaining('ギア: Aeroad（デモ）'), findsOneWidget);
+    expect(find.textContaining('ギア: ロード（デモ）'), findsOneWidget);
     expect(
       find.textContaining('走行 2025-07-17〜2026-07-15（デモ）'),
       findsOneWidget,
     );
 
-    await tester.tap(find.textContaining('ギア: Aeroad（デモ）'));
+    await tester.tap(find.textContaining('ギア: ロード（デモ）'));
     await tester.pumpAndSettle();
     expect(find.text('自転車を追加'), findsOneWidget);
+    expect(find.text('自転車を削除'), findsOneWidget);
     expect(find.text('部品を追加'), findsOneWidget);
     expect(find.text('記録の CSV'), findsOneWidget);
     expect(find.text('部品の CSV'), findsOneWidget);
@@ -74,7 +82,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('先に走行を追加してください'), findsOneWidget);
     expect(
-      find.text('デモのあいだは部品の追加と CSV は使えません。'),
+      find.text('デモのあいだは部品の追加・削除と CSV は使えません。'),
       findsWidgets,
     );
     await tester.tap(find.text('OK'));
@@ -98,10 +106,11 @@ void main() {
     await tester.tap(find.text('走行を追加'));
     await tester.pumpAndSettle();
     expect(find.text('手入力'), findsOneWidget);
-    expect(find.textContaining('選んでいるギア: Aeroad'), findsOneWidget);
+    expect(find.textContaining('選んでいるギア: ロード'), findsOneWidget);
     expect(find.text('記録する'), findsOneWidget);
     expect(find.text('Strava から取り込む'), findsOneWidget);
-    expect(find.textContaining('未連携。設定の Strava 連携から'), findsOneWidget);
+    expect(find.textContaining('連携は任意です'), findsOneWidget);
+    expect(find.text('Strava 連携'), findsOneWidget);
     expect(find.text('Strava開始日を変更'), findsNothing);
   });
 
@@ -121,7 +130,7 @@ void main() {
       l10nApp(
         home: PartDetailScreen(
           store: store,
-          partId: partIdOnGear('p_chain', 'g_aeroad'),
+          partId: partIdOnGear('p_chain', 'g_road'),
         ),
       ),
     );
@@ -166,7 +175,7 @@ void main() {
     expect(store.parts.length, 18);
   });
 
-  testWidgets('settings opens a dedicated Strava connect screen', (tester) async {
+  testWidgets('settings opens add-ride, which opens Strava connect', (tester) async {
     tester.view.physicalSize = const Size(800, 4000);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.resetPhysicalSize);
@@ -180,6 +189,10 @@ void main() {
 
     await tester.pumpWidget(l10nApp(home: SettingsScreen(store: store)));
     await tester.pumpAndSettle();
+    expect(find.text('Strava 連携'), findsNothing);
+    await tester.tap(find.text('走行を追加'));
+    await tester.pumpAndSettle();
+    expect(find.textContaining('連携は任意です'), findsOneWidget);
     await tester.tap(find.text('Strava 連携'));
     await tester.pumpAndSettle();
     expect(find.text('連携を解除'), findsOneWidget);
@@ -193,6 +206,8 @@ void main() {
     expect(find.textContaining('Chrome が自動で開かないとき'), findsOneWidget);
     expect(find.textContaining('許可用 URL をコピー'), findsOneWidget);
 
+    await tester.tap(find.byType(BackButton));
+    await tester.pumpAndSettle();
     await tester.tap(find.byType(BackButton));
     await tester.pumpAndSettle();
     await tester.tap(find.widgetWithText(OutlinedButton, 'ギア'));
@@ -219,7 +234,7 @@ void main() {
       l10nApp(
         home: EditPartScreen(
           store: store,
-          partId: partIdOnGear('p_bar_tape', 'g_aeroad'),
+          partId: partIdOnGear('p_bar_tape', 'g_road'),
         ),
       ),
     );
@@ -233,6 +248,64 @@ void main() {
     expect(find.textContaining('設定  24 か月'), findsOneWidget);
     expect(find.textContaining('5,000'), findsNothing);
     expect(find.textContaining('5000'), findsNothing);
+  });
+
+  testWidgets('edit part offers delete, blocked during demo', (tester) async {
+    tester.view.physicalSize = const Size(800, 4000);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    final store = AppStore(
+      database: AppDatabase(overridePath: '${dir.path}/app.db'),
+      now: parseDate('2026-08-23'),
+    );
+    await tester.runAsync(store.load);
+
+    await tester.pumpWidget(
+      l10nApp(
+        home: EditPartScreen(
+          store: store,
+          partId: partIdOnGear('p_bar_tape', 'g_road'),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('この部品を削除'), findsOneWidget);
+
+    await tester.tap(find.text('この部品を削除'));
+    await tester.pumpAndSettle();
+    expect(find.text('先に走行を追加してください'), findsOneWidget);
+    expect(
+      find.text('デモのあいだは部品の追加・削除と CSV は使えません。'),
+      findsOneWidget,
+    );
+    await tester.tap(find.text('OK'));
+    await tester.pumpAndSettle();
+    expect(store.partById(partIdOnGear('p_bar_tape', 'g_road')), isNotNull);
+  });
+
+  testWidgets('gear screen confirms bike delete', (tester) async {
+    tester.view.physicalSize = const Size(800, 4000);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    final store = AppStore(
+      database: AppDatabase(overridePath: '${dir.path}/app.db'),
+      now: parseDate('2026-08-23'),
+    );
+    await tester.runAsync(store.load);
+
+    await tester.pumpWidget(l10nApp(home: GearScreen(store: store)));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('自転車を削除'));
+    await tester.pumpAndSettle();
+    expect(find.text('この自転車を消しますか？'), findsOneWidget);
+    expect(find.textContaining('ロード の部品、交換記録、走行も消えます。'), findsOneWidget);
+    await tester.tap(find.text('キャンセル'));
+    await tester.pumpAndSettle();
+    expect(store.gears.length, 3);
   });
 
   testWidgets('settings language picker switches the app to English', (
@@ -300,8 +373,27 @@ void main() {
     );
     expect(find.text('タイヤ'), findsNothing);
     expect(
-      store.partById(partIdOnGear('p_chain', 'g_aeroad'))!.registeredName,
+      store.partById(partIdOnGear('p_chain', 'g_road'))!.registeredName,
       'Chain',
+    );
+  });
+
+  testWidgets('empty field hints are small and light', (tester) async {
+    final store = AppStore(
+      database: AppDatabase(overridePath: '${dir.path}/app.db'),
+      now: parseDate('2026-08-23'),
+    );
+    await tester.runAsync(store.load);
+
+    await tester.pumpWidget(l10nApp(home: AddGearScreen(store: store)));
+    await tester.pumpAndSettle();
+    final field = tester.widget<TextField>(find.byType(TextField));
+    expect(field.decoration?.hintText, 'ロード');
+    final theme = Theme.of(tester.element(find.byType(TextField)));
+    expect(field.decoration?.hintStyle?.color, theme.colorScheme.outline);
+    expect(
+      field.decoration?.hintStyle?.fontSize,
+      theme.textTheme.bodySmall?.fontSize,
     );
   });
 }

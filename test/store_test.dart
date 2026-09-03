@@ -16,7 +16,7 @@ import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
-String aeroadPart(String catalogId) => partIdOnGear(catalogId, 'g_aeroad');
+String roadPart(String catalogId) => partIdOnGear(catalogId, 'g_road');
 
 void main() {
   late Directory dir;
@@ -64,11 +64,16 @@ void main() {
       'リヤライト電池',
       'プーリー',
     ]);
-    expect(store.selectedGear?.name, 'Aeroad');
+    expect(store.selectedGear?.name, 'ロード');
+    expect(store.gears.map((gear) => gear.name).toSet(), {
+      'ロード',
+      'シクロクロス',
+      'TTバイク',
+    });
     expect(store.usingDemoRides, isTrue);
-    expect(store.partById(aeroadPart('p_battery')), isNull);
-    expect(store.partById(aeroadPart('p_front_oil'))!.cycle, CycleKind.distance);
-    expect(store.usedOf(store.partById(aeroadPart('p_speed_batt'))!), 7);
+    expect(store.partById(roadPart('p_battery')), isNull);
+    expect(store.partById(roadPart('p_front_oil'))!.cycle, CycleKind.distance);
+    expect(store.usedOf(store.partById(roadPart('p_speed_batt'))!), 7);
     expect(
       store.alerts.map((alert) => alert.label).toList(),
       ['タイヤ F', 'ブレーキパッド F'],
@@ -79,7 +84,7 @@ void main() {
     final store = await openStore();
     final part = Part(
       id: 'p_blocked',
-      gearId: 'g_aeroad',
+      gearId: 'g_road',
       registeredName: 'ブロック',
       cycle: CycleKind.distance,
       limitMode: LimitMode.recommended,
@@ -107,7 +112,7 @@ void main() {
       throwsA(isA<DemoRequiresSyncException>()),
     );
     expect(
-      store.replacementsFor(aeroadPart('p_chain')).map((item) => formatDate(item.replacedOn)),
+      store.replacementsFor(roadPart('p_chain')).map((item) => formatDate(item.replacedOn)),
       ['2025-11-12'],
     );
 
@@ -123,7 +128,7 @@ $settingsCsvHeader
       store.importSettingsPlan(settingsPlan),
       throwsA(isA<DemoRequiresSyncException>()),
     );
-    expect(store.partById(aeroadPart('p_chain'))!.customLimit, 4000);
+    expect(store.partById(roadPart('p_chain'))!.customLimit, 4000);
   });
 
   test('existing installs drop battery and convert oil to distance', () async {
@@ -134,7 +139,7 @@ $settingsCsvHeader
     await repo.upsertPart(
       const Part(
         id: 'p_battery',
-        gearId: 'g_aeroad',
+        gearId: 'g_road',
         registeredName: 'バッテリー',
         cycle: CycleKind.months,
         limitMode: LimitMode.recommended,
@@ -144,8 +149,8 @@ $settingsCsvHeader
         sortOrder: 99,
       ),
     );
-    final oil = (await repo.loadParts(gearId: 'g_aeroad'))
-        .firstWhere((part) => part.id == aeroadPart('p_front_oil'));
+    final oil = (await repo.loadParts(gearId: 'g_road'))
+        .firstWhere((part) => part.id == roadPart('p_front_oil'));
     await repo.upsertPart(
       oil.copyWith(
         cycle: CycleKind.months,
@@ -157,34 +162,34 @@ $settingsCsvHeader
     await ensureMissingDefaultParts(
       repo,
       now: parseDate('2026-08-23'),
-      gearId: 'g_aeroad',
+      gearId: 'g_road',
     );
-    final parts = await repo.loadParts(gearId: 'g_aeroad');
+    final parts = await repo.loadParts(gearId: 'g_road');
     expect(parts.any((part) => part.id == 'p_battery'), isFalse);
-    final updatedOil = parts.firstWhere((part) => part.id == aeroadPart('p_front_oil'));
+    final updatedOil = parts.firstWhere((part) => part.id == roadPart('p_front_oil'));
     expect(updatedOil.cycle, CycleKind.distance);
     expect(updatedOil.recommendedLimit, 10000);
   });
 
   test('combine and dissolve only change display', () async {
     final store = await openStore();
-    await store.dissolveGroup(groupIdOnGear('grp_tire', 'g_aeroad'));
+    await store.dissolveGroup(groupIdOnGear('grp_tire', 'g_road'));
     expect(store.cards.any((card) => card.title == '前タイヤ'), isTrue);
     expect(store.cards.any((card) => card.title == '後タイヤ'), isTrue);
-    expect(store.partById(aeroadPart('p_front_tire'))!.registeredName, '前タイヤ');
+    expect(store.partById(roadPart('p_front_tire'))!.registeredName, '前タイヤ');
 
     await store.combineDisplay(
-      frontPartId: aeroadPart('p_front_tire'),
-      rearPartId: aeroadPart('p_rear_tire'),
+      frontPartId: roadPart('p_front_tire'),
+      rearPartId: roadPart('p_rear_tire'),
       displayName: 'タイヤ',
     );
     expect(store.cards.any((card) => card.title == 'タイヤ'), isTrue);
-    expect(store.partById(aeroadPart('p_front_tire'))!.registeredName, '前タイヤ');
+    expect(store.partById(roadPart('p_front_tire'))!.registeredName, '前タイヤ');
   });
 
   test('replacement date change recalculates usage', () async {
     final store = await openStore();
-    final part = store.partById(aeroadPart('p_chain'))!;
+    final part = store.partById(roadPart('p_chain'))!;
     final before = store.usedOf(part);
     expect(before, greaterThan(0));
 
@@ -203,7 +208,7 @@ $settingsCsvHeader
     await store.savePart(
       Part(
         id: 'p_new',
-        gearId: 'g_aeroad',
+        gearId: 'g_road',
         registeredName: '新品',
         cycle: CycleKind.distance,
         limitMode: LimitMode.recommended,
@@ -221,13 +226,13 @@ $settingsCsvHeader
   test('new part first replacement is today when the selected gear has no rides', () async {
     final store = await openStore();
     await store.convertDemoRidesForTest();
-    await store.selectGear('g_endurace');
+    await store.selectGear('g_cx');
     expect(store.oldestSelectedRideOn, isNull);
     await store.savePart(
       Part(
-        id: 'p_endurace_only',
-        gearId: 'g_endurace',
-        registeredName: 'Endurace用',
+        id: 'p_cx_only',
+        gearId: 'g_cx',
+        registeredName: 'シクロクロス用',
         cycle: CycleKind.distance,
         limitMode: LimitMode.recommended,
         recommendedLimit: 3000,
@@ -237,7 +242,7 @@ $settingsCsvHeader
       ),
       isNew: true,
     );
-    final first = store.replacementsFor('p_endurace_only').single;
+    final first = store.replacementsFor('p_cx_only').single;
     expect(formatDate(first.replacedOn), '2026-08-23');
   });
 
@@ -257,7 +262,7 @@ $settingsCsvHeader
     expect(store.settings.stravaConnected, isTrue);
     expect(store.settings.stravaAthleteName, 'Ken Rider');
     expect(store.gears.any((gear) => gear.name == 'Tarmac'), isTrue);
-    expect(store.gears.any((gear) => gear.id == 'g_aeroad'), isFalse);
+    expect(store.gears.any((gear) => gear.id == 'g_road'), isFalse);
     expect(store.settings.selectedGearId, 'b1');
 
     final again = await openStore();
@@ -273,7 +278,7 @@ $settingsCsvHeader
     await store.savePart(
       Part(
         id: 'p_custom',
-        gearId: 'g_aeroad',
+        gearId: 'g_road',
         registeredName: 'カスタム部品',
         cycle: CycleKind.distance,
         limitMode: LimitMode.recommended,
@@ -305,11 +310,11 @@ $settingsCsvHeader
     expect(store.partById('p_custom'), isNull);
     expect(store.parts.length, 18);
     expect(store.usingDemoRides, isTrue);
-    expect(store.selectedGear?.name, 'Aeroad');
+    expect(store.selectedGear?.name, 'ロード');
     expect(store.settings.stravaConnected, isFalse);
     expect(store.settings.stravaAccessToken, isNull);
     expect(store.settings.stravaClientId, isNull);
-    expect(store.gears.any((gear) => gear.id == 'g_aeroad'), isTrue);
+    expect(store.gears.any((gear) => gear.id == 'g_road'), isTrue);
     expect(store.gears.any((gear) => gear.id == 'b1'), isFalse);
   });
 
@@ -421,7 +426,8 @@ $settingsCsvHeader
     );
     await store.load();
     expect(store.cards.map((card) => card.title).toList(), contains('Tires'));
-    expect(store.partById(aeroadPart('p_chain'))!.registeredName, 'Chain');
+    expect(store.selectedGear?.name, 'Road');
+    expect(store.partById(roadPart('p_chain'))!.registeredName, 'Chain');
     expect(
       store.groups.any((group) => group.displayName == 'Tires'),
       isTrue,
@@ -430,11 +436,11 @@ $settingsCsvHeader
 
   test('resetToDemo writes catalog names for the selected language', () async {
     final store = await openStore();
-    expect(store.partById(aeroadPart('p_chain'))!.registeredName, 'チェーン');
+    expect(store.partById(roadPart('p_chain'))!.registeredName, 'チェーン');
     await store.setLocaleCode('en');
     await store.resetToDemo();
     expect(store.settings.localeCode, 'en');
-    expect(store.partById(aeroadPart('p_chain'))!.registeredName, 'Chain');
+    expect(store.partById(roadPart('p_chain'))!.registeredName, 'Chain');
     expect(store.cards.any((card) => card.title == 'Tires'), isTrue);
   });
 
@@ -466,7 +472,7 @@ $settingsCsvHeader
     final store = await openStore();
     await store.convertDemoRidesForTest();
     expect(
-      store.replacementsFor(aeroadPart('p_chain')).map((item) => formatDate(item.replacedOn)),
+      store.replacementsFor(roadPart('p_chain')).map((item) => formatDate(item.replacedOn)),
       ['2025-11-12'],
     );
     final parsed = parseReplacementCsv('''
@@ -482,11 +488,11 @@ $settingsCsvHeader
     expect(result.added, 1);
     expect(result.skippedDuplicates, 0);
     expect(
-      store.replacementsFor(aeroadPart('p_chain')).map((item) => formatDate(item.replacedOn)).toList(),
+      store.replacementsFor(roadPart('p_chain')).map((item) => formatDate(item.replacedOn)).toList(),
       ['2026-06-12'],
     );
     expect(
-      store.replacementsFor(aeroadPart('p_front_tire')).any(
+      store.replacementsFor(roadPart('p_front_tire')).any(
             (item) => formatDate(item.replacedOn) == '2023-04-02',
           ),
       isTrue,
@@ -496,31 +502,31 @@ $settingsCsvHeader
   test('replacements, parts, and CSV are per selected gear', () async {
     final store = await openStore();
     await store.convertDemoRidesForTest();
-    expect(store.replacementsFor(aeroadPart('p_chain')), hasLength(1));
+    expect(store.replacementsFor(roadPart('p_chain')), hasLength(1));
 
-    await store.selectGear('g_endurace');
+    await store.selectGear('g_cx');
     final enduraceChain =
         store.parts.firstWhere((part) => part.registeredName == 'チェーン');
-    expect(enduraceChain.id, isNot(aeroadPart('p_chain')));
+    expect(enduraceChain.id, isNot(roadPart('p_chain')));
     expect(store.replacementsFor(enduraceChain.id), hasLength(1));
 
     await store.addReplacement(
       partId: enduraceChain.id,
       replacedOn: parseDate('2026-02-01'),
-      memo: 'Endurace',
+      memo: 'シクロクロス',
     );
     expect(
       store.replacementsFor(enduraceChain.id).map((item) => formatDate(item.replacedOn)),
       ['2026-02-01', '2023-04-15'],
     );
 
-    await store.selectGear('g_aeroad');
+    await store.selectGear('g_road');
     expect(
-      store.replacementsFor(aeroadPart('p_chain')).map((item) => formatDate(item.replacedOn)),
+      store.replacementsFor(roadPart('p_chain')).map((item) => formatDate(item.replacedOn)),
       ['2025-11-12'],
     );
 
-    await store.selectGear('g_endurace');
+    await store.selectGear('g_cx');
     final parsed = parseReplacementCsv('''
 登録名,交換日,メモ
 チェーン,2026-04-01,CSV
@@ -535,9 +541,9 @@ $settingsCsvHeader
       ['2026-04-01'],
     );
 
-    await store.selectGear('g_aeroad');
+    await store.selectGear('g_road');
     expect(
-      store.replacementsFor(aeroadPart('p_chain')).map((item) => formatDate(item.replacedOn)),
+      store.replacementsFor(roadPart('p_chain')).map((item) => formatDate(item.replacedOn)),
       ['2025-11-12'],
     );
   });
@@ -545,14 +551,14 @@ $settingsCsvHeader
   test('editing a part on one gear does not change the same name on another', () async {
     final store = await openStore();
     await store.convertDemoRidesForTest();
-    final aeroadChain = store.partById(aeroadPart('p_chain'))!;
+    final aeroadChain = store.partById(roadPart('p_chain'))!;
     await store.savePart(
       aeroadChain.copyWith(customLimit: 1111, limitMode: LimitMode.custom),
       isNew: false,
     );
-    expect(store.partById(aeroadPart('p_chain'))!.customLimit, 1111);
+    expect(store.partById(roadPart('p_chain'))!.customLimit, 1111);
 
-    await store.selectGear('g_endurace');
+    await store.selectGear('g_cx');
     final enduraceChain =
         store.parts.firstWhere((part) => part.registeredName == 'チェーン');
     expect(enduraceChain.customLimit, 4000);
@@ -576,16 +582,16 @@ $settingsCsvHeader
     expect(result.updated, 3);
     expect(result.created, 1);
     expect(result.grouped, 1);
-    expect(store.partById(aeroadPart('p_chain'))!.customLimit, 2222);
-    expect(store.partById(aeroadPart('p_chain'))!.thresholdPct, 70);
+    expect(store.partById(roadPart('p_chain'))!.customLimit, 2222);
+    expect(store.partById(roadPart('p_chain'))!.thresholdPct, 70);
     expect(store.parts.any((part) => part.registeredName == 'カスタム部品'), isTrue);
-    expect(store.groupOf(aeroadPart('p_front_tire'))!.displayName, 'タイヤ');
+    expect(store.groupOf(roadPart('p_front_tire'))!.displayName, 'タイヤ');
     expect(
-      store.replacementsFor(aeroadPart('p_chain')).map((item) => formatDate(item.replacedOn)),
+      store.replacementsFor(roadPart('p_chain')).map((item) => formatDate(item.replacedOn)),
       ['2025-11-12'],
     );
 
-    await store.selectGear('g_endurace');
+    await store.selectGear('g_cx');
     final enduraceChain =
         store.parts.firstWhere((part) => part.registeredName == 'チェーン');
     expect(enduraceChain.customLimit, 4000);
@@ -681,13 +687,13 @@ $settingsCsvHeader
     expect(store.settings.lastSyncFrom, isNull);
     expect(store.rides.length, 1);
     expect(store.rides.single.id, startsWith('manual_'));
-    expect(store.rides.single.gearId, 'g_aeroad');
+    expect(store.rides.single.gearId, 'g_road');
     expect(store.rides.single.distanceKm, 32);
     expect(formatDate(store.rides.single.startedOn), '2026-08-23');
     await store.savePart(
       Part(
         id: 'p_after_ride',
-        gearId: 'g_aeroad',
+        gearId: 'g_road',
         registeredName: 'ライト',
         cycle: CycleKind.months,
         limitMode: LimitMode.recommended,
@@ -708,5 +714,110 @@ $settingsCsvHeader
     expect(store.selectedGear!.id, startsWith('g_'));
     expect(isDemoGearId(store.selectedGear!.id), isFalse);
     expect(store.parts.length, 18);
+  });
+
+  test('demo blocks deleting parts until a real ride is added', () async {
+    final store = await openStore();
+    final chainId = roadPart('p_chain');
+    await expectLater(
+      store.deletePart(chainId),
+      throwsA(isA<DemoRequiresSyncException>()),
+    );
+    expect(store.partById(chainId), isNotNull);
+  });
+
+  test('hand-added and demo bikes can be deleted during demo, including the last', () async {
+    final store = await openStore();
+    expect(store.usingDemoRides, isTrue);
+    expect(store.gears.map((gear) => gear.id).toSet(), {
+      'g_road',
+      'g_cx',
+      'g_tt',
+    });
+
+    await store.deleteGear('g_cx');
+    expect(store.gears.map((gear) => gear.id), isNot(contains('g_cx')));
+    expect(store.usingDemoRides, isTrue);
+    expect(store.selectedGear?.id, 'g_road');
+
+    await store.deleteGear('g_tt');
+    await store.deleteGear('g_road');
+    expect(store.gears, isEmpty);
+    expect(store.selectedGear, isNull);
+    expect(store.parts, isEmpty);
+    expect(store.settings.selectedGearId, isNull);
+
+    await store.addGear('Solo');
+    expect(store.selectedGear?.name, 'Solo');
+    expect(store.parts.length, 18);
+  });
+
+  test('Strava bikes cannot be deleted from the gear screen', () async {
+    final database = AppDatabase(overridePath: '${dir.path}/app.db');
+    final store = AppStore(
+      database: database,
+      now: parseDate('2026-08-23'),
+    );
+    await store.load();
+    final db = await database.instance;
+    await db.insert('gears', {'id': 'b1', 'name': 'Tarmac'});
+    await store.refresh();
+    await store.selectGear('b1');
+    await expectLater(
+      store.deleteGear('b1'),
+      throwsA(isA<StateError>()),
+    );
+    expect(store.gears.any((gear) => gear.id == 'b1'), isTrue);
+  });
+
+  test('deleted catalog parts stay gone after reload, including the initial 18', () async {
+    final dbPath = '${dir.path}/app.db';
+    final database = AppDatabase(overridePath: dbPath);
+    final store = AppStore(
+      database: database,
+      now: parseDate('2026-08-23'),
+    );
+    await store.load();
+    await store.convertDemoRidesForTest();
+    for (final catalog in defaultParts()) {
+      await store.deletePart(partIdOnGear(catalog.id, 'g_road'));
+    }
+    expect(store.parts, isEmpty);
+    expect(store.groups, isEmpty);
+
+    await database.close();
+    final reopened = AppStore(
+      database: AppDatabase(overridePath: dbPath),
+      now: parseDate('2026-08-23'),
+    );
+    await reopened.load();
+    await reopened.selectGear('g_road');
+    expect(reopened.parts, isEmpty);
+    expect(reopened.partById(roadPart('p_chain')), isNull);
+    expect(reopened.gears.any((gear) => gear.id == 'g_road'), isTrue);
+  });
+
+  test('deleting the last bike does not reseed demo data on launch', () async {
+    final dbPath = '${dir.path}/app.db';
+    final database = AppDatabase(overridePath: dbPath);
+    final store = AppStore(
+      database: database,
+      now: parseDate('2026-08-23'),
+    );
+    await store.load();
+    for (final id in ['g_cx', 'g_tt', 'g_road']) {
+      await store.deleteGear(id);
+    }
+    expect(store.gears, isEmpty);
+    await database.close();
+
+    final reopened = AppStore(
+      database: AppDatabase(overridePath: dbPath),
+      now: parseDate('2026-08-23'),
+    );
+    await reopened.load();
+    expect(reopened.gears, isEmpty);
+    expect(reopened.selectedGear, isNull);
+    expect(reopened.parts, isEmpty);
   });
 }

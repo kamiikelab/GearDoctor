@@ -287,7 +287,7 @@ abstract class AppLocalizations {
   /// No description provided for @demoBanner.
   ///
   /// In en, this message translates to:
-  /// **'Add a ride to leave the demo. The first real ride, typed or from Strava, replaces demo rides.'**
+  /// **'Add a ride to leave the demo.'**
   String get demoBanner;
 
   /// No description provided for @alertCount.
@@ -395,13 +395,13 @@ abstract class AppLocalizations {
   /// No description provided for @demoRequiresSyncMessage.
   ///
   /// In en, this message translates to:
-  /// **'You can\'t add parts or use CSV while the demo is on.'**
+  /// **'You can\'t add, delete, or import parts while the demo is on.'**
   String get demoRequiresSyncMessage;
 
   /// No description provided for @gearDemoCsvHint.
   ///
   /// In en, this message translates to:
-  /// **'You can\'t add parts or use CSV during the demo. Add a ride first.'**
+  /// **'You can\'t add, delete, or import parts during the demo. Add a ride first.'**
   String get gearDemoCsvHint;
 
   /// No description provided for @gearEmptyHint.
@@ -422,11 +422,41 @@ abstract class AppLocalizations {
   /// **'Add bike'**
   String get addBike;
 
+  /// No description provided for @deleteBike.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete bike'**
+  String get deleteBike;
+
+  /// No description provided for @deleteBikeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete this bike?'**
+  String get deleteBikeTitle;
+
+  /// No description provided for @deleteBikeConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'This also deletes {name}\'s parts, replacement records, and rides.'**
+  String deleteBikeConfirm(String name);
+
+  /// No description provided for @cannotDeleteStravaBike.
+  ///
+  /// In en, this message translates to:
+  /// **'Bikes imported from Strava can\'t be deleted here.'**
+  String get cannotDeleteStravaBike;
+
   /// No description provided for @bikeName.
   ///
   /// In en, this message translates to:
   /// **'Name'**
   String get bikeName;
+
+  /// No description provided for @bikeNameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Road'**
+  String get bikeNameHint;
 
   /// No description provided for @addBikeAction.
   ///
@@ -757,6 +787,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Delete this record'**
   String get deleteThisRecord;
+
+  /// No description provided for @deleteThisPart.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete this part'**
+  String get deleteThisPart;
+
+  /// No description provided for @deletePartTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete this part?'**
+  String get deletePartTitle;
+
+  /// No description provided for @deletePartConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'This also deletes replacement records for {name}. Any display group is split.'**
+  String deletePartConfirm(String name);
 
   /// No description provided for @connectAgain.
   ///

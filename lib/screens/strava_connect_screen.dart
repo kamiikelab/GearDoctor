@@ -102,9 +102,6 @@ class _StravaConnectScreenState extends State<StravaConnectScreen> {
                 decoration: InputDecoration(
                   border: const OutlineInputBorder(),
                   hintText: l10n.clientIdHint,
-                  hintStyle: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Theme.of(context).colorScheme.outline,
-                  ),
                 ),
               ),
               const SizedBox(height: 12),
@@ -119,9 +116,6 @@ class _StravaConnectScreenState extends State<StravaConnectScreen> {
                 decoration: InputDecoration(
                   border: const OutlineInputBorder(),
                   hintText: l10n.clientSecretHint,
-                  hintStyle: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Theme.of(context).colorScheme.outline,
-                  ),
                 ),
               ),
               const SizedBox(height: 12),

@@ -33,7 +33,7 @@ class AppDatabase {
     final path = overridePath ?? await _defaultPath();
     return openDatabase(
       path,
-      version: 3,
+      version: 4,
       onCreate: (db, version) async {
         await db.execute('''
 CREATE TABLE parts (
@@ -86,6 +86,7 @@ CREATE TABLE settings (
   value TEXT NOT NULL
 )
 ''');
+        await _ensureRemovedCatalogTable(db);
       },
       onUpgrade: (db, oldVersion, newVersion) async {
         if (oldVersion < 2) {
@@ -117,8 +118,21 @@ CREATE TABLE settings (
         if (oldVersion < 3) {
           await migrateToPerGearParts(db);
         }
+        if (oldVersion < 4) {
+          await _ensureRemovedCatalogTable(db);
+        }
       },
     );
+  }
+
+  static Future<void> _ensureRemovedCatalogTable(Database db) async {
+    await db.execute('''
+CREATE TABLE IF NOT EXISTS removed_catalog_parts (
+  gear_id TEXT NOT NULL,
+  catalog_id TEXT NOT NULL,
+  PRIMARY KEY (gear_id, catalog_id)
+)
+''');
   }
 
   Future<String> _defaultPath() async {

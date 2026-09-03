@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../data/seed.dart';
 import '../l10n/app_localizations.dart';
+import '../models/models.dart';
 import '../state/app_store.dart';
 import '../widgets/widgets.dart';
 import 'display_group_screen.dart';
@@ -83,6 +84,13 @@ class GearScreen extends StatelessWidget {
                 child: Text(l10n.addBike),
               ),
               const SizedBox(height: 8),
+              OutlinedButton(
+                onPressed: selected == null
+                    ? null
+                    : () => _deleteBike(context, store, selected),
+                child: Text(l10n.deleteBike),
+              ),
+              const SizedBox(height: 8),
               if (!canManage && store.gears.isNotEmpty)
                 Padding(
                   padding: const EdgeInsets.only(bottom: 12),
@@ -162,5 +170,54 @@ class GearScreen extends StatelessWidget {
         );
       },
     );
+  }
+
+  Future<void> _deleteBike(
+    BuildContext context,
+    AppStore store,
+    Gear gear,
+  ) async {
+    final l10n = AppLocalizations.of(context);
+    if (!isUserDeletableGear(gear.id)) {
+      await showDialog<void>(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text(l10n.deleteBikeTitle),
+            content: Text(l10n.cannotDeleteStravaBike),
+            actions: [
+              FilledButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: Text(l10n.ok),
+              ),
+            ],
+          );
+        },
+      );
+      return;
+    }
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(l10n.deleteBikeTitle),
+          content: Text(l10n.deleteBikeConfirm(gear.name)),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: Text(l10n.cancel),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: Text(l10n.deleteBike),
+            ),
+          ],
+        );
+      },
+    );
+    if (confirmed != true || !context.mounted) {
+      return;
+    }
+    await store.deleteGear(gear.id);
   }
 }

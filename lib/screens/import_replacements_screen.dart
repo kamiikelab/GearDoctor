@@ -98,9 +98,6 @@ class _ImportReplacementsScreenState extends State<ImportReplacementsScreen> {
                 decoration: InputDecoration(
                   border: const OutlineInputBorder(),
                   hintText: l10n.recordsCsvHint,
-                  hintStyle: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Theme.of(context).colorScheme.outline,
-                  ),
                 ),
               ),
               const SizedBox(height: 8),

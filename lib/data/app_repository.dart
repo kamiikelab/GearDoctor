@@ -16,6 +16,23 @@ class AppRepository {
     return (rows.first['c'] as num).toInt() > 0;
   }
 
+  /// 初回起動済み。部品や自転車を全部消してもデモを入れ直さない。
+  Future<bool> hasInitialized() async {
+    final marked = await _db.query(
+      'settings',
+      where: 'key = ?',
+      whereArgs: ['app_initialized'],
+    );
+    if (marked.isNotEmpty) {
+      return true;
+    }
+    if (await hasParts()) {
+      return true;
+    }
+    final gears = await _db.rawQuery('SELECT COUNT(*) AS c FROM gears');
+    return (gears.first['c'] as num).toInt() > 0;
+  }
+
   Future<List<Part>> loadParts({String? gearId}) async {
     final rows = gearId == null
         ? await _db.query('parts', orderBy: 'sort_order ASC')
@@ -147,6 +164,12 @@ class AppRepository {
     await _db.delete('replacements', where: 'gear_id = ?', whereArgs: [id]);
     await _db.delete('display_groups', where: 'gear_id = ?', whereArgs: [id]);
     await _db.delete('parts', where: 'gear_id = ?', whereArgs: [id]);
+    await _db.delete('rides', where: 'gear_id = ?', whereArgs: [id]);
+    await _db.delete(
+      'removed_catalog_parts',
+      where: 'gear_id = ?',
+      whereArgs: [id],
+    );
     await _db.delete('gears', where: 'id = ?', whereArgs: [id]);
   }
 
@@ -191,6 +214,7 @@ class AppRepository {
     await _db.delete('parts');
     await _db.delete('rides');
     await _db.delete('gears');
+    await _db.delete('removed_catalog_parts');
     await _db.delete('settings');
     await _secretVault?.clear();
   }
@@ -294,6 +318,7 @@ class AppRepository {
     await put('strava_athlete_name', settings.stravaAthleteName);
     await put('strava_connected', settings.stravaConnected ? '1' : '0');
     await put('locale_code', settings.localeCode);
+    await put('app_initialized', '1');
   }
 
   Future<
@@ -350,6 +375,26 @@ class AppRepository {
       clientSecret: clientSecret,
       accessToken: accessToken,
       refreshToken: refreshToken,
+    );
+  }
+
+  Future<Set<String>> removedCatalogIds(String gearId) async {
+    final rows = await _db.query(
+      'removed_catalog_parts',
+      where: 'gear_id = ?',
+      whereArgs: [gearId],
+    );
+    return {for (final row in rows) row['catalog_id'] as String};
+  }
+
+  Future<void> addRemovedCatalogPart({
+    required String gearId,
+    required String catalogId,
+  }) async {
+    await _db.insert(
+      'removed_catalog_parts',
+      {'gear_id': gearId, 'catalog_id': catalogId},
+      conflictAlgorithm: ConflictAlgorithm.replace,
     );
   }
 

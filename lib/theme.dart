@@ -5,7 +5,7 @@ ThemeData buildAppTheme() {
     seedColor: const Color(0xFF2F5D50),
     brightness: Brightness.light,
   );
-  return ThemeData(
+  final theme = ThemeData(
     colorScheme: scheme,
     useMaterial3: true,
     fontFamily: 'NotoSansJP',
@@ -23,6 +23,13 @@ ThemeData buildAppTheme() {
     outlinedButtonTheme: OutlinedButtonThemeData(
       style: OutlinedButton.styleFrom(
         minimumSize: const Size.fromHeight(48),
+      ),
+    ),
+  );
+  return theme.copyWith(
+    inputDecorationTheme: InputDecorationTheme(
+      hintStyle: theme.textTheme.bodySmall?.copyWith(
+        color: scheme.outline,
       ),
     ),
   );
