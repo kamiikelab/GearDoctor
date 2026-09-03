@@ -521,7 +521,7 @@ function HomeScreen({
               border: `1.5px solid ${t.accent.primary}`,
               background: t.fill.secondary,
               color: t.accent.primary,
-              fontWeight: 600,
+              fontWeight: 500,
               fontSize: 14,
             }}
           >
