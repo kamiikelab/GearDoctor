@@ -40,13 +40,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get stravaHint =>
-      'Connect to import rides. Steps are on the next screen.';
+      'Connecting is optional. You can also enter rides by hand.';
 
   @override
   String get stravaConnect => 'Strava connect';
 
   @override
-  String get stravaSync => 'Strava sync';
+  String get stravaSync => 'Add ride';
 
   @override
   String get gear => 'Bikes';
@@ -100,11 +100,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String lastSync(String range) {
-    return 'Last sync $range';
+    return 'Rides $range';
   }
 
   @override
-  String get notSynced => 'Not synced';
+  String get notSynced => 'No rides';
 
   @override
   String syncRangeOpen(String from) {
@@ -118,7 +118,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get demoBanner =>
-      'Sync Strava to leave the demo. The first import replaces demo rides.';
+      'Add a ride to leave the demo. The first real ride, typed or from Strava, replaces demo rides.';
 
   @override
   String alertCount(int count) {
@@ -175,7 +175,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get demoRequiresSyncTitle => 'Sync Strava first';
+  String get demoRequiresSyncTitle => 'Add a ride first';
 
   @override
   String get demoRequiresSyncMessage =>
@@ -183,14 +183,27 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get gearDemoCsvHint =>
-      'You can\'t add parts or use CSV during the demo. Sync Strava first.';
+      'You can\'t add parts or use CSV during the demo. Add a ride first.';
 
   @override
-  String get gearEmptyHint => 'Sync Strava first and bikes will appear here.';
+  String get gearEmptyHint =>
+      'Add a bike, or import from Strava, and they will appear here.';
 
   @override
   String get gearBikesHelp =>
-      'You can only pick bikes imported from Strava. Adding parts, settings, records, and CSV apply to the selected bike. The initial parts are the same.';
+      'You can pick bikes imported from Strava or added by name. Adding parts, settings, records, and CSV apply to the selected bike. The initial parts are the same.';
+
+  @override
+  String get addBike => 'Add bike';
+
+  @override
+  String get bikeName => 'Name';
+
+  @override
+  String get addBikeAction => 'Add';
+
+  @override
+  String get bikeNameRequired => 'Enter a name';
 
   @override
   String get gearSelectHint => 'Select a bike above to add parts and records.';
@@ -428,11 +441,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get connectStep3Help =>
-      'On a phone, you return to the app after you approve. On a computer, Chrome opens. After you approve, a 127.0.0.1 page appears. You must close that page. If you don\'t, the connect button stays gray. On a computer the app will not come to the front. When this screen shows Connected and the button is green again, it worked. Import rides from Strava sync on Home.';
+      'On a phone, you return to the app after you approve. On a computer, Chrome opens. After you approve, a 127.0.0.1 page appears. You must close that page. If you don\'t, the connect button stays gray. On a computer the app will not come to the front. When this screen shows Connected and the button is green again, it worked. Add rides from Add ride on Home.';
 
   @override
   String get connectStep3HelpIos =>
-      'Tap Connect, then Continue when iPhone asks to open the web. If you are signed out, Strava’s login appears. If you are already signed in and have approved this app, it may return right away. Success is when this screen shows Connected and the button is green again. Import rides from Strava sync on Home.';
+      'Tap Connect, then Continue when iPhone asks to open the web. If you are signed out, Strava’s login appears. If you are already signed in and have approved this app, it may return right away. Success is when this screen shows Connected and the button is green again. Add rides from Add ride on Home.';
 
   @override
   String get connectStep4 => '4. If Chrome doesn\'t open';
@@ -458,7 +471,40 @@ class AppLocalizationsEn extends AppLocalizations {
   String get disconnected => 'Disconnected and removed the tokens.';
 
   @override
-  String get syncTitle => 'Strava sync';
+  String get syncTitle => 'Add ride';
+
+  @override
+  String selectedGearLine(String name) {
+    return 'Selected bike: $name';
+  }
+
+  @override
+  String get manualRideSection => 'Enter by hand';
+
+  @override
+  String get importFromStrava => 'Import from Strava';
+
+  @override
+  String get notConnectedImportHint =>
+      'Not connected. Connect Strava in Settings.';
+
+  @override
+  String get goToStravaConnect => 'Strava connect';
+
+  @override
+  String get rideDate => 'Date';
+
+  @override
+  String get rideDistance => 'Distance';
+
+  @override
+  String get needGearForRide => 'Select a bike before logging a ride';
+
+  @override
+  String get invalidRideDistance => 'Distance must be greater than 0';
+
+  @override
+  String get rideRecorded => 'Ride saved.';
 
   @override
   String stravaStartDate(String value) {
@@ -666,8 +712,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get csvLabel => 'CSV';
 
   @override
-  String get csvNeedGear =>
-      'Import bikes from Strava and select one to use this screen.';
+  String get csvNeedGear => 'Select a bike to use this screen.';
 
   @override
   String skipCsvDuplicatesPreview(int count) {

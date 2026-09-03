@@ -21,7 +21,7 @@ import {
   useHostTheme,
 } from "cursor/canvas";
 
-type ScreenId = "home" | "detail" | "replace" | "edit-record" | "add" | "split-merge" | "import-csv" | "import-settings" | "sync" | "strava" | "settings" | "gear";
+type ScreenId = "home" | "detail" | "replace" | "edit-record" | "add" | "add-gear" | "split-merge" | "import-csv" | "import-settings" | "sync" | "strava" | "settings" | "gear";
 type Position = "rear" | "front" | "single";
 type LimitMode = "recommended" | "previousCycle" | "custom";
 type CycleKind = "distance" | "months";
@@ -276,24 +276,35 @@ function PhoneButton({
   label,
   variant,
   onClick,
+  disabled = false,
 }: {
   label: string;
   variant: "primary" | "secondary" | "ghost";
   onClick: () => void;
+  disabled?: boolean;
 }) {
   const t = useHostTheme();
   const bg =
-    variant === "primary"
-      ? t.accent.primary
-      : variant === "secondary"
-        ? t.fill.primary
-        : "transparent";
-  const color = variant === "primary" ? t.text.onAccent : t.text.primary;
-  const border =
-    variant === "ghost" ? `1px solid ${t.stroke.secondary}` : "1px solid transparent";
+    disabled
+      ? t.fill.tertiary
+      : variant === "primary"
+        ? t.accent.primary
+        : variant === "secondary"
+          ? t.fill.primary
+          : "transparent";
+  const color = disabled
+    ? t.text.tertiary
+    : variant === "primary"
+      ? t.text.onAccent
+      : t.text.primary;
+  const border = disabled
+    ? `1px solid ${t.stroke.secondary}`
+    : variant === "ghost"
+      ? `1px solid ${t.stroke.secondary}`
+      : "1px solid transparent";
   return (
     <div
-      onClick={onClick}
+      onClick={disabled ? undefined : onClick}
       style={{
         flex: 1,
         textAlign: "center",
@@ -302,9 +313,10 @@ function PhoneButton({
         background: bg,
         color,
         border,
-        cursor: "pointer",
+        cursor: disabled ? "default" : "pointer",
         fontSize: 13,
         fontWeight: 590,
+        opacity: disabled ? 0.7 : 1,
       }}
     >
       {label}
@@ -488,7 +500,7 @@ function HomeScreen({
           }}
         >
           <Text size="small" weight="semibold">
-            デモを解除するには Strava を同期します。最初の取得でデモ走行は消えます。
+            デモを解除するには走行を追加します。手入力か Strava の最初の実走行でデモは消えます。
           </Text>
         </div>
         <div
@@ -506,7 +518,7 @@ function HomeScreen({
           </div>
           <div onClick={() => go("sync")} style={{ cursor: "pointer" }}>
             <Text size="small" tone="secondary">
-              最終同期 2025-07-17〜2026-07-15（デモ）
+              走行 2025-07-17〜2026-07-15（デモ）
             </Text>
           </div>
         </div>
@@ -592,7 +604,7 @@ function HomeScreen({
           ))}
         </div>
         <div style={{ flexShrink: 0 }}>
-          <PhoneButton label="Strava同期" variant="primary" onClick={() => go("sync")} />
+          <PhoneButton label="走行を追加" variant="primary" onClick={() => go("sync")} />
         </div>
       </div>
     </Phone>
@@ -1174,29 +1186,77 @@ function ImportSettingsCsvScreen({
   );
 }
 
-function SyncScreen({ go }: { go: (screen: ScreenId) => void }) {
+function SyncScreen({
+  go,
+  gear,
+}: {
+  go: (screen: ScreenId) => void;
+  gear: string;
+}) {
+  const [connected, setConnected] = useCanvasState("stravaConnected", false);
+  const [rideDate, setRideDate] = useCanvasState("manualRideDate", "2026-09-03");
+  const [rideKm, setRideKm] = useCanvasState("manualRideKm", "32");
   return (
-    <Phone title="Strava 同期" onBack={() => go("home")}>
+    <Phone title="走行を追加" onBack={() => go("home")}>
       <Stack gap={14}>
+        <Text weight="semibold">手入力</Text>
+        <Text size="small" tone="tertiary">
+          選んでいるギア: {gear}
+        </Text>
         <Stack gap={4}>
           <Text size="small" tone="secondary">
-            データの範囲
+            日付
           </Text>
-          <Text weight="semibold">Strava開始日  2025-07-17（デモ）</Text>
-          <Text weight="semibold">何日まで  2026-07-15（デモ）</Text>
-          <Text size="small" tone="tertiary">
-            何日までは、Strava開始日以降で入っているいちばん新しい走行の日です。
-          </Text>
+          <TextInput value={rideDate} onChange={setRideDate} />
         </Stack>
-        <Text>期間を選んで取得します。自動では取りに行きません。</Text>
-        <PhoneButton label="前回から 3 か月" variant="primary" onClick={() => go("home")} />
-        <PhoneButton label="前回から 6 か月" variant="ghost" onClick={() => go("home")} />
-        <PhoneButton label="前回から 1 年" variant="ghost" onClick={() => go("home")} />
-        <div style={{ height: 16 }} />
-        <Text size="small" tone="tertiary">
-          Strava開始日を変えると、取り込んだ走行は消えて初期化されます。新しい日から取り直します。
-        </Text>
-        <PhoneButton label="Strava開始日を変更" variant="ghost" onClick={() => go("home")} />
+        <Stack gap={4}>
+          <Text size="small" tone="secondary">
+            距離
+          </Text>
+          <TextInput value={rideKm} onChange={setRideKm} placeholder="km" />
+        </Stack>
+        <PhoneButton label="記録する" variant="primary" onClick={() => go("home")} />
+        <div style={{ height: 8 }} />
+        <Text weight="semibold">Strava から取り込む</Text>
+        <div
+          onClick={() => setConnected(!connected)}
+          style={{ cursor: "pointer" }}
+        >
+          <Text size="small" tone="secondary">
+            {connected ? "連携済み（タップで未連携の表示）" : "未連携（タップで連携済みの表示）"}
+          </Text>
+        </div>
+        {connected ? (
+          <Stack gap={10}>
+            <Stack gap={4}>
+              <Text size="small" tone="secondary">
+                データの範囲
+              </Text>
+              <Text weight="semibold">Strava開始日  2025-07-17</Text>
+              <Text weight="semibold">何日まで  2026-07-15</Text>
+              <Text size="small" tone="tertiary">
+                何日までは、Strava開始日以降で入っているいちばん新しい走行の日です。
+              </Text>
+            </Stack>
+            <PhoneButton label="前回から 3 か月" variant="primary" onClick={() => go("home")} />
+            <PhoneButton label="前回から 6 か月" variant="ghost" onClick={() => go("home")} />
+            <PhoneButton label="前回から 1 年" variant="ghost" onClick={() => go("home")} />
+            <Text size="small" tone="tertiary">
+              Strava開始日を変えると、取り込んだ走行は消えて初期化されます。新しい日から取り直します。
+            </Text>
+            <PhoneButton label="Strava開始日を変更" variant="ghost" onClick={() => go("home")} />
+          </Stack>
+        ) : (
+          <Stack gap={10}>
+            <Text size="small" tone="tertiary">
+              未連携。設定の Strava 連携から。
+            </Text>
+            <PhoneButton label="前回から 3 か月" variant="primary" disabled onClick={() => undefined} />
+            <PhoneButton label="前回から 6 か月" variant="ghost" disabled onClick={() => undefined} />
+            <PhoneButton label="前回から 1 年" variant="ghost" disabled onClick={() => undefined} />
+            <PhoneButton label="Strava 連携へ" variant="ghost" onClick={() => go("strava")} />
+          </Stack>
+        )}
       </Stack>
     </Phone>
   );
@@ -1225,10 +1285,10 @@ function StravaConnectScreen({ go }: { go: (screen: ScreenId) => void }) {
         <PhoneButton label="連携を解除" variant="ghost" onClick={() => go("strava")} />
         <Stack gap={6}>
           <Text weight="semibold">連携方法</Text>
-          <Text size="small">1. Strava の API 設定でアプリを作る。Callback Domain は 127.0.0.1（http もポートも付けない）</Text>
+          <Text size="small">1. Strava の API 設定でアプリを作る。Callback Domain は触らなくてよい</Text>
           <Text size="small">2. Client ID と Client Secret を上に入れる。このアプリでは Access Token は使いません。</Text>
-          <Text size="small">3. 「連携する」を押す。Chrome が自動で開き、許可すると 127.0.0.1 に案内が出る。その画面を閉じることが必須。アプリは手前に切り替わらない。連携ボタンが緑に戻り「連携済み」なら成功</Text>
-          <Text size="small">4. Chrome が自動で開かないときだけ、許可用 URL をコピーして Chrome で開く</Text>
+          <Text size="small">3. 「連携する」を押す。「Webを開きます」と出たら続ける。連携ボタンが緑に戻り「連携済み」なら成功。走行はホームの「走行を追加」から</Text>
+          <Text size="small">4. パソコンで Chrome が自動で開かないときだけ、許可用 URL をコピーして Chrome で開く</Text>
         </Stack>
       </Stack>
     </Phone>
@@ -1251,7 +1311,7 @@ function GearScreen({
         <Stack gap={4}>
           <Text weight="semibold">{gear}（デモ）</Text>
           <Text size="small" tone="tertiary">
-            Strava から取った自転車だけ選べます。部品の追加・設定、交換記録、CSV は選んだギアだけです。初期の部品は同じです。デモのあいだは部品の追加と CSV は使えません。先に Strava を同期してください。
+            Strava から取った自転車も、手で足した自転車も選べます。部品の追加・設定、交換記録、CSV は選んだギアだけです。初期の部品は同じです。デモのあいだは部品の追加と CSV は使えません。先に走行を追加してください。
           </Text>
         </Stack>
         {GEARS.map((name) => {
@@ -1274,10 +1334,28 @@ function GearScreen({
             </div>
           );
         })}
-        <PhoneButton label="部品を追加" variant="primary" onClick={() => go("add")} />
+        <PhoneButton label="自転車を追加" variant="primary" onClick={() => go("add-gear")} />
+        <PhoneButton label="部品を追加" variant="ghost" onClick={() => go("add")} />
         <PhoneButton label="記録の CSV" variant="ghost" onClick={() => go("import-csv")} />
         <PhoneButton label="部品の CSV" variant="ghost" onClick={() => go("import-settings")} />
         <PhoneButton label="表示をまとめる / 分ける" variant="ghost" onClick={() => go("split-merge")} />
+      </Stack>
+    </Phone>
+  );
+}
+
+function AddGearScreen({ go }: { go: (screen: ScreenId) => void }) {
+  const [name, setName] = useCanvasState("newGearName", "Aeroad");
+  return (
+    <Phone title="自転車を追加" onBack={() => go("gear")}>
+      <Stack gap={14}>
+        <Stack gap={4}>
+          <Text size="small" tone="secondary">
+            名前
+          </Text>
+          <TextInput value={name} onChange={setName} placeholder="Aeroad" />
+        </Stack>
+        <PhoneButton label="追加する" variant="primary" onClick={() => go("gear")} />
       </Stack>
     </Phone>
   );
@@ -1295,13 +1373,13 @@ function SettingsScreen({
           <Text size="small" tone="secondary">
             Strava
           </Text>
-          <Text weight="semibold">連携済み</Text>
+          <Text weight="semibold">未連携</Text>
           <Text size="small" tone="secondary">
-            連携すると走行を取れます。手順は次の画面。
+            連携は任意です。走行は手入力でも入れられます。
           </Text>
         </Stack>
         <PhoneButton label="Strava 連携" variant="primary" onClick={() => go("strava")} />
-        <PhoneButton label="Strava同期" variant="ghost" onClick={() => go("sync")} />
+        <PhoneButton label="走行を追加" variant="ghost" onClick={() => go("sync")} />
         <Stack gap={4}>
           <Text size="small" tone="secondary">
             ギア
@@ -1408,8 +1486,10 @@ export default function GearDoctorUiWireframe() {
         recommendedMonths={recommendedMonths}
         customLimitMonths={customLimitMonths}
       />
+    ) : screen === "add-gear" ? (
+      <AddGearScreen go={go} />
     ) : screen === "sync" ? (
-      <SyncScreen go={go} />
+      <SyncScreen go={go} gear={gear} />
     ) : screen === "import-csv" ? (
       <ImportCsvScreen go={go} gear={gear} />
     ) : screen === "import-settings" ? (
@@ -1447,6 +1527,9 @@ export default function GearDoctorUiWireframe() {
         <Pill active={screen === "add"} onClick={() => setScreen("add")}>
           部品を追加
         </Pill>
+        <Pill active={screen === "add-gear"} onClick={() => setScreen("add-gear")}>
+          自転車を追加
+        </Pill>
         <Pill active={screen === "gear"} onClick={() => setScreen("gear")}>
           ギア
         </Pill>
@@ -1460,7 +1543,7 @@ export default function GearDoctorUiWireframe() {
           表示のまとめ
         </Pill>
         <Pill active={screen === "sync"} onClick={() => setScreen("sync")}>
-          同期
+          走行を追加
         </Pill>
         <Pill active={screen === "settings"} onClick={() => setScreen("settings")}>
           設定
@@ -1476,21 +1559,22 @@ export default function GearDoctorUiWireframe() {
         <Stack gap={16}>
           <H2>決まったこと</H2>
           <Text>
-            下部タブなし。交換したは詳細画面。ホームの主ボタンは同期。部品は登録名だけで管理し、追加に F/R の種別は付けない。左右の合体は表示のまとめだけ。同期は自動ではなく、押したときだけ。デモのあいだは部品の追加と CSV はエラーにし、先に Strava を同期する。
+            下部タブなし。交換したは詳細画面。ホームの主ボタンは「走行を追加」。部品は登録名だけで管理し、追加に F/R の種別は付けない。左右の合体は表示のまとめだけ。走行は手入力が常に使え、Strava は連携したときだけ。デモのあいだは部品の追加と CSV はエラーにし、先に走行を追加する。
           </Text>
           <Table
             headers={["画面", "上から下", "横並び"]}
             rows={[
-              ["ホーム", "デモ案内 → ギアと最終同期 → 警告 → 部品 → 同期", "ギア | 最終同期、R | F"],
+              ["ホーム", "デモ案内 → ギアと走行の範囲 → 警告 → 部品 → 走行を追加", "ギア | 走行、R | F"],
               ["詳細", "距離 → バー → 交換日 → 操作 → 過去の交換記録", "交換した | 編集"],
               ["記録を編集", "日付 → メモ → 保存 → 削除", "なし（縦のみ）"],
-              ["ギア", "大きなギア名 → 自転車の選択 → 部品追加 / CSV / まとめ", "なし（縦のみ）"],
+              ["ギア", "大きなギア名 → 自転車の選択 → 自転車を追加 / 部品追加 / CSV / まとめ", "なし（縦のみ）"],
+              ["自転車を追加", "名前 → 追加する", "なし（縦のみ）"],
               ["部品を追加", "登録名 → 周期 → 目安 → しきい値", "距離 | 月"],
               ["記録の CSV", "ギア名 → 書き出し → 貼り付け → CSVを取り込み → 確定", "なし（縦のみ）"],
               ["部品の CSV", "ギア名 → 書き出し → 貼り付け → CSVを取り込み → 確定", "なし（縦のみ）"],
               ["表示のまとめ", "2件選択 → どちらがF → 表示名", "なし（縦のみ）"],
-              ["同期", "Strava開始日と何日まで → 期間の選択 → 取得", "なし（縦のみ）"],
-              ["設定", "Strava 連携へ → Strava同期へ → ギアへ → 初期化 → バージョン", "なし（縦のみ）"],
+              ["走行を追加", "手入力 → Strava から取り込む", "なし（縦のみ）"],
+              ["設定", "Strava 連携へ → 走行を追加へ → ギアへ → 初期化 → バージョン", "なし（縦のみ）"],
               ["Strava 連携", "状態 → ID/Secret → 連携 → 解除 → 連携方法", "なし（縦のみ）"],
             ]}
           />
@@ -1510,9 +1594,9 @@ export default function GearDoctorUiWireframe() {
             三つの数値を見せ、選んだ一方を使う。自動は直近の2回の間隔。毎回計算。
           </Callout>
 
-          <H3>同期画面は未確定</H3>
-          <Callout tone="warning" title="別途相談">
-            期間は 3か月・6か月・1年・Strava開始日。失敗時の続きはまだ決めません。ギアはホームまたは設定から選びます。交換記録はギアごとです。
+          <H3>走行を追加</H3>
+          <Callout tone="info" title="手入力は常に、Strava は連携時だけ">
+            上段は日付と距離。下段の期間ボタンは連携したときだけ押せる。未連携は灰色で、設定の Strava 連携へ案内する。
           </Callout>
 
           <Card>

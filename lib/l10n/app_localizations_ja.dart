@@ -39,13 +39,13 @@ class AppLocalizationsJa extends AppLocalizations {
   String get notConnected => '未連携';
 
   @override
-  String get stravaHint => '連携すると走行を取れます。手順は次の画面。';
+  String get stravaHint => '連携は任意です。走行は手入力でも入れられます。';
 
   @override
   String get stravaConnect => 'Strava 連携';
 
   @override
-  String get stravaSync => 'Strava同期';
+  String get stravaSync => '走行を追加';
 
   @override
   String get gear => 'ギア';
@@ -97,11 +97,11 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String lastSync(String range) {
-    return '最終同期 $range';
+    return '走行 $range';
   }
 
   @override
-  String get notSynced => '未同期';
+  String get notSynced => '走行なし';
 
   @override
   String syncRangeOpen(String from) {
@@ -114,7 +114,7 @@ class AppLocalizationsJa extends AppLocalizations {
   }
 
   @override
-  String get demoBanner => 'デモを解除するには Strava を同期します。最初の取得でデモ走行は消えます。';
+  String get demoBanner => 'デモを解除するには走行を追加します。手入力か Strava の最初の実走行でデモは消えます。';
 
   @override
   String alertCount(int count) {
@@ -171,20 +171,32 @@ class AppLocalizationsJa extends AppLocalizations {
   }
 
   @override
-  String get demoRequiresSyncTitle => '先に Strava を同期してください';
+  String get demoRequiresSyncTitle => '先に走行を追加してください';
 
   @override
   String get demoRequiresSyncMessage => 'デモのあいだは部品の追加と CSV は使えません。';
 
   @override
-  String get gearDemoCsvHint => 'デモのあいだは部品の追加と CSV は使えません。先に Strava を同期してください。';
+  String get gearDemoCsvHint => 'デモのあいだは部品の追加と CSV は使えません。先に走行を追加してください。';
 
   @override
-  String get gearEmptyHint => '先に Strava を同期すると、ここに自転車が並びます。';
+  String get gearEmptyHint => '自転車を追加するか、Strava から取り込むと、ここに並びます。';
 
   @override
   String get gearBikesHelp =>
-      'Strava から取った自転車だけ選べます。部品の追加・設定、交換記録、CSV は選んだギアだけです。初期の部品は同じです。';
+      'Strava から取った自転車も、手で足した自転車も選べます。部品の追加・設定、交換記録、CSV は選んだギアだけです。初期の部品は同じです。';
+
+  @override
+  String get addBike => '自転車を追加';
+
+  @override
+  String get bikeName => '名前';
+
+  @override
+  String get addBikeAction => '追加する';
+
+  @override
+  String get bikeNameRequired => '名前を入力してください';
 
   @override
   String get gearSelectHint => '上で自転車を選ぶと、部品の追加と交換記録が使えます。';
@@ -415,11 +427,11 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get connectStep3Help =>
-      'スマホでは許可するとアプリに戻ります。パソコンでは Chrome が自動で開きます。許可すると 127.0.0.1 に案内が出ます。その画面を閉じることが必須です。閉じないと、連携ボタンは灰色のままです。パソコンではアプリが手前に切り替わることはありません。この画面を見て、連携ボタンが緑に戻り「連携済み」になれば成功です。走行の取得はホームの「Strava同期」から。';
+      'スマホでは許可するとアプリに戻ります。パソコンでは Chrome が自動で開きます。許可すると 127.0.0.1 に案内が出ます。その画面を閉じることが必須です。閉じないと、連携ボタンは灰色のままです。パソコンではアプリが手前に切り替わることはありません。この画面を見て、連携ボタンが緑に戻り「連携済み」になれば成功です。走行はホームの「走行を追加」から。';
 
   @override
   String get connectStep3HelpIos =>
-      '「連携する」を押すと、「Webを開きます」と出ます。続けてください。ログインしていないときは Strava のログインが出ます。すでにログインしてこのアプリを許可していると、すぐ戻ることがあります。この画面が「連携済み」になり、連携ボタンが緑に戻れば成功です。走行の取得はホームの「Strava同期」から。';
+      '「連携する」を押すと、「Webを開きます」と出ます。続けてください。ログインしていないときは Strava のログインが出ます。すでにログインしてこのアプリを許可していると、すぐ戻ることがあります。この画面が「連携済み」になり、連携ボタンが緑に戻れば成功です。走行はホームの「走行を追加」から。';
 
   @override
   String get connectStep4 => '4. Chrome が自動で開かないとき';
@@ -445,7 +457,39 @@ class AppLocalizationsJa extends AppLocalizations {
   String get disconnected => '連携を解除し、トークンを消しました。';
 
   @override
-  String get syncTitle => 'Strava同期';
+  String get syncTitle => '走行を追加';
+
+  @override
+  String selectedGearLine(String name) {
+    return '選んでいるギア: $name';
+  }
+
+  @override
+  String get manualRideSection => '手入力';
+
+  @override
+  String get importFromStrava => 'Strava から取り込む';
+
+  @override
+  String get notConnectedImportHint => '未連携。設定の Strava 連携から。';
+
+  @override
+  String get goToStravaConnect => 'Strava 連携へ';
+
+  @override
+  String get rideDate => '日付';
+
+  @override
+  String get rideDistance => '距離';
+
+  @override
+  String get needGearForRide => 'ギアを選んでから走行を記録してください';
+
+  @override
+  String get invalidRideDistance => '距離は 0 より大きい数にしてください';
+
+  @override
+  String get rideRecorded => '走行を記録しました。';
 
   @override
   String stravaStartDate(String value) {
@@ -643,7 +687,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get csvLabel => 'CSV';
 
   @override
-  String get csvNeedGear => 'Strava から自転車を取って選ぶと、この画面が使えます。';
+  String get csvNeedGear => '自転車を選ぶと、この画面が使えます。';
 
   @override
   String skipCsvDuplicatesPreview(int count) {

@@ -34,7 +34,7 @@ void main() {
     }
   });
 
-  testWidgets('home shows grouped tires and the sync button', (tester) async {
+  testWidgets('home shows grouped tires and the add-ride button', (tester) async {
     final store = AppStore(
       database: AppDatabase(overridePath: '${dir.path}/app.db'),
       now: parseDate('2026-08-23'),
@@ -45,25 +45,26 @@ void main() {
 
     expect(find.text('GearDoctor'), findsOneWidget);
     expect(
-      find.textContaining('デモを解除するには Strava を同期します'),
+      find.textContaining('デモを解除するには走行を追加します'),
       findsOneWidget,
     );
     expect(find.text('タイヤ'), findsOneWidget);
     expect(find.text('チェーン'), findsOneWidget);
     expect(find.textContaining(' / '), findsWidgets);
     expect(find.textContaining('推奨'), findsWidgets);
-    expect(find.text('Strava同期'), findsOneWidget);
+    expect(find.text('走行を追加'), findsOneWidget);
     expect(find.text('しきい値 2件'), findsOneWidget);
     expect(find.text('タイヤ F'), findsOneWidget);
     expect(find.text('ブレーキパッド F'), findsOneWidget);
     expect(find.textContaining('ギア: Aeroad（デモ）'), findsOneWidget);
     expect(
-      find.textContaining('最終同期 2025-07-17〜2026-07-15（デモ）'),
+      find.textContaining('走行 2025-07-17〜2026-07-15（デモ）'),
       findsOneWidget,
     );
 
     await tester.tap(find.textContaining('ギア: Aeroad（デモ）'));
     await tester.pumpAndSettle();
+    expect(find.text('自転車を追加'), findsOneWidget);
     expect(find.text('部品を追加'), findsOneWidget);
     expect(find.text('記録の CSV'), findsOneWidget);
     expect(find.text('部品の CSV'), findsOneWidget);
@@ -71,7 +72,7 @@ void main() {
 
     await tester.tap(find.text('部品を追加'));
     await tester.pumpAndSettle();
-    expect(find.text('先に Strava を同期してください'), findsOneWidget);
+    expect(find.text('先に走行を追加してください'), findsOneWidget);
     expect(
       find.text('デモのあいだは部品の追加と CSV は使えません。'),
       findsWidgets,
@@ -81,31 +82,27 @@ void main() {
 
     await tester.tap(find.text('記録の CSV'));
     await tester.pumpAndSettle();
-    expect(find.text('先に Strava を同期してください'), findsOneWidget);
+    expect(find.text('先に走行を追加してください'), findsOneWidget);
     await tester.tap(find.text('OK'));
     await tester.pumpAndSettle();
 
     await tester.tap(find.text('部品の CSV'));
     await tester.pumpAndSettle();
-    expect(find.text('先に Strava を同期してください'), findsOneWidget);
+    expect(find.text('先に走行を追加してください'), findsOneWidget);
     await tester.tap(find.text('OK'));
     await tester.pumpAndSettle();
 
     await tester.tap(find.byType(BackButton));
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text('Strava同期'));
+    await tester.tap(find.text('走行を追加'));
     await tester.pumpAndSettle();
-    expect(find.textContaining('Strava開始日  2025-07-17（デモ）'), findsOneWidget);
-    expect(find.textContaining('何日まで  2026-07-15（デモ）'), findsOneWidget);
-    expect(
-      find.textContaining('Strava開始日を変えると、取り込んだ走行は消えて初期化されます'),
-      findsOneWidget,
-    );
-
-    await tester.tap(find.text('Strava開始日を変更'));
-    await tester.pumpAndSettle();
-    expect(find.byType(DatePickerDialog), findsOneWidget);
+    expect(find.text('手入力'), findsOneWidget);
+    expect(find.textContaining('選んでいるギア: Aeroad'), findsOneWidget);
+    expect(find.text('記録する'), findsOneWidget);
+    expect(find.text('Strava から取り込む'), findsOneWidget);
+    expect(find.textContaining('未連携。設定の Strava 連携から'), findsOneWidget);
+    expect(find.text('Strava開始日を変更'), findsNothing);
   });
 
   testWidgets('part detail shows replacement history under the replace button', (tester) async {
@@ -155,7 +152,7 @@ void main() {
 
     await tester.pumpWidget(l10nApp(home: SettingsScreen(store: store)));
     await tester.pumpAndSettle();
-    expect(find.text('Strava同期'), findsOneWidget);
+    expect(find.text('走行を追加'), findsOneWidget);
     expect(find.text('ギア'), findsWidgets);
     expect(find.text(appVersionLabel), findsOneWidget);
     expect(find.text('プライバシーポリシー'), findsOneWidget);
@@ -265,7 +262,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Settings'), findsWidgets);
     expect(find.text('Match device'), findsOneWidget);
-    expect(find.text('Strava sync'), findsOneWidget);
+    expect(find.text('Add ride'), findsOneWidget);
     expect(find.text('設定'), findsNothing);
 
     await tester.tap(find.byType(BackButton));
@@ -298,7 +295,7 @@ void main() {
     expect(find.text('Chain'), findsOneWidget);
     expect(find.text('Bar tape'), findsOneWidget);
     expect(
-      find.textContaining('Sync Strava to leave the demo'),
+      find.textContaining('Add a ride to leave the demo'),
       findsOneWidget,
     );
     expect(find.text('タイヤ'), findsNothing);

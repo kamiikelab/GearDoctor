@@ -11,10 +11,12 @@ bool isDemoGearId(String id) => demoGearIds.contains(id);
 
 bool isDemoRideId(String id) => id.startsWith('ride_');
 
+bool isManualRideId(String id) => id.startsWith('manual_');
+
 class DemoRequiresSyncException implements Exception {
   const DemoRequiresSyncException();
 
-  static const title = '先に Strava を同期してください';
+  static const title = '先に走行を追加してください';
   static const message = 'デモのあいだは部品の追加と CSV は使えません。';
 
   @override

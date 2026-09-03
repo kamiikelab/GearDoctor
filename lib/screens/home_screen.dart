@@ -12,19 +12,21 @@ import 'settings_screen.dart';
 import 'sync_screen.dart';
 import 'gear_screen.dart';
 
-String _homeSyncLabel(AppStore store, AppLocalizations l10n) {
+String _homeRideRange(AppStore store, AppLocalizations l10n) {
   final from = store.settings.lastSyncFrom;
-  final to = store.newestSyncedOn;
-  if (from == null && to == null) {
-    return l10n.notSynced;
-  }
-  if (from != null && to != null) {
+  if (from != null) {
+    final to = store.newestSyncedOn;
+    if (to == null) {
+      return l10n.syncRangeOpen(formatDate(from));
+    }
     return l10n.syncRange(formatDate(from), formatDate(to));
   }
-  if (from != null) {
-    return l10n.syncRangeOpen(formatDate(from));
+  final oldest = store.oldestSelectedRideOn;
+  final newest = store.newestSelectedRideOn;
+  if (oldest == null || newest == null) {
+    return l10n.notSynced;
   }
-  return formatDate(to!);
+  return l10n.syncRange(formatDate(oldest), formatDate(newest));
 }
 
 class HomeScreen extends StatelessWidget {
@@ -45,11 +47,12 @@ class HomeScreen extends StatelessWidget {
                 demoGearLabel(
                   store.selectedGear!.name,
                   l10n,
-                  demo: isDemoGearId(store.selectedGear!.id),
+                  demo: store.usingDemoRides &&
+                      isDemoGearId(store.selectedGear!.id),
                 ),
               );
         final lastSync = markDemo(
-          _homeSyncLabel(store, l10n),
+          _homeRideRange(store, l10n),
           l10n,
           demo: store.usingDemoRides,
         );

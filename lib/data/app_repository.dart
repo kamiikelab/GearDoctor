@@ -176,6 +176,15 @@ class AppRepository {
     await _db.delete('rides');
   }
 
+  Future<void> deleteRidesWhere(bool Function(Ride ride) test) async {
+    final rides = await loadRides();
+    for (final ride in rides) {
+      if (test(ride)) {
+        await _db.delete('rides', where: 'id = ?', whereArgs: [ride.id]);
+      }
+    }
+  }
+
   Future<void> clearAllTables() async {
     await _db.delete('replacements');
     await _db.delete('display_groups');

@@ -75,7 +75,7 @@ void main() {
     );
   });
 
-  test('demo blocks new parts and CSV import until Strava sync', () async {
+  test('demo blocks new parts and CSV import until a real ride is added', () async {
     final store = await openStore();
     final part = Part(
       id: 'p_blocked',
@@ -664,5 +664,49 @@ $settingsCsvHeader
     expect(second.savedCount, 0);
     expect(formatDate(store.settings.lastSyncAt!), '2025-09-17');
     expect(formatDate(store.newestSyncedOn!), '2025-08-01');
+  });
+
+  test('manual ride replaces demo rides and does not mark Strava connected', () async {
+    final store = await openStore();
+    expect(store.usingDemoRides, isTrue);
+    expect(store.settings.stravaConnected, isFalse);
+
+    await store.addManualRide(
+      on: parseDate('2026-08-23'),
+      distanceKm: 32,
+    );
+
+    expect(store.usingDemoRides, isFalse);
+    expect(store.settings.stravaConnected, isFalse);
+    expect(store.settings.lastSyncFrom, isNull);
+    expect(store.rides.length, 1);
+    expect(store.rides.single.id, startsWith('manual_'));
+    expect(store.rides.single.gearId, 'g_aeroad');
+    expect(store.rides.single.distanceKm, 32);
+    expect(formatDate(store.rides.single.startedOn), '2026-08-23');
+    await store.savePart(
+      Part(
+        id: 'p_after_ride',
+        gearId: 'g_aeroad',
+        registeredName: 'ライト',
+        cycle: CycleKind.months,
+        limitMode: LimitMode.recommended,
+        recommendedLimit: 12,
+        customLimit: 12,
+        thresholdPct: 80,
+        sortOrder: store.nextSortOrder(),
+      ),
+      isNew: true,
+    );
+    expect(store.partById('p_after_ride'), isNotNull);
+  });
+
+  test('addGear creates a named bike with default parts', () async {
+    final store = await openStore();
+    await store.addGear('My Bike');
+    expect(store.selectedGear?.name, 'My Bike');
+    expect(store.selectedGear!.id, startsWith('g_'));
+    expect(isDemoGearId(store.selectedGear!.id), isFalse);
+    expect(store.parts.length, 18);
   });
 }

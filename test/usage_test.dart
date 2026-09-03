@@ -395,8 +395,8 @@ void main() {
     expect(formatTodayUsed(3000, CycleKind.distance, l10n), '3,000km（今日）');
     expect(formatUsed(7, CycleKind.months, l10n, demo: true), '7か月');
     expect(
-      markDemo('最終同期 2025-07-17〜2026-07-15', l10n, demo: true),
-      '最終同期 2025-07-17〜2026-07-15（デモ）',
+      markDemo('走行 2025-07-17〜2026-07-15', l10n, demo: true),
+      '走行 2025-07-17〜2026-07-15（デモ）',
     );
     expect(
       demoGearLabel('Aeroad', l10n, demo: true, selected: true),

@@ -155,7 +155,7 @@ abstract class AppLocalizations {
   /// No description provided for @stravaHint.
   ///
   /// In en, this message translates to:
-  /// **'Connect to import rides. Steps are on the next screen.'**
+  /// **'Connecting is optional. You can also enter rides by hand.'**
   String get stravaHint;
 
   /// No description provided for @stravaConnect.
@@ -167,7 +167,7 @@ abstract class AppLocalizations {
   /// No description provided for @stravaSync.
   ///
   /// In en, this message translates to:
-  /// **'Strava sync'**
+  /// **'Add ride'**
   String get stravaSync;
 
   /// No description provided for @gear.
@@ -263,13 +263,13 @@ abstract class AppLocalizations {
   /// No description provided for @lastSync.
   ///
   /// In en, this message translates to:
-  /// **'Last sync {range}'**
+  /// **'Rides {range}'**
   String lastSync(String range);
 
   /// No description provided for @notSynced.
   ///
   /// In en, this message translates to:
-  /// **'Not synced'**
+  /// **'No rides'**
   String get notSynced;
 
   /// No description provided for @syncRangeOpen.
@@ -287,7 +287,7 @@ abstract class AppLocalizations {
   /// No description provided for @demoBanner.
   ///
   /// In en, this message translates to:
-  /// **'Sync Strava to leave the demo. The first import replaces demo rides.'**
+  /// **'Add a ride to leave the demo. The first real ride, typed or from Strava, replaces demo rides.'**
   String get demoBanner;
 
   /// No description provided for @alertCount.
@@ -389,7 +389,7 @@ abstract class AppLocalizations {
   /// No description provided for @demoRequiresSyncTitle.
   ///
   /// In en, this message translates to:
-  /// **'Sync Strava first'**
+  /// **'Add a ride first'**
   String get demoRequiresSyncTitle;
 
   /// No description provided for @demoRequiresSyncMessage.
@@ -401,20 +401,44 @@ abstract class AppLocalizations {
   /// No description provided for @gearDemoCsvHint.
   ///
   /// In en, this message translates to:
-  /// **'You can\'t add parts or use CSV during the demo. Sync Strava first.'**
+  /// **'You can\'t add parts or use CSV during the demo. Add a ride first.'**
   String get gearDemoCsvHint;
 
   /// No description provided for @gearEmptyHint.
   ///
   /// In en, this message translates to:
-  /// **'Sync Strava first and bikes will appear here.'**
+  /// **'Add a bike, or import from Strava, and they will appear here.'**
   String get gearEmptyHint;
 
   /// No description provided for @gearBikesHelp.
   ///
   /// In en, this message translates to:
-  /// **'You can only pick bikes imported from Strava. Adding parts, settings, records, and CSV apply to the selected bike. The initial parts are the same.'**
+  /// **'You can pick bikes imported from Strava or added by name. Adding parts, settings, records, and CSV apply to the selected bike. The initial parts are the same.'**
   String get gearBikesHelp;
+
+  /// No description provided for @addBike.
+  ///
+  /// In en, this message translates to:
+  /// **'Add bike'**
+  String get addBike;
+
+  /// No description provided for @bikeName.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get bikeName;
+
+  /// No description provided for @addBikeAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Add'**
+  String get addBikeAction;
+
+  /// No description provided for @bikeNameRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a name'**
+  String get bikeNameRequired;
 
   /// No description provided for @gearSelectHint.
   ///
@@ -839,13 +863,13 @@ abstract class AppLocalizations {
   /// No description provided for @connectStep3Help.
   ///
   /// In en, this message translates to:
-  /// **'On a phone, you return to the app after you approve. On a computer, Chrome opens. After you approve, a 127.0.0.1 page appears. You must close that page. If you don\'t, the connect button stays gray. On a computer the app will not come to the front. When this screen shows Connected and the button is green again, it worked. Import rides from Strava sync on Home.'**
+  /// **'On a phone, you return to the app after you approve. On a computer, Chrome opens. After you approve, a 127.0.0.1 page appears. You must close that page. If you don\'t, the connect button stays gray. On a computer the app will not come to the front. When this screen shows Connected and the button is green again, it worked. Add rides from Add ride on Home.'**
   String get connectStep3Help;
 
   /// No description provided for @connectStep3HelpIos.
   ///
   /// In en, this message translates to:
-  /// **'Tap Connect, then Continue when iPhone asks to open the web. If you are signed out, Strava’s login appears. If you are already signed in and have approved this app, it may return right away. Success is when this screen shows Connected and the button is green again. Import rides from Strava sync on Home.'**
+  /// **'Tap Connect, then Continue when iPhone asks to open the web. If you are signed out, Strava’s login appears. If you are already signed in and have approved this app, it may return right away. Success is when this screen shows Connected and the button is green again. Add rides from Add ride on Home.'**
   String get connectStep3HelpIos;
 
   /// No description provided for @connectStep4.
@@ -887,8 +911,68 @@ abstract class AppLocalizations {
   /// No description provided for @syncTitle.
   ///
   /// In en, this message translates to:
-  /// **'Strava sync'**
+  /// **'Add ride'**
   String get syncTitle;
+
+  /// No description provided for @selectedGearLine.
+  ///
+  /// In en, this message translates to:
+  /// **'Selected bike: {name}'**
+  String selectedGearLine(String name);
+
+  /// No description provided for @manualRideSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter by hand'**
+  String get manualRideSection;
+
+  /// No description provided for @importFromStrava.
+  ///
+  /// In en, this message translates to:
+  /// **'Import from Strava'**
+  String get importFromStrava;
+
+  /// No description provided for @notConnectedImportHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Not connected. Connect Strava in Settings.'**
+  String get notConnectedImportHint;
+
+  /// No description provided for @goToStravaConnect.
+  ///
+  /// In en, this message translates to:
+  /// **'Strava connect'**
+  String get goToStravaConnect;
+
+  /// No description provided for @rideDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get rideDate;
+
+  /// No description provided for @rideDistance.
+  ///
+  /// In en, this message translates to:
+  /// **'Distance'**
+  String get rideDistance;
+
+  /// No description provided for @needGearForRide.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a bike before logging a ride'**
+  String get needGearForRide;
+
+  /// No description provided for @invalidRideDistance.
+  ///
+  /// In en, this message translates to:
+  /// **'Distance must be greater than 0'**
+  String get invalidRideDistance;
+
+  /// No description provided for @rideRecorded.
+  ///
+  /// In en, this message translates to:
+  /// **'Ride saved.'**
+  String get rideRecorded;
 
   /// No description provided for @stravaStartDate.
   ///
@@ -1241,7 +1325,7 @@ abstract class AppLocalizations {
   /// No description provided for @csvNeedGear.
   ///
   /// In en, this message translates to:
-  /// **'Import bikes from Strava and select one to use this screen.'**
+  /// **'Select a bike to use this screen.'**
   String get csvNeedGear;
 
   /// No description provided for @skipCsvDuplicatesPreview.

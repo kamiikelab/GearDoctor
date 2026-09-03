@@ -104,6 +104,24 @@ class AppStore extends ChangeNotifier {
         fromInclusive: settings.lastSyncFrom,
       );
 
+  DateTime? get newestSelectedRideOn {
+    final gearId = settings.selectedGearId;
+    if (gearId == null) {
+      return null;
+    }
+    DateTime? newest;
+    for (final ride in rides) {
+      if (ride.gearId != gearId) {
+        continue;
+      }
+      final day = dateOnly(ride.startedOn);
+      if (newest == null || day.isAfter(newest)) {
+        newest = day;
+      }
+    }
+    return newest;
+  }
+
   DateTime? get oldestSelectedRideOn => oldestRideOn(
         rides: rides,
         gearId: settings.selectedGearId,
@@ -449,6 +467,53 @@ class AppStore extends ChangeNotifier {
     await refresh();
   }
 
+  Future<void> addGear(String name) async {
+    final trimmed = name.trim();
+    if (trimmed.isEmpty) {
+      throw StateError('名前を入力してください');
+    }
+    final repo = _requireRepo();
+    final id = newId('g');
+    await repo.upsertGear(Gear(id: id, name: trimmed));
+    await seedDefaultCatalogForGear(
+      repo,
+      id,
+      startDate: now,
+      locale: catalogLocale,
+    );
+    settings = settings.copyWith(selectedGearId: id);
+    await repo.saveSettings(settings);
+    await refresh();
+  }
+
+  Future<void> addManualRide({
+    required DateTime on,
+    required double distanceKm,
+  }) async {
+    final gearId = settings.selectedGearId;
+    if (gearId == null) {
+      throw StateError('ギアを選んでから走行を記録してください');
+    }
+    if (distanceKm <= 0 || distanceKm.isNaN) {
+      throw StateError('距離は 0 より大きい数にしてください');
+    }
+    final repo = _requireRepo();
+    if (usingDemoRides) {
+      await repo.deleteAllRides();
+      settings = settings.copyWith(clearSync: true);
+      await repo.saveSettings(settings);
+    }
+    await repo.upsertRide(
+      Ride(
+        id: newId('manual'),
+        gearId: gearId,
+        startedOn: dateOnly(on),
+        distanceKm: distanceKm,
+      ),
+    );
+    await refresh();
+  }
+
   Future<void> setLocaleCode(String? code) async {
     settings = code == null || code.isEmpty
         ? settings.copyWith(clearLocale: true)
@@ -510,7 +575,7 @@ class AppStore extends ChangeNotifier {
       return;
     }
     final repo = _requireRepo();
-    await repo.deleteAllRides();
+    await repo.deleteRidesWhere((ride) => !isManualRideId(ride.id));
     settings = settings.copyWith(clearSync: true).copyWith(lastSyncFrom: next);
     await repo.saveSettings(settings);
     await refresh();
