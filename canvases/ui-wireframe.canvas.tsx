@@ -511,10 +511,21 @@ function HomeScreen({
             gap: 8,
           }}
         >
-          <div onClick={() => go("gear")} style={{ cursor: "pointer", flex: 1 }}>
-            <Text weight="semibold">
-              ギア: {gear}（デモ）
-            </Text>
+          <div
+            onClick={() => go("gear")}
+            style={{
+              cursor: "pointer",
+              flex: 1,
+              padding: "8px 12px",
+              borderRadius: 8,
+              border: `1.5px solid ${t.accent.primary}`,
+              background: t.fill.secondary,
+              color: t.accent.primary,
+              fontWeight: 600,
+              fontSize: 14,
+            }}
+          >
+            ギア: {gear}（デモ）
           </div>
           <div onClick={() => go("sync")} style={{ cursor: "pointer" }}>
             <Text size="small" tone="secondary">
@@ -1118,7 +1129,7 @@ function ImportCsvScreen({
   gear: string;
 }) {
   return (
-    <Phone title="記録の CSV" onBack={() => go("gear")}>
+    <Phone title="交換記録の CSV" onBack={() => go("gear")}>
       <Stack gap={14}>
         <Text weight="semibold">{gear}（デモ）</Text>
         <Text size="small" tone="tertiary">
@@ -1159,7 +1170,7 @@ function ImportSettingsCsvScreen({
   gear: string;
 }) {
   return (
-    <Phone title="部品の CSV" onBack={() => go("gear")}>
+    <Phone title="部品登録の CSV" onBack={() => go("gear")}>
       <Stack gap={14}>
         <Text weight="semibold">{gear}（デモ）</Text>
         <Text size="small" tone="tertiary">
@@ -1270,6 +1281,9 @@ function StravaConnectScreen({ go }: { go: (screen: ScreenId) => void }) {
       <Stack gap={14}>
         <Stack gap={4}>
           <Text weight="semibold">未連携</Text>
+          <Text size="small" tone="secondary">
+            Strava 連携は任意です。
+          </Text>
         </Stack>
         <Stack gap={4}>
           <Text size="small" tone="secondary">
@@ -1289,7 +1303,7 @@ function StravaConnectScreen({ go }: { go: (screen: ScreenId) => void }) {
           <Text weight="semibold">連携方法</Text>
           <Text size="small">1. Strava の API 設定でアプリを作る。Callback Domain は触らなくてよい</Text>
           <Text size="small">2. Client ID と Client Secret を上に入れる。このアプリでは Access Token は使いません。</Text>
-          <Text size="small">3. 「連携する」を押す。「Webを開きます」と出たら続ける。連携ボタンが緑に戻り「連携済み」なら成功。走行はホームの「走行を追加」から</Text>
+          <Text size="small">3. 「連携する」を押す。「Webを開きます」と出たら続ける。連携ボタンが緑に戻り「連携済み」なら成功。走行記録の取得は「走行を追加」から</Text>
           <Text size="small">4. パソコンで Chrome が自動で開かないときだけ、許可用 URL をコピーして Chrome で開く</Text>
         </Stack>
       </Stack>
@@ -1339,8 +1353,8 @@ function GearScreen({
         <PhoneButton label="自転車を追加" variant="primary" onClick={() => go("add-gear")} />
         <PhoneButton label="自転車を削除" variant="ghost" onClick={() => go("gear")} />
         <PhoneButton label="部品を追加" variant="ghost" onClick={() => go("add")} />
-        <PhoneButton label="記録の CSV" variant="ghost" onClick={() => go("import-csv")} />
-        <PhoneButton label="部品の CSV" variant="ghost" onClick={() => go("import-settings")} />
+        <PhoneButton label="交換記録の CSV" variant="ghost" onClick={() => go("import-csv")} />
+        <PhoneButton label="部品登録の CSV" variant="ghost" onClick={() => go("import-settings")} />
         <PhoneButton label="表示をまとめる / 分ける" variant="ghost" onClick={() => go("split-merge")} />
       </Stack>
     </Phone>
@@ -1372,16 +1386,6 @@ function SettingsScreen({
   return (
     <Phone title="設定" onBack={() => go("home")}>
       <Stack gap={14}>
-        <PhoneButton label="走行を追加" variant="primary" onClick={() => go("sync")} />
-        <Stack gap={4}>
-          <Text size="small" tone="secondary">
-            ギア
-          </Text>
-          <Text size="small" tone="tertiary">
-            距離を計算する自転車と、そのギアの交換記録です。
-          </Text>
-        </Stack>
-        <PhoneButton label="ギア" variant="ghost" onClick={() => go("gear")} />
         <Stack gap={4}>
           <Text size="small" tone="secondary">
             初期化
@@ -1527,10 +1531,10 @@ export default function GearDoctorUiWireframe() {
           ギア
         </Pill>
         <Pill active={screen === "import-csv"} onClick={() => setScreen("import-csv")}>
-          記録の CSV
+          交換記録の CSV
         </Pill>
         <Pill active={screen === "import-settings"} onClick={() => setScreen("import-settings")}>
-          部品の CSV
+          部品登録の CSV
         </Pill>
         <Pill active={screen === "split-merge"} onClick={() => setScreen("split-merge")}>
           表示のまとめ
@@ -1552,7 +1556,7 @@ export default function GearDoctorUiWireframe() {
         <Stack gap={16}>
           <H2>決まったこと</H2>
           <Text>
-            下部タブなし。交換したは詳細画面。ホームの主ボタンは「走行を追加」。部品は登録名だけで管理し、追加に F/R の種別は付けない。左右の合体は表示のまとめだけ。走行は手入力が常に使え、Strava は連携したときだけ。デモのあいだは部品の追加・削除と CSV はエラーにし、先に走行を追加する。自転車の削除はギア画面。部品の削除は編集画面（解除後は初期18件も可）。
+            下部タブなし。交換したは詳細画面。ホームの主ボタンは「走行を追加」。ホームのギアは緑の枠ボタン。設定からギアと走行は出さない。部品は登録名だけで管理し、追加に F/R の種別は付けない。左右の合体は表示のまとめだけ。走行は手入力が常に使え、Strava は連携したときだけ。デモのあいだは部品の追加・削除と CSV はエラーにし、先に走行を追加する。自転車の削除はギア画面。部品の削除は編集画面（解除後は初期18件も可）。
           </Text>
           <Table
             headers={["画面", "上から下", "横並び"]}
@@ -1560,14 +1564,14 @@ export default function GearDoctorUiWireframe() {
               ["ホーム", "デモ案内 → ギアと走行の範囲 → 警告 → 部品 → 走行を追加", "ギア | 走行、R | F"],
               ["詳細", "距離 → バー → 交換日 → 操作 → 過去の交換記録", "交換した | 編集"],
               ["記録を編集", "日付 → メモ → 保存 → 削除", "なし（縦のみ）"],
-              ["ギア", "大きなギア名 → 自転車の選択 → 自転車を追加 / 自転車を削除 / 部品追加 / CSV / まとめ", "なし（縦のみ）"],
+              ["ギア", "大きなギア名 → 自転車の選択 → 自転車を追加 / 自転車を削除 / 部品追加 / 交換記録の CSV / 部品登録の CSV / まとめ", "なし（縦のみ）"],
               ["自転車を追加", "名前 → 追加する", "なし（縦のみ）"],
               ["部品を追加 / 編集", "登録名 → 周期 → 目安 → しきい値 → 保存 / 削除", "距離 | 月"],
-              ["記録の CSV", "ギア名 → 書き出し → 貼り付け → CSVを取り込み → 確定", "なし（縦のみ）"],
-              ["部品の CSV", "ギア名 → 書き出し → 貼り付け → CSVを取り込み → 確定", "なし（縦のみ）"],
+              ["交換記録の CSV", "ギア名 → 書き出し → 貼り付け → CSVを取り込み → 確定", "なし（縦のみ）"],
+              ["部品登録の CSV", "ギア名 → 書き出し → 貼り付け → CSVを取り込み → 確定", "なし（縦のみ）"],
               ["表示のまとめ", "2件選択 → どちらがF → 表示名", "なし（縦のみ）"],
               ["走行を追加", "手入力 → Strava から取り込む", "なし（縦のみ）"],
-              ["設定", "走行を追加へ → ギアへ → 初期化 → バージョン", "なし（縦のみ）"],
+              ["設定", "言語 → 初期化 → バージョン", "なし（縦のみ）"],
               ["Strava 連携", "状態 → ID/Secret → 連携 → 解除 → 連携方法", "なし（縦のみ）"],
             ]}
           />

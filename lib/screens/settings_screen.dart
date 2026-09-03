@@ -5,8 +5,6 @@ import '../l10n/app_localizations.dart';
 import '../state/app_store.dart';
 import '../strava/open_browser.dart';
 import '../widgets/widgets.dart';
-import 'gear_screen.dart';
-import 'sync_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key, required this.store});
@@ -51,34 +49,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 selected: localeCode == 'en',
                 title: l10n.languageEnglish,
                 onTap: () => widget.store.setLocaleCode('en'),
-              ),
-              const SizedBox(height: 16),
-              OutlinedButton(
-                onPressed: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute<void>(
-                      builder: (_) => SyncScreen(store: widget.store),
-                    ),
-                  );
-                },
-                child: Text(l10n.stravaSync),
-              ),
-              const SizedBox(height: 16),
-              Text(l10n.gear, style: Theme.of(context).textTheme.bodySmall),
-              Text(
-                l10n.gearHint,
-                style: Theme.of(context).textTheme.bodySmall,
-              ),
-              const SizedBox(height: 8),
-              OutlinedButton(
-                onPressed: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute<void>(
-                      builder: (_) => GearScreen(store: widget.store),
-                    ),
-                  );
-                },
-                child: Text(l10n.gear),
               ),
               const SizedBox(height: 16),
               Text(

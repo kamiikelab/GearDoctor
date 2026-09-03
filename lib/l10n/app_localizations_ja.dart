@@ -39,6 +39,9 @@ class AppLocalizationsJa extends AppLocalizations {
   String get notConnected => '未連携';
 
   @override
+  String get stravaOptional => 'Strava 連携は任意です。';
+
+  @override
   String get stravaHint => '連携は任意です。走行は手入力でも入れられます。';
 
   @override
@@ -225,10 +228,10 @@ class AppLocalizationsJa extends AppLocalizations {
   String get editPart => '部品を編集';
 
   @override
-  String get recordsCsv => '記録の CSV';
+  String get recordsCsv => '交換記録の CSV';
 
   @override
-  String get settingsCsv => '部品の CSV';
+  String get settingsCsv => '部品登録の CSV';
 
   @override
   String get displayGroups => '表示をまとめる / 分ける';
@@ -442,7 +445,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get connectStep1 => '1. Strava の API 設定でアプリを作る';
 
   @override
-  String get stravaPaidApi => 'Standard Tier の API は、Strava の有料サブスクが必要です。';
+  String get stravaPaidApi => 'Strava の API は、有料サブスクが必要です。';
 
   @override
   String get connectStep2 => '2. Client ID と Client Secret を上に入れる';
@@ -455,11 +458,11 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get connectStep3Help =>
-      'スマホでは許可するとアプリに戻ります。パソコンでは Chrome が自動で開きます。許可すると 127.0.0.1 に案内が出ます。その画面を閉じることが必須です。閉じないと、連携ボタンは灰色のままです。パソコンではアプリが手前に切り替わることはありません。この画面を見て、連携ボタンが緑に戻り「連携済み」になれば成功です。走行はホームの「走行を追加」から。';
+      'スマホでは許可するとアプリに戻ります。パソコンでは Chrome が自動で開きます。許可すると 127.0.0.1 に案内が出ます。その画面を閉じることが必須です。閉じないと、連携ボタンは灰色のままです。パソコンではアプリが手前に切り替わることはありません。この画面を見て、連携ボタンが緑に戻り「連携済み」になれば成功です。走行記録の取得は「走行を追加」から。';
 
   @override
   String get connectStep3HelpIos =>
-      '「連携する」を押すと、「Webを開きます」と出ます。続けてください。ログインしていないときは Strava のログインが出ます。すでにログインしてこのアプリを許可していると、すぐ戻ることがあります。この画面が「連携済み」になり、連携ボタンが緑に戻れば成功です。走行はホームの「走行を追加」から。';
+      '「連携する」を押すと、「Webを開きます」と出ます。続けてください。ログインしていないときは Strava のログインが出ます。すでにログインしてこのアプリを許可していると、すぐ戻ることがあります。この画面が「連携済み」になり、連携ボタンが緑に戻れば成功です。走行記録の取得は「走行を追加」から。';
 
   @override
   String get connectStep4 => '4. Chrome が自動で開かないとき';

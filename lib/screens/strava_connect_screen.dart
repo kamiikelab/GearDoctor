@@ -90,6 +90,13 @@ class _StravaConnectScreenState extends State<StravaConnectScreen> {
                 connected ? l10n.connected : l10n.notConnected,
                 style: Theme.of(context).textTheme.titleMedium,
               ),
+              if (!connected) ...[
+                const SizedBox(height: 4),
+                Text(
+                  l10n.stravaOptional,
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
+              ],
               if (athlete != null && athlete.isNotEmpty)
                 Text(athlete, style: Theme.of(context).textTheme.bodySmall),
               const SizedBox(height: 12),

@@ -65,6 +65,10 @@ void main() {
     expect(find.text('ブレーキパッド F'), findsOneWidget);
     expect(find.textContaining('ギア: ロード（デモ）'), findsOneWidget);
     expect(
+      find.widgetWithText(OutlinedButton, 'ギア: ロード（デモ）'),
+      findsOneWidget,
+    );
+    expect(
       find.textContaining('走行 2025-07-17〜2026-07-15（デモ）'),
       findsOneWidget,
     );
@@ -74,8 +78,8 @@ void main() {
     expect(find.text('自転車を追加'), findsOneWidget);
     expect(find.text('自転車を削除'), findsOneWidget);
     expect(find.text('部品を追加'), findsOneWidget);
-    expect(find.text('記録の CSV'), findsOneWidget);
-    expect(find.text('部品の CSV'), findsOneWidget);
+    expect(find.text('交換記録の CSV'), findsOneWidget);
+    expect(find.text('部品登録の CSV'), findsOneWidget);
     expect(find.text('表示をまとめる / 分ける'), findsOneWidget);
 
     await tester.tap(find.text('部品を追加'));
@@ -88,13 +92,13 @@ void main() {
     await tester.tap(find.text('OK'));
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text('記録の CSV'));
+    await tester.tap(find.text('交換記録の CSV'));
     await tester.pumpAndSettle();
     expect(find.text('先に走行を追加してください'), findsOneWidget);
     await tester.tap(find.text('OK'));
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text('部品の CSV'));
+    await tester.tap(find.text('部品登録の CSV'));
     await tester.pumpAndSettle();
     expect(find.text('先に走行を追加してください'), findsOneWidget);
     await tester.tap(find.text('OK'));
@@ -161,12 +165,12 @@ void main() {
 
     await tester.pumpWidget(l10nApp(home: SettingsScreen(store: store)));
     await tester.pumpAndSettle();
-    expect(find.text('走行を追加'), findsOneWidget);
-    expect(find.text('ギア'), findsWidgets);
+    expect(find.text('走行を追加'), findsNothing);
+    expect(find.text('ギア'), findsNothing);
     expect(find.text(appVersionLabel), findsOneWidget);
     expect(find.text('プライバシーポリシー'), findsOneWidget);
     expect(find.text('部品を追加'), findsNothing);
-    expect(find.text('記録の CSV'), findsNothing);
+    expect(find.text('交換記録の CSV'), findsNothing);
     await tester.tap(find.text('初期状態に戻す'));
     await tester.pumpAndSettle();
     expect(find.text('初期状態に戻しますか？'), findsOneWidget);
@@ -175,7 +179,9 @@ void main() {
     expect(store.parts.length, 18);
   });
 
-  testWidgets('settings opens add-ride, which opens Strava connect', (tester) async {
+  testWidgets('home add-ride opens Strava connect, gear button opens gear', (
+    tester,
+  ) async {
     tester.view.physicalSize = const Size(800, 4000);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.resetPhysicalSize);
@@ -187,7 +193,7 @@ void main() {
     );
     await tester.runAsync(store.load);
 
-    await tester.pumpWidget(l10nApp(home: SettingsScreen(store: store)));
+    await tester.pumpWidget(l10nApp(home: HomeScreen(store: store)));
     await tester.pumpAndSettle();
     expect(find.text('Strava 連携'), findsNothing);
     await tester.tap(find.text('走行を追加'));
@@ -196,6 +202,7 @@ void main() {
     await tester.tap(find.text('Strava 連携'));
     await tester.pumpAndSettle();
     expect(find.text('連携を解除'), findsOneWidget);
+    expect(find.text('Strava 連携は任意です。'), findsOneWidget);
     expect(find.text('連携方法'), findsOneWidget);
     expect(find.textContaining('Strava の API 設定でアプリを作る'), findsOneWidget);
     expect(find.textContaining('このアプリでは Access Token は使いません'), findsOneWidget);
@@ -210,10 +217,10 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.byType(BackButton));
     await tester.pumpAndSettle();
-    await tester.tap(find.widgetWithText(OutlinedButton, 'ギア'));
+    await tester.tap(find.widgetWithText(OutlinedButton, 'ギア: ロード（デモ）'));
     await tester.pumpAndSettle();
     expect(find.text('部品を追加'), findsOneWidget);
-    expect(find.text('記録の CSV'), findsOneWidget);
+    expect(find.text('交換記録の CSV'), findsOneWidget);
   });
 
   testWidgets('changing cycle resets custom limit to the new recommended value', (

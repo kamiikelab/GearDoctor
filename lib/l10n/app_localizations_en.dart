@@ -39,6 +39,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get notConnected => 'Not connected';
 
   @override
+  String get stravaOptional => 'Strava connection is optional.';
+
+  @override
   String get stravaHint =>
       'Connecting is optional. You can also enter rides by hand.';
 
@@ -232,10 +235,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get editPart => 'Edit part';
 
   @override
-  String get recordsCsv => 'Records CSV';
+  String get recordsCsv => 'Replacement records CSV';
 
   @override
-  String get settingsCsv => 'Parts CSV';
+  String get settingsCsv => 'Part registration CSV';
 
   @override
   String get displayGroups => 'Group / split display';
@@ -455,8 +458,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get connectStep1 => '1. Create an app in Strava API settings';
 
   @override
-  String get stravaPaidApi =>
-      'The Standard Tier API needs a paid Strava subscription.';
+  String get stravaPaidApi => 'The Strava API needs a paid subscription.';
 
   @override
   String get connectStep2 => '2. Enter Client ID and Client Secret above';
@@ -469,11 +471,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get connectStep3Help =>
-      'On a phone, you return to the app after you approve. On a computer, Chrome opens. After you approve, a 127.0.0.1 page appears. You must close that page. If you don\'t, the connect button stays gray. On a computer the app will not come to the front. When this screen shows Connected and the button is green again, it worked. Add rides from Add ride on Home.';
+      'On a phone, you return to the app after you approve. On a computer, Chrome opens. After you approve, a 127.0.0.1 page appears. You must close that page. If you don\'t, the connect button stays gray. On a computer the app will not come to the front. When this screen shows Connected and the button is green again, it worked. Get ride records from Add ride.';
 
   @override
   String get connectStep3HelpIos =>
-      'Tap Connect, then Continue when iPhone asks to open the web. If you are signed out, Strava’s login appears. If you are already signed in and have approved this app, it may return right away. Success is when this screen shows Connected and the button is green again. Add rides from Add ride on Home.';
+      'Tap Connect, then Continue when iPhone asks to open the web. If you are signed out, Strava’s login appears. If you are already signed in and have approved this app, it may return right away. Success is when this screen shows Connected and the button is green again. Get ride records from Add ride.';
 
   @override
   String get connectStep4 => '4. If Chrome doesn\'t open';

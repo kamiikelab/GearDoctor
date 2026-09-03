@@ -152,6 +152,12 @@ abstract class AppLocalizations {
   /// **'Not connected'**
   String get notConnected;
 
+  /// No description provided for @stravaOptional.
+  ///
+  /// In en, this message translates to:
+  /// **'Strava connection is optional.'**
+  String get stravaOptional;
+
   /// No description provided for @stravaHint.
   ///
   /// In en, this message translates to:
@@ -491,13 +497,13 @@ abstract class AppLocalizations {
   /// No description provided for @recordsCsv.
   ///
   /// In en, this message translates to:
-  /// **'Records CSV'**
+  /// **'Replacement records CSV'**
   String get recordsCsv;
 
   /// No description provided for @settingsCsv.
   ///
   /// In en, this message translates to:
-  /// **'Parts CSV'**
+  /// **'Part registration CSV'**
   String get settingsCsv;
 
   /// No description provided for @displayGroups.
@@ -887,7 +893,7 @@ abstract class AppLocalizations {
   /// No description provided for @stravaPaidApi.
   ///
   /// In en, this message translates to:
-  /// **'The Standard Tier API needs a paid Strava subscription.'**
+  /// **'The Strava API needs a paid subscription.'**
   String get stravaPaidApi;
 
   /// No description provided for @connectStep2.
@@ -911,13 +917,13 @@ abstract class AppLocalizations {
   /// No description provided for @connectStep3Help.
   ///
   /// In en, this message translates to:
-  /// **'On a phone, you return to the app after you approve. On a computer, Chrome opens. After you approve, a 127.0.0.1 page appears. You must close that page. If you don\'t, the connect button stays gray. On a computer the app will not come to the front. When this screen shows Connected and the button is green again, it worked. Add rides from Add ride on Home.'**
+  /// **'On a phone, you return to the app after you approve. On a computer, Chrome opens. After you approve, a 127.0.0.1 page appears. You must close that page. If you don\'t, the connect button stays gray. On a computer the app will not come to the front. When this screen shows Connected and the button is green again, it worked. Get ride records from Add ride.'**
   String get connectStep3Help;
 
   /// No description provided for @connectStep3HelpIos.
   ///
   /// In en, this message translates to:
-  /// **'Tap Connect, then Continue when iPhone asks to open the web. If you are signed out, Strava’s login appears. If you are already signed in and have approved this app, it may return right away. Success is when this screen shows Connected and the button is green again. Add rides from Add ride on Home.'**
+  /// **'Tap Connect, then Continue when iPhone asks to open the web. If you are signed out, Strava’s login appears. If you are already signed in and have approved this app, it may return right away. Success is when this screen shows Connected and the button is green again. Get ride records from Add ride.'**
   String get connectStep3HelpIos;
 
   /// No description provided for @connectStep4.
