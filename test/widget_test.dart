@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:gear_doctor/app.dart';
 import 'package:gear_doctor/app_version.dart';
@@ -116,6 +117,32 @@ void main() {
     expect(find.textContaining('連携は任意です'), findsOneWidget);
     expect(find.text('Strava 連携'), findsOneWidget);
     expect(find.text('Strava開始日を変更'), findsNothing);
+  });
+
+  testWidgets('home gear button uses text width on a phone-sized screen', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(390, 844);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    final store = AppStore(
+      database: AppDatabase(overridePath: '${dir.path}/app.db'),
+      now: parseDate('2026-08-23'),
+    );
+    await tester.runAsync(store.load);
+    await tester.pumpWidget(l10nApp(home: HomeScreen(store: store)));
+    await tester.pumpAndSettle();
+
+    final button = find.widgetWithText(OutlinedButton, 'ギア: ロード（デモ）');
+    expect(button, findsOneWidget);
+    expect(tester.getSize(button).width, lessThan(200));
+    expect(tester.getSize(button).width, greaterThan(120));
+    final text = tester.renderObject<RenderParagraph>(
+      find.descendant(of: button, matching: find.text('ギア: ロード（デモ）')),
+    );
+    expect(text.didExceedMaxLines, isFalse);
   });
 
   testWidgets('part detail shows replacement history under the replace button', (tester) async {

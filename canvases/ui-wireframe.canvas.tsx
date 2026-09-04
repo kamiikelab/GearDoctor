@@ -515,7 +515,8 @@ function HomeScreen({
             onClick={() => go("gear")}
             style={{
               cursor: "pointer",
-              flex: 1,
+              flexShrink: 0,
+              maxWidth: "70%",
               padding: "8px 12px",
               borderRadius: 8,
               border: `1.5px solid ${t.accent.primary}`,
@@ -523,11 +524,20 @@ function HomeScreen({
               color: t.accent.primary,
               fontWeight: 500,
               fontSize: 14,
+              whiteSpace: "nowrap",
             }}
           >
             ギア: {gear}（デモ）
           </div>
-          <div onClick={() => go("sync")} style={{ cursor: "pointer" }}>
+          <div
+            onClick={() => go("sync")}
+            style={{
+              cursor: "pointer",
+              flex: 1,
+              minWidth: 0,
+              textAlign: "right",
+            }}
+          >
             <Text size="small" tone="secondary">
               走行 2025-07-17〜2026-07-15（デモ）
             </Text>
