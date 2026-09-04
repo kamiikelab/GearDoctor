@@ -1220,32 +1220,71 @@ function SyncScreen({
   gear: string;
 }) {
   const [connected, setConnected] = useCanvasState("stravaConnected", false);
+  const [rideMode, setRideMode] = useCanvasState<"demo" | "manual" | "strava">(
+    "rideSourceMode",
+    "demo",
+  );
   const [rideDate, setRideDate] = useCanvasState("manualRideDate", "2026-09-03");
   const [rideKm, setRideKm] = useCanvasState("manualRideKm", "32");
+  const nextMode = () => {
+    setRideMode(rideMode === "demo" ? "manual" : rideMode === "manual" ? "strava" : "demo");
+  };
+  const stravaHint =
+    rideMode === "manual"
+      ? "手入力の走行があるあいだは、取り込むと消えます。"
+      : rideMode === "strava"
+        ? "Strava から取り込んだ走行は参照だけです。手入力はできません。"
+        : "連携は任意です。走行は手入力でも入れられます。";
   return (
     <Phone title="走行を追加" onBack={() => go("home")}>
       <Stack gap={14}>
-        <Text weight="semibold">手入力</Text>
-        <Text size="small" tone="tertiary">
-          選んでいるギア: {gear}
-        </Text>
-        <Stack gap={4}>
+        <div onClick={nextMode} style={{ cursor: "pointer" }}>
           <Text size="small" tone="secondary">
-            日付
+            {rideMode === "demo"
+              ? "デモ（タップで手書き）"
+              : rideMode === "manual"
+                ? "手書き（タップで Strava）"
+                : "Strava（タップでデモ）"}
           </Text>
-          <TextInput value={rideDate} onChange={setRideDate} />
-        </Stack>
-        <Stack gap={4}>
-          <Text size="small" tone="secondary">
-            距離
-          </Text>
-          <TextInput value={rideKm} onChange={setRideKm} placeholder="km" />
-        </Stack>
-        <PhoneButton label="記録する" variant="primary" onClick={() => go("home")} />
-        <div style={{ height: 8 }} />
+        </div>
+        {rideMode !== "strava" ? (
+          <Stack gap={14}>
+            <Text weight="semibold">手入力</Text>
+            <Text size="small" tone="tertiary">
+              選んでいるギア: {gear}
+            </Text>
+            <Stack gap={4}>
+              <Text size="small" tone="secondary">
+                日付
+              </Text>
+              <TextInput value={rideDate} onChange={setRideDate} />
+            </Stack>
+            <Stack gap={4}>
+              <Text size="small" tone="secondary">
+                距離
+              </Text>
+              <TextInput value={rideKm} onChange={setRideKm} placeholder="km" />
+            </Stack>
+            <PhoneButton label="記録する" variant="primary" onClick={() => go("home")} />
+          </Stack>
+        ) : null}
+        {rideMode !== "demo" ? (
+          <Stack gap={8}>
+            <Text weight="semibold">
+              {rideMode === "strava" ? "このギアの走行（参照のみ）" : "このギアの走行"}
+            </Text>
+            {rideMode === "strava" ? (
+              <Text size="small" tone="tertiary">
+                選んでいるギア: {gear}
+              </Text>
+            ) : null}
+            <Text>2026-09-03    32 km</Text>
+            {rideMode === "manual" ? <Text>2026-08-20    18 km</Text> : null}
+          </Stack>
+        ) : null}
         <Text weight="semibold">Strava から取り込む</Text>
         <Text size="small" tone="tertiary">
-          連携は任意です。走行は手入力でも入れられます。
+          {stravaHint}
         </Text>
         <div
           onClick={() => setConnected(!connected)}
@@ -1275,6 +1314,9 @@ function SyncScreen({
             </Text>
             <PhoneButton label="Strava開始日を変更" variant="ghost" onClick={() => go("home")} />
             <PhoneButton label="Strava 連携" variant="ghost" onClick={() => go("strava")} />
+            {rideMode === "strava" ? (
+              <PhoneButton label="手入力に切り替える" variant="ghost" onClick={() => setRideMode("manual")} />
+            ) : null}
           </Stack>
         ) : (
           <Stack gap={10}>
@@ -1570,7 +1612,7 @@ export default function GearDoctorUiWireframe() {
         <Stack gap={16}>
           <H2>決まったこと</H2>
           <Text>
-            下部タブなし。交換したは詳細画面。ホームの主ボタンは「走行を追加」。ホームのギアは緑の枠ボタン。設定からギアと走行は出さない。部品は登録名だけで管理し、追加に F/R の種別は付けない。左右の合体は表示のまとめだけ。走行は手入力が常に使え、Strava は連携したときだけ。デモのあいだは部品の追加・削除と CSV はエラーにし、先に走行を追加する。自転車の削除はギア画面。部品の削除は編集画面（解除後は初期18件も可）。
+            下部タブなし。交換したは詳細画面。ホームの主ボタンは「走行を追加」。ホームのギアは緑の枠ボタン。設定からギアと走行は出さない。部品は登録名だけで管理し、追加に F/R の種別は付けない。左右の合体は表示のまとめだけ。走行は手書きか Strava かアプリ全体で排他。手書きは一覧の修正・削除、Strava は参照のみ。デモのあいだは部品の追加・削除と CSV はエラーにし、先に走行を追加する。自転車の削除はギア画面。部品の削除は編集画面（解除後は初期18件も可）。
           </Text>
           <Table
             headers={["画面", "上から下", "横並び"]}
@@ -1584,7 +1626,7 @@ export default function GearDoctorUiWireframe() {
               ["交換記録の CSV", "ギア名 → 書き出し → 貼り付け → CSVを取り込み → 確定", "なし（縦のみ）"],
               ["部品登録の CSV", "ギア名 → 書き出し → 貼り付け → CSVを取り込み → 確定", "なし（縦のみ）"],
               ["表示のまとめ", "2件選択 → どちらがF → 表示名", "なし（縦のみ）"],
-              ["走行を追加", "手入力 → Strava から取り込む", "なし（縦のみ）"],
+              ["走行を追加", "手入力または走行一覧 → Strava から取り込む", "なし（縦のみ）"],
               ["設定", "言語 → 初期化 → バージョン", "なし（縦のみ）"],
               ["Strava 連携", "状態 → ID/Secret → 連携 → 解除 → 連携方法", "なし（縦のみ）"],
             ]}
@@ -1606,8 +1648,8 @@ export default function GearDoctorUiWireframe() {
           </Callout>
 
           <H3>走行を追加</H3>
-          <Callout tone="info" title="手入力は常に、Strava は連携時だけ">
-            上段は日付と距離。下段の期間ボタンは連携したときだけ押せる。未連携は灰色。連携は任意で、同じ画面の「Strava 連携」から開く。
+          <Callout tone="info" title="手書きと Strava は排他">
+            アプリ全体でどちらか一方。手書きは一覧の修正・削除。Strava は参照と取り込みだけ。切り替えは確認のうえ、今の出どころの走行を消す。
           </Callout>
 
           <Card>

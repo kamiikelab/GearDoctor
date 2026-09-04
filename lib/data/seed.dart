@@ -20,6 +20,8 @@ bool isDemoRideId(String id) => id.startsWith('ride_');
 
 bool isManualRideId(String id) => id.startsWith('manual_');
 
+bool isStravaRideId(String id) => !isDemoRideId(id) && !isManualRideId(id);
+
 class DemoRequiresSyncException implements Exception {
   const DemoRequiresSyncException();
 

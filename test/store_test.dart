@@ -707,6 +707,115 @@ $settingsCsvHeader
     expect(store.partById('p_after_ride'), isNotNull);
   });
 
+  test('manual ride can be updated and deleted', () async {
+    final store = await openStore();
+    await store.addManualRide(on: parseDate('2026-08-23'), distanceKm: 32);
+    expect(store.settings.rideSource, RideSource.manual);
+    final id = store.rides.single.id;
+
+    await store.updateManualRide(
+      id: id,
+      on: parseDate('2026-08-20'),
+      distanceKm: 18,
+    );
+    expect(store.rides.single.distanceKm, 18);
+    expect(formatDate(store.rides.single.startedOn), '2026-08-20');
+
+    await store.deleteManualRide(id);
+    expect(store.rides, isEmpty);
+    expect(store.settings.rideSource, RideSource.manual);
+  });
+
+  test('syncForward after a manual ride deletes hand-entered rides', () async {
+    final store = await openStore();
+    await store.addGear('My Bike');
+    await store.addManualRide(on: parseDate('2026-08-23'), distanceKm: 32);
+    expect(store.rides.single.gearId, startsWith('g_'));
+    await store.saveStravaAuth(
+      StravaAuthResult(
+        accessToken: 'access-1',
+        refreshToken: 'refresh-1',
+        expiresAt: DateTime.utc(2030, 1, 1),
+        athleteId: '42',
+        athleteName: 'Ken Rider',
+        bikes: const [Gear(id: 'b1', name: 'Tarmac')],
+      ),
+    );
+    await store.changeSyncStart(parseDate('2025-07-17'));
+    expect(store.rides.single.id, startsWith('manual_'));
+
+    final client = MockClient((request) async {
+      if (request.url.path == '/api/v3/athlete') {
+        return http.Response(
+          '{"id":42,"bikes":[{"id":"b1","name":"Tarmac"}]}',
+          200,
+          headers: {'content-type': 'application/json'},
+        );
+      }
+      if (request.url.path == '/api/v3/athlete/activities') {
+        return http.Response(
+          jsonEncode([
+            {
+              'id': 99,
+              'sport_type': 'Ride',
+              'distance': 15000,
+              'start_date': '2025-08-01T08:00:00Z',
+              'gear_id': 'b1',
+            },
+          ]),
+          200,
+          headers: {'content-type': 'application/json'},
+        );
+      }
+      fail('unexpected ${request.method} ${request.url}');
+    });
+
+    await store.syncForward(months: 1, client: client);
+    expect(store.rides.any((ride) => isManualRideId(ride.id)), isFalse);
+    expect(store.rides.single.id, '99');
+    expect(store.settings.rideSource, RideSource.strava);
+    await expectLater(
+      store.addManualRide(on: parseDate('2026-08-24'), distanceKm: 10),
+      throwsStateError,
+    );
+  });
+
+  test('switchToManualRides deletes Strava rides', () async {
+    final store = await openStore();
+    await store.convertDemoRidesForTest();
+    expect(store.settings.rideSource, RideSource.strava);
+    expect(store.rides, isNotEmpty);
+
+    await store.switchToManualRides();
+    expect(store.settings.rideSource, RideSource.manual);
+    expect(store.rides, isEmpty);
+    expect(store.settings.lastSyncFrom, isNull);
+
+    await store.addManualRide(on: parseDate('2026-08-23'), distanceKm: 12);
+    expect(store.rides.single.distanceKm, 12);
+  });
+
+  test('mixed rides backfill keeps manuals and drops Strava', () async {
+    final store = await openStore();
+    await store.addManualRide(on: parseDate('2026-08-23'), distanceKm: 32);
+    final db = await AppDatabase(overridePath: '${dir.path}/app.db').instance;
+    final repo = AppRepository(db);
+    await repo.upsertRide(
+      Ride(
+        id: '99',
+        gearId: 'g_road',
+        startedOn: parseDate('2026-08-01'),
+        distanceKm: 15,
+      ),
+    );
+    await repo.saveSettings(store.settings.copyWith(clearRideSource: true));
+
+    final again = await openStore();
+    expect(again.settings.rideSource, RideSource.manual);
+    expect(again.rides.every((ride) => isManualRideId(ride.id)), isTrue);
+    expect(again.rides.any((ride) => ride.id == '99'), isFalse);
+  });
+
   test('addGear creates a named bike with default parts', () async {
     final store = await openStore();
     await store.addGear('My Bike');

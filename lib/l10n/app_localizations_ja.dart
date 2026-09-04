@@ -523,6 +523,54 @@ class AppLocalizationsJa extends AppLocalizations {
   String get rideRecorded => '走行を記録しました。';
 
   @override
+  String get rideUpdated => '走行を保存しました。';
+
+  @override
+  String get rideDeleted => '走行を消しました。';
+
+  @override
+  String get gearRidesSection => 'このギアの走行';
+
+  @override
+  String get gearRidesReadOnly => 'このギアの走行（参照のみ）';
+
+  @override
+  String get noGearRides => 'このギアの走行はまだありません。';
+
+  @override
+  String get stravaHintManual => '手入力の走行があるあいだは、取り込むと消えます。';
+
+  @override
+  String get stravaHintStrava => 'Strava から取り込んだ走行は参照だけです。手入力はできません。';
+
+  @override
+  String get switchToStravaTitle => 'Strava に切り替えますか？';
+
+  @override
+  String get switchToStravaConfirm =>
+      '手入力の走行をすべて消してから取り込みます。自転車をまたいでも手入力は残りません。';
+
+  @override
+  String get switchToManual => '手入力に切り替える';
+
+  @override
+  String get switchToManualTitle => '手入力に切り替えますか？';
+
+  @override
+  String get switchToManualConfirm => 'Strava から取り込んだ走行をすべて消します。連携は解除しません。';
+
+  @override
+  String get deleteRideTitle => 'この走行を消しますか？';
+
+  @override
+  String deleteRideConfirm(String date, String km) {
+    return '$date の $km km を消します。';
+  }
+
+  @override
+  String get cancelEditRide => '編集をやめる';
+
+  @override
   String stravaStartDate(String value) {
     return 'Strava開始日  $value';
   }

@@ -257,6 +257,27 @@
   "needGearForRide": "Select a bike before logging a ride",
   "invalidRideDistance": "Distance must be greater than 0",
   "rideRecorded": "Ride saved.",
+  "rideUpdated": "Ride updated.",
+  "rideDeleted": "Ride deleted.",
+  "gearRidesSection": "Rides on this bike",
+  "gearRidesReadOnly": "Rides on this bike (view only)",
+  "noGearRides": "No rides on this bike yet.",
+  "stravaHintManual": "Importing from Strava deletes all hand-entered rides.",
+  "stravaHintStrava": "Strava rides are view only. You cannot enter rides by hand.",
+  "switchToStravaTitle": "Switch to Strava?",
+  "switchToStravaConfirm": "All hand-entered rides will be deleted, then imported. This applies to every bike.",
+  "switchToManual": "Switch to hand entry",
+  "switchToManualTitle": "Switch to hand entry?",
+  "switchToManualConfirm": "All rides imported from Strava will be deleted. The Strava connection stays.",
+  "deleteRideTitle": "Delete this ride?",
+  "deleteRideConfirm": "Delete {km} km on {date}.",
+  "@deleteRideConfirm": {
+    "placeholders": {
+      "date": {"type": "String"},
+      "km": {"type": "String"}
+    }
+  },
+  "cancelEditRide": "Cancel edit",
   "stravaStartDate": "Strava start date  {value}",
   "@stravaStartDate": {
     "placeholders": {

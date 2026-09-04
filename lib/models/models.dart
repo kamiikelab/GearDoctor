@@ -142,6 +142,16 @@ class Ride {
   final double distanceKm;
 }
 
+enum RideSource { manual, strava }
+
+RideSource? rideSourceFromName(String? value) {
+  return switch (value) {
+    'manual' => RideSource.manual,
+    'strava' => RideSource.strava,
+    _ => null,
+  };
+}
+
 class AppSettings {
   const AppSettings({
     this.selectedGearId,
@@ -155,6 +165,7 @@ class AppSettings {
     this.stravaAthleteId,
     this.stravaAthleteName,
     this.localeCode,
+    this.rideSource,
   });
 
   final String? selectedGearId;
@@ -171,6 +182,9 @@ class AppSettings {
   /// `null` follows the device language. `ja` or `en` forces that language.
   final String? localeCode;
 
+  /// `null` is demo / not yet chosen. App-wide: manual or Strava, never mixed.
+  final RideSource? rideSource;
+
   bool get stravaConnected =>
       stravaAccessToken != null && stravaAccessToken!.isNotEmpty;
 
@@ -186,11 +200,13 @@ class AppSettings {
     String? stravaAthleteId,
     String? stravaAthleteName,
     String? localeCode,
+    RideSource? rideSource,
     bool clearGear = false,
     bool clearSync = false,
     bool clearTokens = false,
     bool clearClient = false,
     bool clearLocale = false,
+    bool clearRideSource = false,
   }) {
     return AppSettings(
       selectedGearId: clearGear ? null : (selectedGearId ?? this.selectedGearId),
@@ -218,6 +234,7 @@ class AppSettings {
           ? null
           : (stravaAthleteName ?? this.stravaAthleteName),
       localeCode: clearLocale ? null : (localeCode ?? this.localeCode),
+      rideSource: clearRideSource ? null : (rideSource ?? this.rideSource),
     );
   }
 }

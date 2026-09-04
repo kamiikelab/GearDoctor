@@ -13,6 +13,7 @@ import 'package:gear_doctor/screens/gear_screen.dart';
 import 'package:gear_doctor/screens/home_screen.dart';
 import 'package:gear_doctor/screens/part_detail_screen.dart';
 import 'package:gear_doctor/screens/settings_screen.dart';
+import 'package:gear_doctor/screens/sync_screen.dart';
 import 'package:gear_doctor/state/app_store.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
@@ -114,6 +115,69 @@ void main() {
     expect(find.textContaining('連携は任意です'), findsOneWidget);
     expect(find.text('Strava 連携'), findsOneWidget);
     expect(find.text('Strava開始日を変更'), findsNothing);
+    expect(find.text('このギアの走行'), findsNothing);
+  });
+
+  testWidgets('manual rides can be listed, edited, and deleted', (tester) async {
+    tester.view.physicalSize = const Size(800, 4000);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    final store = AppStore(
+      database: AppDatabase(overridePath: '${dir.path}/app.db'),
+      now: parseDate('2026-08-23'),
+    );
+    await tester.runAsync(store.load);
+    await tester.runAsync(
+      () => store.addManualRide(on: parseDate('2026-08-23'), distanceKm: 32),
+    );
+
+    await tester.pumpWidget(l10nApp(home: SyncScreen(store: store)));
+    await tester.pumpAndSettle();
+    expect(find.text('手入力'), findsOneWidget);
+    expect(find.text('記録する'), findsOneWidget);
+    expect(find.text('このギアの走行'), findsOneWidget);
+    expect(find.text('2026-08-23    32 km'), findsOneWidget);
+    expect(find.textContaining('連携は任意です'), findsNothing);
+    expect(find.textContaining('取り込むと消えます'), findsOneWidget);
+
+    await tester.tap(find.text('2026-08-23    32 km'));
+    await tester.pumpAndSettle();
+    expect(find.text('保存'), findsOneWidget);
+
+    await tester.tap(find.byIcon(Icons.delete_outline));
+    await tester.pumpAndSettle();
+    expect(find.text('この走行を消しますか？'), findsOneWidget);
+    await tester.tap(find.text('キャンセル'));
+    await tester.pumpAndSettle();
+    final id = store.rides.single.id;
+    await tester.runAsync(() => store.deleteManualRide(id));
+    await tester.pumpAndSettle();
+    expect(store.rides, isEmpty);
+    expect(find.text('このギアの走行はまだありません。'), findsOneWidget);
+  });
+
+  testWidgets('strava mode hides the hand-entry form', (tester) async {
+    tester.view.physicalSize = const Size(800, 4000);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    final store = AppStore(
+      database: AppDatabase(overridePath: '${dir.path}/app.db'),
+      now: parseDate('2026-08-23'),
+    );
+    await tester.runAsync(store.load);
+    await tester.runAsync(store.convertDemoRidesForTest);
+
+    await tester.pumpWidget(l10nApp(home: SyncScreen(store: store)));
+    await tester.pumpAndSettle();
+    expect(find.text('手入力'), findsNothing);
+    expect(find.text('記録する'), findsNothing);
+    expect(find.text('このギアの走行（参照のみ）'), findsOneWidget);
+    expect(find.text('手入力に切り替える'), findsOneWidget);
+    expect(find.byIcon(Icons.delete_outline), findsNothing);
   });
 
   testWidgets('home gear button uses text width on a phone-sized screen', (

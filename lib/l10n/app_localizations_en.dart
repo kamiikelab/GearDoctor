@@ -537,6 +537,57 @@ class AppLocalizationsEn extends AppLocalizations {
   String get rideRecorded => 'Ride saved.';
 
   @override
+  String get rideUpdated => 'Ride updated.';
+
+  @override
+  String get rideDeleted => 'Ride deleted.';
+
+  @override
+  String get gearRidesSection => 'Rides on this bike';
+
+  @override
+  String get gearRidesReadOnly => 'Rides on this bike (view only)';
+
+  @override
+  String get noGearRides => 'No rides on this bike yet.';
+
+  @override
+  String get stravaHintManual =>
+      'Importing from Strava deletes all hand-entered rides.';
+
+  @override
+  String get stravaHintStrava =>
+      'Strava rides are view only. You cannot enter rides by hand.';
+
+  @override
+  String get switchToStravaTitle => 'Switch to Strava?';
+
+  @override
+  String get switchToStravaConfirm =>
+      'All hand-entered rides will be deleted, then imported. This applies to every bike.';
+
+  @override
+  String get switchToManual => 'Switch to hand entry';
+
+  @override
+  String get switchToManualTitle => 'Switch to hand entry?';
+
+  @override
+  String get switchToManualConfirm =>
+      'All rides imported from Strava will be deleted. The Strava connection stays.';
+
+  @override
+  String get deleteRideTitle => 'Delete this ride?';
+
+  @override
+  String deleteRideConfirm(String date, String km) {
+    return 'Delete $km km on $date.';
+  }
+
+  @override
+  String get cancelEditRide => 'Cancel edit';
+
+  @override
   String stravaStartDate(String value) {
     return 'Strava start date  $value';
   }

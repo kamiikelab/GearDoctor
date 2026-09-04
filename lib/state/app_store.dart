@@ -54,6 +54,22 @@ class AppStore extends ChangeNotifier {
 
   bool get usingDemoRides => rides.any((ride) => isDemoRideId(ride.id));
 
+  bool get isManualRideMode => settings.rideSource == RideSource.manual;
+
+  bool get isStravaRideMode => settings.rideSource == RideSource.strava;
+
+  List<Ride> get selectedGearRides {
+    final gearId = settings.selectedGearId;
+    if (gearId == null) {
+      return const [];
+    }
+    final selected = rides
+        .where((ride) => ride.gearId == gearId && !isDemoRideId(ride.id))
+        .toList();
+    selected.sort((a, b) => b.startedOn.compareTo(a.startedOn));
+    return selected;
+  }
+
   Future<void> load() async {
     loading = true;
     error = null;
@@ -95,8 +111,31 @@ class AppStore extends ChangeNotifier {
     parts = gearId == null ? [] : await repo.loadParts(gearId: gearId);
     groups = gearId == null ? [] : await repo.loadGroups(gearId: gearId);
     replacements = await repo.loadReplacements();
+    await _backfillRideSourceIfNeeded();
     loading = false;
     notifyListeners();
+  }
+
+  Future<void> _backfillRideSourceIfNeeded() async {
+    if (settings.rideSource != null || usingDemoRides) {
+      return;
+    }
+    final hasManual = rides.any((ride) => isManualRideId(ride.id));
+    final hasStrava = rides.any((ride) => isStravaRideId(ride.id));
+    if (!hasManual && !hasStrava) {
+      return;
+    }
+    final repo = _requireRepo();
+    if (hasManual) {
+      if (hasStrava) {
+        await repo.deleteRidesWhere((ride) => isStravaRideId(ride.id));
+        rides = await repo.loadRides();
+      }
+      settings = settings.copyWith(rideSource: RideSource.manual);
+    } else {
+      settings = settings.copyWith(rideSource: RideSource.strava);
+    }
+    await repo.saveSettings(settings);
   }
 
   DateTime? get newestSyncedOn => newestRideOn(
@@ -507,6 +546,7 @@ class AppStore extends ChangeNotifier {
     required DateTime on,
     required double distanceKm,
   }) async {
+    _ensureCanEditManualRides();
     final gearId = settings.selectedGearId;
     if (gearId == null) {
       throw StateError('ギアを選んでから走行を記録してください');
@@ -518,8 +558,9 @@ class AppStore extends ChangeNotifier {
     if (usingDemoRides) {
       await repo.deleteAllRides();
       settings = settings.copyWith(clearSync: true);
-      await repo.saveSettings(settings);
     }
+    settings = settings.copyWith(rideSource: RideSource.manual);
+    await repo.saveSettings(settings);
     await repo.upsertRide(
       Ride(
         id: newId('manual'),
@@ -529,6 +570,74 @@ class AppStore extends ChangeNotifier {
       ),
     );
     await refresh();
+  }
+
+  Future<void> updateManualRide({
+    required String id,
+    required DateTime on,
+    required double distanceKm,
+  }) async {
+    _ensureCanEditManualRides();
+    if (!isManualRideId(id)) {
+      throw StateError('Strava の走行は直せません');
+    }
+    final gearId = settings.selectedGearId;
+    if (gearId == null) {
+      throw StateError('ギアを選んでから走行を記録してください');
+    }
+    if (distanceKm <= 0 || distanceKm.isNaN) {
+      throw StateError('距離は 0 より大きい数にしてください');
+    }
+    final current = rides.where((ride) => ride.id == id);
+    if (current.isEmpty || current.first.gearId != gearId) {
+      throw StateError('このギアの走行ではありません');
+    }
+    await _requireRepo().upsertRide(
+      Ride(
+        id: id,
+        gearId: gearId,
+        startedOn: dateOnly(on),
+        distanceKm: distanceKm,
+      ),
+    );
+    await refresh();
+  }
+
+  Future<void> deleteManualRide(String id) async {
+    _ensureCanEditManualRides();
+    if (!isManualRideId(id)) {
+      throw StateError('Strava の走行は消せません');
+    }
+    final gearId = settings.selectedGearId;
+    if (gearId == null) {
+      throw StateError('ギアを選んでから走行を記録してください');
+    }
+    final current = rides.where((ride) => ride.id == id);
+    if (current.isEmpty || current.first.gearId != gearId) {
+      throw StateError('このギアの走行ではありません');
+    }
+    await _requireRepo().deleteRidesWhere((ride) => ride.id == id);
+    await refresh();
+  }
+
+  Future<void> switchToManualRides() async {
+    if (usingDemoRides) {
+      throw StateError('デモのあいだは切り替えできません');
+    }
+    final repo = _requireRepo();
+    await repo.deleteRidesWhere((ride) => isStravaRideId(ride.id));
+    settings = settings.copyWith(
+      rideSource: RideSource.manual,
+      clearSync: true,
+    );
+    await repo.saveSettings(settings);
+    await refresh();
+  }
+
+  void _ensureCanEditManualRides() {
+    if (isStravaRideMode) {
+      throw StateError('Strava の走行があるときは手入力できません');
+    }
   }
 
   Future<void> deleteGear(String gearId) async {
@@ -608,7 +717,9 @@ class AppStore extends ChangeNotifier {
       return;
     }
     final repo = _requireRepo();
-    await repo.deleteRidesWhere((ride) => !isManualRideId(ride.id));
+    if (settings.rideSource != RideSource.manual) {
+      await repo.deleteAllRides();
+    }
     settings = settings.copyWith(clearSync: true).copyWith(lastSyncFrom: next);
     await repo.saveSettings(settings);
     await refresh();
@@ -651,6 +762,11 @@ class AppStore extends ChangeNotifier {
         await repo.deleteAllRides();
         rides = [];
       }
+      if (rides.any((ride) => isManualRideId(ride.id)) ||
+          settings.rideSource == RideSource.manual) {
+        await repo.deleteRidesWhere((ride) => isManualRideId(ride.id));
+        rides = rides.where((ride) => !isManualRideId(ride.id)).toList();
+      }
 
       final window = nextSyncWindow(
         startDate: start,
@@ -669,7 +785,10 @@ class AppStore extends ChangeNotifier {
       for (final ride in fetched) {
         await repo.upsertRide(ride);
       }
-      settings = settings.copyWith(lastSyncAt: window.toInclusive);
+      settings = settings.copyWith(
+        lastSyncAt: window.toInclusive,
+        rideSource: RideSource.strava,
+      );
       await repo.saveSettings(settings);
       await refresh();
       return StravaSyncSummary(

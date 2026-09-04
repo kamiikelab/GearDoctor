@@ -1028,6 +1028,96 @@ abstract class AppLocalizations {
   /// **'Ride saved.'**
   String get rideRecorded;
 
+  /// No description provided for @rideUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Ride updated.'**
+  String get rideUpdated;
+
+  /// No description provided for @rideDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Ride deleted.'**
+  String get rideDeleted;
+
+  /// No description provided for @gearRidesSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Rides on this bike'**
+  String get gearRidesSection;
+
+  /// No description provided for @gearRidesReadOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Rides on this bike (view only)'**
+  String get gearRidesReadOnly;
+
+  /// No description provided for @noGearRides.
+  ///
+  /// In en, this message translates to:
+  /// **'No rides on this bike yet.'**
+  String get noGearRides;
+
+  /// No description provided for @stravaHintManual.
+  ///
+  /// In en, this message translates to:
+  /// **'Importing from Strava deletes all hand-entered rides.'**
+  String get stravaHintManual;
+
+  /// No description provided for @stravaHintStrava.
+  ///
+  /// In en, this message translates to:
+  /// **'Strava rides are view only. You cannot enter rides by hand.'**
+  String get stravaHintStrava;
+
+  /// No description provided for @switchToStravaTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Switch to Strava?'**
+  String get switchToStravaTitle;
+
+  /// No description provided for @switchToStravaConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'All hand-entered rides will be deleted, then imported. This applies to every bike.'**
+  String get switchToStravaConfirm;
+
+  /// No description provided for @switchToManual.
+  ///
+  /// In en, this message translates to:
+  /// **'Switch to hand entry'**
+  String get switchToManual;
+
+  /// No description provided for @switchToManualTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Switch to hand entry?'**
+  String get switchToManualTitle;
+
+  /// No description provided for @switchToManualConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'All rides imported from Strava will be deleted. The Strava connection stays.'**
+  String get switchToManualConfirm;
+
+  /// No description provided for @deleteRideTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete this ride?'**
+  String get deleteRideTitle;
+
+  /// No description provided for @deleteRideConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete {km} km on {date}.'**
+  String deleteRideConfirm(String date, String km);
+
+  /// No description provided for @cancelEditRide.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel edit'**
+  String get cancelEditRide;
+
   /// No description provided for @stravaStartDate.
   ///
   /// In en, this message translates to:
