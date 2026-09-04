@@ -137,19 +137,26 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('手入力'), findsOneWidget);
     expect(find.text('記録する'), findsOneWidget);
-    expect(find.text('このギアの走行'), findsOneWidget);
-    expect(find.text('2026-08-23    32 km'), findsOneWidget);
+    expect(find.text('Strava から取り込む'), findsOneWidget);
+    expect(find.text('走行を確認'), findsOneWidget);
     expect(find.textContaining('連携は任意です'), findsNothing);
     expect(find.textContaining('取り込むと消えます'), findsOneWidget);
 
-    await tester.tap(find.text('2026-08-23    32 km'));
+    await tester.tap(find.text('走行を確認'));
+    await tester.pumpAndSettle();
+    expect(find.text('このギアの走行'), findsOneWidget);
+    expect(find.text('2026-08-23'), findsOneWidget);
+    expect(find.text('32 km'), findsOneWidget);
+
+    await tester.tap(find.text('2026-08-23'));
     await tester.pumpAndSettle();
     expect(find.text('保存'), findsOneWidget);
+    expect(find.text('この走行を削除'), findsOneWidget);
 
-    await tester.tap(find.byIcon(Icons.delete_outline));
+    await tester.tap(find.text('この走行を削除'));
     await tester.pumpAndSettle();
     expect(find.text('この走行を消しますか？'), findsOneWidget);
-    await tester.tap(find.text('キャンセル'));
+    await tester.tap(find.widgetWithText(TextButton, 'キャンセル'));
     await tester.pumpAndSettle();
     final id = store.rides.single.id;
     await tester.runAsync(() => store.deleteManualRide(id));
@@ -175,9 +182,15 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('手入力'), findsNothing);
     expect(find.text('記録する'), findsNothing);
-    expect(find.text('このギアの走行（参照のみ）'), findsOneWidget);
+    expect(find.text('Strava から取り込む'), findsOneWidget);
+    expect(find.text('走行を確認'), findsOneWidget);
     expect(find.text('手入力に切り替える'), findsOneWidget);
-    expect(find.byIcon(Icons.delete_outline), findsNothing);
+
+    await tester.tap(find.text('走行を確認'));
+    await tester.pumpAndSettle();
+    expect(find.text('このギアの走行（参照のみ）'), findsOneWidget);
+    expect(find.text('この走行を削除'), findsNothing);
+    expect(find.text('保存'), findsNothing);
   });
 
   testWidgets('home gear button uses text width on a phone-sized screen', (

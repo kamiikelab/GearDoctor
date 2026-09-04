@@ -4,10 +4,10 @@ import 'package:http/http.dart' as http;
 
 import '../domain/dates.dart';
 import '../l10n/app_localizations.dart';
-import '../models/models.dart';
 import '../state/app_store.dart';
 import '../strava/strava_oauth.dart';
 import '../widgets/widgets.dart';
+import 'ride_history_screen.dart';
 import 'strava_connect_screen.dart';
 
 class SyncScreen extends StatefulWidget {
@@ -22,7 +22,6 @@ class SyncScreen extends StatefulWidget {
 class _SyncScreenState extends State<SyncScreen> {
   String? _message;
   bool _busy = false;
-  String? _editingRideId;
   late DateTime _rideDate;
   late final TextEditingController _km;
   final _http = http.Client();
@@ -56,8 +55,6 @@ class _SyncScreenState extends State<SyncScreen> {
         final stravaMode = widget.store.isStravaRideMode;
         final manualMode = widget.store.isManualRideMode;
         final showForm = !stravaMode;
-        final showList = !widget.store.usingDemoRides;
-        final rides = widget.store.selectedGearRides;
         return Scaffold(
           appBar: AppBar(title: Text(l10n.syncTitle)),
           body: ListView(
@@ -106,63 +103,31 @@ class _SyncScreenState extends State<SyncScreen> {
                 const SizedBox(height: 12),
                 FilledButton(
                   onPressed: _busy ? null : _recordRide,
-                  child: Text(
-                    _editingRideId == null ? l10n.logReplacement : l10n.save,
-                  ),
+                  child: Text(l10n.logReplacement),
                 ),
-                if (_editingRideId != null) ...[
-                  const SizedBox(height: 8),
-                  OutlinedButton(
-                    onPressed: _busy ? null : _clearEdit,
-                    child: Text(l10n.cancelEditRide),
-                  ),
-                ],
                 const SizedBox(height: 24),
               ],
-              if (showList) ...[
+              if (stravaMode) ...[
                 Text(
-                  stravaMode ? l10n.gearRidesReadOnly : l10n.gearRidesSection,
-                  style: Theme.of(context).textTheme.titleMedium,
+                  l10n.selectedGearLine(gearName),
+                  style: Theme.of(context).textTheme.bodySmall,
                 ),
-                if (!showForm) ...[
-                  const SizedBox(height: 4),
-                  Text(
-                    l10n.selectedGearLine(gearName),
-                    style: Theme.of(context).textTheme.bodySmall,
-                  ),
-                ],
-                const SizedBox(height: 8),
-                if (rides.isEmpty)
-                  Text(
-                    l10n.noGearRides,
-                    style: Theme.of(context).textTheme.bodySmall,
-                  )
-                else
-                  ...rides.map((ride) {
-                    final label =
-                        '${formatDate(ride.startedOn)}    ${formatAmount(ride.distanceKm)} ${l10n.unitKm}';
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 4),
-                      child: ListTile(
-                        contentPadding: EdgeInsets.zero,
-                        title: Text(label),
-                        onTap: stravaMode || _busy
-                            ? null
-                            : () => _startEdit(ride),
-                        trailing: stravaMode
-                            ? null
-                            : IconButton(
-                                onPressed: _busy
-                                    ? null
-                                    : () => _deleteRide(ride),
-                                icon: const Icon(Icons.delete_outline),
-                                tooltip: l10n.deleteRideTitle,
-                              ),
-                      ),
-                    );
-                  }),
-                const SizedBox(height: 24),
+                const SizedBox(height: 12),
               ],
+              OutlinedButton(
+                onPressed: _busy
+                    ? null
+                    : () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute<void>(
+                            builder: (_) =>
+                                RideHistoryScreen(store: widget.store),
+                          ),
+                        );
+                      },
+                child: Text(l10n.viewRides),
+              ),
+              const SizedBox(height: 24),
               Text(
                 l10n.importFromStrava,
                 style: Theme.of(context).textTheme.titleMedium,
@@ -286,30 +251,6 @@ class _SyncScreenState extends State<SyncScreen> {
     });
   }
 
-  void _startEdit(Ride ride) {
-    setState(() {
-      _editingRideId = ride.id;
-      _rideDate = dateOnly(ride.startedOn);
-      _km.text = _kmFieldText(ride.distanceKm);
-      _message = null;
-    });
-  }
-
-  void _clearEdit() {
-    setState(() {
-      _editingRideId = null;
-      _rideDate = widget.store.now;
-      _km.clear();
-    });
-  }
-
-  String _kmFieldText(double km) {
-    if (km == km.roundToDouble()) {
-      return km.round().toString();
-    }
-    return km.toString();
-  }
-
   Future<void> _recordRide() async {
     final l10n = AppLocalizations.of(context);
     if (widget.store.selectedGear == null) {
@@ -326,67 +267,15 @@ class _SyncScreenState extends State<SyncScreen> {
       _message = null;
     });
     try {
-      final editingId = _editingRideId;
-      if (editingId == null) {
-        await widget.store.addManualRide(on: _rideDate, distanceKm: km);
-      } else {
-        await widget.store.updateManualRide(
-          id: editingId,
-          on: _rideDate,
-          distanceKm: km,
-        );
-      }
+      await widget.store.addManualRide(on: _rideDate, distanceKm: km);
       if (!mounted) {
         return;
       }
       setState(() {
         _busy = false;
-        _message = editingId == null ? l10n.rideRecorded : l10n.rideUpdated;
-        _editingRideId = null;
+        _message = l10n.rideRecorded;
         _km.clear();
         _rideDate = widget.store.now;
-      });
-    } catch (error) {
-      if (!mounted) {
-        return;
-      }
-      setState(() {
-        _busy = false;
-        _message = '$error';
-      });
-    }
-  }
-
-  Future<void> _deleteRide(Ride ride) async {
-    final l10n = AppLocalizations.of(context);
-    final confirmed = await _confirm(
-      title: l10n.deleteRideTitle,
-      body: l10n.deleteRideConfirm(
-        formatDate(ride.startedOn),
-        formatAmount(ride.distanceKm),
-      ),
-      action: l10n.deleteAndContinue,
-    );
-    if (confirmed != true || !mounted) {
-      return;
-    }
-    setState(() {
-      _busy = true;
-      _message = null;
-    });
-    try {
-      await widget.store.deleteManualRide(ride.id);
-      if (!mounted) {
-        return;
-      }
-      setState(() {
-        _busy = false;
-        _message = l10n.rideDeleted;
-        if (_editingRideId == ride.id) {
-          _editingRideId = null;
-          _km.clear();
-          _rideDate = widget.store.now;
-        }
       });
     } catch (error) {
       if (!mounted) {
@@ -434,7 +323,6 @@ class _SyncScreenState extends State<SyncScreen> {
       final newest = summary.newestRideOn;
       setState(() {
         _busy = false;
-        _editingRideId = null;
         _km.clear();
         _message = newest == null
             ? l10n.syncFetchedEmpty(
@@ -480,7 +368,6 @@ class _SyncScreenState extends State<SyncScreen> {
       }
       setState(() {
         _busy = false;
-        _editingRideId = null;
         _km.clear();
         _rideDate = widget.store.now;
       });

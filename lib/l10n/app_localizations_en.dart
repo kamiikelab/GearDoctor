@@ -543,6 +543,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get rideDeleted => 'Ride deleted.';
 
   @override
+  String get viewRides => 'View rides';
+
+  @override
+  String get rideHistoryHint => 'Tap a row to edit date, distance, or delete';
+
+  @override
+  String get deleteThisRide => 'Delete this ride';
+
+  @override
   String get gearRidesSection => 'Rides on this bike';
 
   @override

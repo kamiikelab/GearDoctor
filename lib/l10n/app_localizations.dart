@@ -1040,6 +1040,24 @@ abstract class AppLocalizations {
   /// **'Ride deleted.'**
   String get rideDeleted;
 
+  /// No description provided for @viewRides.
+  ///
+  /// In en, this message translates to:
+  /// **'View rides'**
+  String get viewRides;
+
+  /// No description provided for @rideHistoryHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap a row to edit date, distance, or delete'**
+  String get rideHistoryHint;
+
+  /// No description provided for @deleteThisRide.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete this ride'**
+  String get deleteThisRide;
+
   /// No description provided for @gearRidesSection.
   ///
   /// In en, this message translates to:

@@ -451,20 +451,86 @@ class ReplacementHistoryTable extends StatelessWidget {
     bool muted = false,
     VoidCallback? onTap,
   }) {
-    final style = header
-        ? Theme.of(context).textTheme.bodySmall
-        : Theme.of(context).textTheme.bodySmall?.copyWith(
-            color: muted
-                ? Theme.of(context).colorScheme.onSurfaceVariant
-                : null,
-          );
-    final child = Padding(
-      padding: const EdgeInsets.all(8),
-      child: Text(text, style: style),
+    return historyTableCell(
+      context,
+      text,
+      header: header,
+      muted: muted,
+      onTap: onTap,
     );
-    if (onTap == null) {
-      return child;
-    }
-    return TableRowInkWell(onTap: onTap, child: child);
   }
+}
+
+class RideHistoryTable extends StatelessWidget {
+  const RideHistoryTable({
+    super.key,
+    required this.rides,
+    this.onRowTap,
+  });
+
+  final List<Ride> rides;
+  final ValueChanged<Ride>? onRowTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final rows = [...rides]
+      ..sort((a, b) => a.startedOn.compareTo(b.startedOn));
+    return Table(
+      columnWidths: const {
+        0: FlexColumnWidth(1.0),
+        1: FlexColumnWidth(1.0),
+      },
+      children: [
+        TableRow(
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.surfaceContainerHighest,
+          ),
+          children: [
+            historyTableCell(context, l10n.rideDate, header: true),
+            historyTableCell(context, l10n.rideDistance, header: true),
+          ],
+        ),
+        for (final ride in rows)
+          TableRow(
+            children: [
+              historyTableCell(
+                context,
+                formatDate(ride.startedOn),
+                onTap: onRowTap == null ? null : () => onRowTap!(ride),
+              ),
+              historyTableCell(
+                context,
+                '${formatAmount(ride.distanceKm)} ${l10n.unitKm}',
+                onTap: onRowTap == null ? null : () => onRowTap!(ride),
+              ),
+            ],
+          ),
+      ],
+    );
+  }
+}
+
+Widget historyTableCell(
+  BuildContext context,
+  String text, {
+  bool header = false,
+  bool muted = false,
+  VoidCallback? onTap,
+}) {
+  final style = header
+      ? Theme.of(context).textTheme.bodySmall
+      : Theme.of(context).textTheme.bodySmall?.copyWith(
+          color: muted
+              ? Theme.of(context).colorScheme.onSurfaceVariant
+              : null,
+        );
+  final child = Padding(
+    padding: const EdgeInsets.all(8),
+    child: Text(text, style: style),
+  );
+  if (onTap == null) {
+    return child;
+  }
+  return TableRowInkWell(onTap: onTap, child: child);
 }

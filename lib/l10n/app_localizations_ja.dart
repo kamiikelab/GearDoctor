@@ -529,6 +529,15 @@ class AppLocalizationsJa extends AppLocalizations {
   String get rideDeleted => '走行を消しました。';
 
   @override
+  String get viewRides => '走行を確認';
+
+  @override
+  String get rideHistoryHint => '行をタップして日付・距離の修正や削除';
+
+  @override
+  String get deleteThisRide => 'この走行を削除';
+
+  @override
   String get gearRidesSection => 'このギアの走行';
 
   @override

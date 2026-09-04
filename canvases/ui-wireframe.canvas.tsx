@@ -21,7 +21,7 @@ import {
   useHostTheme,
 } from "cursor/canvas";
 
-type ScreenId = "home" | "detail" | "replace" | "edit-record" | "add" | "add-gear" | "split-merge" | "import-csv" | "import-settings" | "sync" | "strava" | "settings" | "gear";
+type ScreenId = "home" | "detail" | "replace" | "edit-record" | "add" | "add-gear" | "split-merge" | "import-csv" | "import-settings" | "sync" | "rides" | "strava" | "settings" | "gear";
 type Position = "rear" | "front" | "single";
 type LimitMode = "recommended" | "previousCycle" | "custom";
 type CycleKind = "distance" | "months";
@@ -1267,21 +1267,12 @@ function SyncScreen({
             </Stack>
             <PhoneButton label="記録する" variant="primary" onClick={() => go("home")} />
           </Stack>
-        ) : null}
-        {rideMode !== "demo" ? (
-          <Stack gap={8}>
-            <Text weight="semibold">
-              {rideMode === "strava" ? "このギアの走行（参照のみ）" : "このギアの走行"}
-            </Text>
-            {rideMode === "strava" ? (
-              <Text size="small" tone="tertiary">
-                選んでいるギア: {gear}
-              </Text>
-            ) : null}
-            <Text>2026-09-03    32 km</Text>
-            {rideMode === "manual" ? <Text>2026-08-20    18 km</Text> : null}
-          </Stack>
-        ) : null}
+        ) : (
+          <Text size="small" tone="tertiary">
+            選んでいるギア: {gear}
+          </Text>
+        )}
+        <PhoneButton label="走行を確認" variant="ghost" onClick={() => go("rides")} />
         <Text weight="semibold">Strava から取り込む</Text>
         <Text size="small" tone="tertiary">
           {stravaHint}
@@ -1326,6 +1317,77 @@ function SyncScreen({
             <PhoneButton label="Strava 連携" variant="ghost" onClick={() => go("strava")} />
           </Stack>
         )}
+      </Stack>
+    </Phone>
+  );
+}
+
+function RideHistoryScreen({
+  go,
+  gear,
+}: {
+  go: (screen: ScreenId) => void;
+  gear: string;
+}) {
+  const t = useHostTheme();
+  const [rideMode] = useCanvasState<"demo" | "manual" | "strava">(
+    "rideSourceMode",
+    "demo",
+  );
+  const readOnly = rideMode === "strava";
+  return (
+    <Phone title={readOnly ? "このギアの走行（参照のみ）" : "このギアの走行"} onBack={() => go("sync")}>
+      <Stack gap={10}>
+        <Text size="small" tone="tertiary">
+          選んでいるギア: {gear}
+        </Text>
+        {readOnly ? null : (
+          <Text size="small" tone="tertiary">
+            行をタップして日付・距離の修正や削除
+          </Text>
+        )}
+        <div
+          style={{
+            border: `1px solid ${t.stroke.secondary}`,
+            borderRadius: 8,
+            overflow: "hidden",
+          }}
+        >
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "1fr 1fr",
+              gap: 4,
+              padding: "6px 8px",
+              background: t.fill.tertiary,
+            }}
+          >
+            <Text size="small" tone="tertiary">
+              日付
+            </Text>
+            <Text size="small" tone="tertiary">
+              距離
+            </Text>
+          </div>
+          {[
+            { date: "2026-08-20", km: "18 km" },
+            { date: "2026-09-03", km: "32 km" },
+          ].map((row) => (
+            <div
+              key={row.date}
+              style={{
+                display: "grid",
+                gridTemplateColumns: "1fr 1fr",
+                gap: 4,
+                padding: 8,
+                borderTop: `1px solid ${t.stroke.tertiary}`,
+              }}
+            >
+              <Text size="small">{row.date}</Text>
+              <Text size="small">{row.km}</Text>
+            </div>
+          ))}
+        </div>
       </Stack>
     </Phone>
   );
@@ -1543,6 +1605,8 @@ export default function GearDoctorUiWireframe() {
       <AddGearScreen go={go} />
     ) : screen === "sync" ? (
       <SyncScreen go={go} gear={gear} />
+    ) : screen === "rides" ? (
+      <RideHistoryScreen go={go} gear={gear} />
     ) : screen === "import-csv" ? (
       <ImportCsvScreen go={go} gear={gear} />
     ) : screen === "import-settings" ? (
@@ -1598,6 +1662,9 @@ export default function GearDoctorUiWireframe() {
         <Pill active={screen === "sync"} onClick={() => setScreen("sync")}>
           走行を追加
         </Pill>
+        <Pill active={screen === "rides"} onClick={() => setScreen("rides")}>
+          走行を確認
+        </Pill>
         <Pill active={screen === "settings"} onClick={() => setScreen("settings")}>
           設定
         </Pill>
@@ -1612,7 +1679,7 @@ export default function GearDoctorUiWireframe() {
         <Stack gap={16}>
           <H2>決まったこと</H2>
           <Text>
-            下部タブなし。交換したは詳細画面。ホームの主ボタンは「走行を追加」。ホームのギアは緑の枠ボタン。設定からギアと走行は出さない。部品は登録名だけで管理し、追加に F/R の種別は付けない。左右の合体は表示のまとめだけ。走行は手書きか Strava かアプリ全体で排他。手書きは一覧の修正・削除、Strava は参照のみ。デモのあいだは部品の追加・削除と CSV はエラーにし、先に走行を追加する。自転車の削除はギア画面。部品の削除は編集画面（解除後は初期18件も可）。
+            下部タブなし。交換したは詳細画面。ホームの主ボタンは「走行を追加」。ホームのギアは緑の枠ボタン。設定からギアと走行は出さない。部品は登録名だけで管理し、追加に F/R の種別は付けない。左右の合体は表示のまとめだけ。走行は手書きか Strava かアプリ全体で排他。手入力と Strava は同じ画面。一覧は「走行を確認」の別画面で、表の大きさは交換記録と同じ。手書きは修正・削除、Strava は参照のみ。デモのあいだは部品の追加・削除と CSV はエラーにし、先に走行を追加する。自転車の削除はギア画面。部品の削除は編集画面（解除後は初期18件も可）。
           </Text>
           <Table
             headers={["画面", "上から下", "横並び"]}
@@ -1626,7 +1693,8 @@ export default function GearDoctorUiWireframe() {
               ["交換記録の CSV", "ギア名 → 書き出し → 貼り付け → CSVを取り込み → 確定", "なし（縦のみ）"],
               ["部品登録の CSV", "ギア名 → 書き出し → 貼り付け → CSVを取り込み → 確定", "なし（縦のみ）"],
               ["表示のまとめ", "2件選択 → どちらがF → 表示名", "なし（縦のみ）"],
-              ["走行を追加", "手入力または走行一覧 → Strava から取り込む", "なし（縦のみ）"],
+              ["走行を追加", "手入力 → 走行を確認 → Strava から取り込む", "なし（縦のみ）"],
+              ["走行を確認", "表（日付・距離）→ 手書きなら修正・削除", "なし（縦のみ）"],
               ["設定", "言語 → 初期化 → バージョン", "なし（縦のみ）"],
               ["Strava 連携", "状態 → ID/Secret → 連携 → 解除 → 連携方法", "なし（縦のみ）"],
             ]}
@@ -1649,7 +1717,7 @@ export default function GearDoctorUiWireframe() {
 
           <H3>走行を追加</H3>
           <Callout tone="info" title="手書きと Strava は排他">
-            アプリ全体でどちらか一方。手書きは一覧の修正・削除。Strava は参照と取り込みだけ。切り替えは確認のうえ、今の出どころの走行を消す。
+            アプリ全体でどちらか一方。手入力と取り込みは同じ画面。一覧は「走行を確認」で、交換記録と同じ大きさの表。手書きは修正・削除、Strava は参照だけ。切り替えは確認のうえ、今の出どころの走行を消す。
           </Callout>
 
           <Card>
