@@ -114,7 +114,8 @@ void main() {
     expect(find.text('Strava から取り込む'), findsOneWidget);
     expect(find.textContaining('連携は任意です'), findsOneWidget);
     expect(find.text('Strava 連携'), findsOneWidget);
-    expect(find.text('Strava開始日を変更'), findsNothing);
+    expect(find.text('前回から 1 年'), findsOneWidget);
+    expect(find.text('開始日を変更'), findsOneWidget);
     expect(find.text('このギアの走行'), findsNothing);
   });
 
@@ -140,7 +141,7 @@ void main() {
     expect(find.text('Strava から取り込む'), findsOneWidget);
     expect(find.text('走行を確認'), findsOneWidget);
     expect(find.textContaining('連携は任意です'), findsNothing);
-    expect(find.textContaining('取り込むと消えます'), findsOneWidget);
+    expect(find.text('手入力の走行記録は、取り込みで消えます。'), findsOneWidget);
 
     await tester.tap(find.text('走行を確認'));
     await tester.pumpAndSettle();

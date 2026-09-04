@@ -731,7 +731,7 @@ class AppStore extends ChangeNotifier {
   }) async {
     final start = settings.lastSyncFrom;
     if (start == null) {
-      throw StravaAuthException('先にStrava開始日を指定してください。');
+      throw StravaAuthException('先に開始日を指定してください。');
     }
     if (!settings.stravaConnected) {
       throw StravaAuthException('先に Strava 連携の画面から連携してください。');

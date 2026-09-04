@@ -1079,7 +1079,7 @@ abstract class AppLocalizations {
   /// No description provided for @stravaHintManual.
   ///
   /// In en, this message translates to:
-  /// **'Importing from Strava deletes all hand-entered rides.'**
+  /// **'Hand-entered rides are deleted when you import.'**
   String get stravaHintManual;
 
   /// No description provided for @stravaHintStrava.
@@ -1139,7 +1139,7 @@ abstract class AppLocalizations {
   /// No description provided for @stravaStartDate.
   ///
   /// In en, this message translates to:
-  /// **'Strava start date  {value}'**
+  /// **'Start date  {value}'**
   String stravaStartDate(String value);
 
   /// No description provided for @untilDate.
@@ -1151,7 +1151,7 @@ abstract class AppLocalizations {
   /// No description provided for @untilDateHelp.
   ///
   /// In en, this message translates to:
-  /// **'Through date is the newest ride on or after the Strava start date.'**
+  /// **'Through date is the newest ride on or after the start date.'**
   String get untilDateHelp;
 
   /// No description provided for @syncManualHelp.
@@ -1181,13 +1181,13 @@ abstract class AppLocalizations {
   /// No description provided for @changeStartDate.
   ///
   /// In en, this message translates to:
-  /// **'Change Strava start date'**
+  /// **'Change start date'**
   String get changeStartDate;
 
   /// No description provided for @specifyStartDate.
   ///
   /// In en, this message translates to:
-  /// **'Set Strava start date'**
+  /// **'Set start date'**
   String get specifyStartDate;
 
   /// No description provided for @startDateHelp.
@@ -1199,7 +1199,7 @@ abstract class AppLocalizations {
   /// No description provided for @needStartDate.
   ///
   /// In en, this message translates to:
-  /// **'Set a Strava start date first.'**
+  /// **'Set a start date first.'**
   String get needStartDate;
 
   /// No description provided for @needConnect.
@@ -1211,7 +1211,7 @@ abstract class AppLocalizations {
   /// No description provided for @changeStartTitle.
   ///
   /// In en, this message translates to:
-  /// **'Change Strava start date?'**
+  /// **'Change start date?'**
   String get changeStartTitle;
 
   /// No description provided for @changeStartBody.
@@ -1541,19 +1541,19 @@ abstract class AppLocalizations {
   /// No description provided for @startDateUnchanged.
   ///
   /// In en, this message translates to:
-  /// **'Strava start date is unchanged.'**
+  /// **'Start date is unchanged.'**
   String get startDateUnchanged;
 
   /// No description provided for @startDateChanged.
   ///
   /// In en, this message translates to:
-  /// **'Strava start date is now {date}. Ride data was cleared. Import again from here.'**
+  /// **'Start date is now {date}. Ride data was cleared. Import again from here.'**
   String startDateChanged(String date);
 
   /// No description provided for @changeStartConfirm.
   ///
   /// In en, this message translates to:
-  /// **'Set Strava start date to {date}.\n\nRides from the start date through the newest imported ride need to be complete. Changing only the start date later can leave gaps.\n\nAll imported rides will be deleted, then fetched again from the new start date.'**
+  /// **'Set start date to {date}.\n\nRides from the start date through the newest imported ride need to be complete. Changing only the start date later can leave gaps.\n\nAll imported rides will be deleted, then fetched again from the new start date.'**
   String changeStartConfirm(String date);
 
   /// No description provided for @pickTwoParts.

@@ -265,7 +265,7 @@
   "gearRidesSection": "Rides on this bike",
   "gearRidesReadOnly": "Rides on this bike (view only)",
   "noGearRides": "No rides on this bike yet.",
-  "stravaHintManual": "Importing from Strava deletes all hand-entered rides.",
+  "stravaHintManual": "Hand-entered rides are deleted when you import.",
   "stravaHintStrava": "Strava rides are view only. You cannot enter rides by hand.",
   "switchToStravaTitle": "Switch to Strava?",
   "switchToStravaConfirm": "All hand-entered rides will be deleted, then imported. This applies to every bike.",
@@ -281,7 +281,7 @@
     }
   },
   "cancelEditRide": "Cancel edit",
-  "stravaStartDate": "Strava start date  {value}",
+  "stravaStartDate": "Start date  {value}",
   "@stravaStartDate": {
     "placeholders": {
       "value": {"type": "String"}
@@ -293,17 +293,17 @@
       "value": {"type": "String"}
     }
   },
-  "untilDateHelp": "Through date is the newest ride on or after the Strava start date.",
+  "untilDateHelp": "Through date is the newest ride on or after the start date.",
   "syncManualHelp": "Pick a period and import. Nothing is fetched automatically.",
   "sync3months": "Last 3 months",
   "sync6months": "Last 6 months",
   "sync1year": "Last year",
-  "changeStartDate": "Change Strava start date",
-  "specifyStartDate": "Set Strava start date",
+  "changeStartDate": "Change start date",
+  "specifyStartDate": "Set start date",
   "startDateHelp": "Changing the start date clears imported rides and resets them. They are fetched again from the new date.",
-  "needStartDate": "Set a Strava start date first.",
+  "needStartDate": "Set a start date first.",
   "needConnect": "Connect from the Strava connect screen first.",
-  "changeStartTitle": "Change Strava start date?",
+  "changeStartTitle": "Change start date?",
   "changeStartBody": "Changing only the start date later can leave gaps.\n\nAll imported rides will be deleted, then fetched again from the new start date.",
   "deleteAndContinue": "Delete and continue",
   "dataRange": "Data range",
@@ -431,14 +431,14 @@
       "newest": {"type": "String"}
     }
   },
-  "startDateUnchanged": "Strava start date is unchanged.",
-  "startDateChanged": "Strava start date is now {date}. Ride data was cleared. Import again from here.",
+  "startDateUnchanged": "Start date is unchanged.",
+  "startDateChanged": "Start date is now {date}. Ride data was cleared. Import again from here.",
   "@startDateChanged": {
     "placeholders": {
       "date": {"type": "String"}
     }
   },
-  "changeStartConfirm": "Set Strava start date to {date}.\n\nRides from the start date through the newest imported ride need to be complete. Changing only the start date later can leave gaps.\n\nAll imported rides will be deleted, then fetched again from the new start date.",
+  "changeStartConfirm": "Set start date to {date}.\n\nRides from the start date through the newest imported ride need to be complete. Changing only the start date later can leave gaps.\n\nAll imported rides will be deleted, then fetched again from the new start date.",
   "@changeStartConfirm": {
     "placeholders": {
       "date": {"type": "String"}

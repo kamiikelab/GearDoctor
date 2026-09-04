@@ -138,60 +138,33 @@ class _SyncScreenState extends State<SyncScreen> {
                 style: Theme.of(context).textTheme.bodySmall,
               ),
               const SizedBox(height: 8),
-              if (connected) ...[
-                _RangeSummary(
-                  from: from,
-                  to: to,
-                  demo: widget.store.usingDemoRides,
+              _RangeSummary(
+                from: from,
+                to: to,
+                demo: widget.store.usingDemoRides,
+              ),
+              const SizedBox(height: 8),
+              Text(
+                l10n.untilDateHelp,
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+              const SizedBox(height: 16),
+              FilledButton(
+                onPressed: connected && !_busy ? _syncForward : null,
+                child: Text(l10n.sync1year),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                l10n.startDateHelp,
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+              const SizedBox(height: 8),
+              OutlinedButton(
+                onPressed: _busy ? null : _changeStartDate,
+                child: Text(
+                  hasStart ? l10n.changeStartDate : l10n.specifyStartDate,
                 ),
-                const SizedBox(height: 8),
-                Text(
-                  l10n.untilDateHelp,
-                  style: Theme.of(context).textTheme.bodySmall,
-                ),
-                const SizedBox(height: 16),
-                FilledButton(
-                  onPressed: _busy ? null : () => _syncForward(months: 3),
-                  child: Text(l10n.sync3months),
-                ),
-                const SizedBox(height: 8),
-                OutlinedButton(
-                  onPressed: _busy ? null : () => _syncForward(months: 6),
-                  child: Text(l10n.sync6months),
-                ),
-                const SizedBox(height: 8),
-                OutlinedButton(
-                  onPressed: _busy ? null : () => _syncForward(months: 12),
-                  child: Text(l10n.sync1year),
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  l10n.startDateHelp,
-                  style: Theme.of(context).textTheme.bodySmall,
-                ),
-                const SizedBox(height: 8),
-                OutlinedButton(
-                  onPressed: _busy ? null : _changeStartDate,
-                  child: Text(
-                    hasStart ? l10n.changeStartDate : l10n.specifyStartDate,
-                  ),
-                ),
-              ] else ...[
-                FilledButton(
-                  onPressed: null,
-                  child: Text(l10n.sync3months),
-                ),
-                const SizedBox(height: 8),
-                OutlinedButton(
-                  onPressed: null,
-                  child: Text(l10n.sync6months),
-                ),
-                const SizedBox(height: 8),
-                OutlinedButton(
-                  onPressed: null,
-                  child: Text(l10n.sync1year),
-                ),
-              ],
+              ),
               const SizedBox(height: 8),
               OutlinedButton(
                 onPressed: () {
@@ -288,7 +261,7 @@ class _SyncScreenState extends State<SyncScreen> {
     }
   }
 
-  Future<void> _syncForward({required int months}) async {
+  Future<void> _syncForward() async {
     final l10n = AppLocalizations.of(context);
     if (widget.store.settings.lastSyncFrom == null) {
       setState(() => _message = l10n.needStartDate);
@@ -314,7 +287,7 @@ class _SyncScreenState extends State<SyncScreen> {
     });
     try {
       final summary = await widget.store.syncForward(
-        months: months,
+        months: 12,
         client: _http,
       );
       if (!mounted) {

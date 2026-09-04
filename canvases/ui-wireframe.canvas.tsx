@@ -1231,7 +1231,7 @@ function SyncScreen({
   };
   const stravaHint =
     rideMode === "manual"
-      ? "手入力の走行があるあいだは、取り込むと消えます。"
+      ? "手入力の走行記録は、取り込みで消えます。"
       : rideMode === "strava"
         ? "Strava から取り込んだ走行は参照だけです。手入力はできません。"
         : "連携は任意です。走行は手入力でも入れられます。";
@@ -1285,38 +1285,32 @@ function SyncScreen({
             {connected ? "連携済み（タップで未連携の表示）" : "未連携（タップで連携済みの表示）"}
           </Text>
         </div>
-        {connected ? (
-          <Stack gap={10}>
-            <Stack gap={4}>
-              <Text size="small" tone="secondary">
-                データの範囲
-              </Text>
-              <Text weight="semibold">Strava開始日  2025-07-17</Text>
-              <Text weight="semibold">何日まで  2026-07-15</Text>
-              <Text size="small" tone="tertiary">
-                何日までは、Strava開始日以降で入っているいちばん新しい走行の日です。
-              </Text>
-            </Stack>
-            <PhoneButton label="前回から 3 か月" variant="primary" onClick={() => go("home")} />
-            <PhoneButton label="前回から 6 か月" variant="ghost" onClick={() => go("home")} />
-            <PhoneButton label="前回から 1 年" variant="ghost" onClick={() => go("home")} />
-            <Text size="small" tone="tertiary">
-              Strava開始日を変えると、取り込んだ走行は消えて初期化されます。新しい日から取り直します。
+        <Stack gap={10}>
+          <Stack gap={4}>
+            <Text size="small" tone="secondary">
+              データの範囲
             </Text>
-            <PhoneButton label="Strava開始日を変更" variant="ghost" onClick={() => go("home")} />
-            <PhoneButton label="Strava 連携" variant="ghost" onClick={() => go("strava")} />
-            {rideMode === "strava" ? (
-              <PhoneButton label="手入力に切り替える" variant="ghost" onClick={() => setRideMode("manual")} />
-            ) : null}
+            <Text weight="semibold">開始日  2025-07-17</Text>
+            <Text weight="semibold">何日まで  2026-07-15</Text>
+            <Text size="small" tone="tertiary">
+              何日までは、開始日以降で入っているいちばん新しい走行の日です。
+            </Text>
           </Stack>
-        ) : (
-          <Stack gap={10}>
-            <PhoneButton label="前回から 3 か月" variant="primary" disabled onClick={() => undefined} />
-            <PhoneButton label="前回から 6 か月" variant="ghost" disabled onClick={() => undefined} />
-            <PhoneButton label="前回から 1 年" variant="ghost" disabled onClick={() => undefined} />
-            <PhoneButton label="Strava 連携" variant="ghost" onClick={() => go("strava")} />
-          </Stack>
-        )}
+          <PhoneButton
+            label="前回から 1 年"
+            variant="primary"
+            disabled={!connected}
+            onClick={() => (connected ? go("home") : undefined)}
+          />
+          <Text size="small" tone="tertiary">
+            開始日を変えると、取り込んだ走行は消えて初期化されます。新しい日から取り直します。
+          </Text>
+          <PhoneButton label="開始日を変更" variant="ghost" onClick={() => go("home")} />
+          <PhoneButton label="Strava 連携" variant="ghost" onClick={() => go("strava")} />
+          {rideMode === "strava" ? (
+            <PhoneButton label="手入力に切り替える" variant="ghost" onClick={() => setRideMode("manual")} />
+          ) : null}
+        </Stack>
       </Stack>
     </Phone>
   );

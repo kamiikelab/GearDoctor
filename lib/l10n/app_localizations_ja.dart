@@ -547,7 +547,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get noGearRides => 'このギアの走行はまだありません。';
 
   @override
-  String get stravaHintManual => '手入力の走行があるあいだは、取り込むと消えます。';
+  String get stravaHintManual => '手入力の走行記録は、取り込みで消えます。';
 
   @override
   String get stravaHintStrava => 'Strava から取り込んだ走行は参照だけです。手入力はできません。';
@@ -581,7 +581,7 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String stravaStartDate(String value) {
-    return 'Strava開始日  $value';
+    return '開始日  $value';
   }
 
   @override
@@ -590,7 +590,7 @@ class AppLocalizationsJa extends AppLocalizations {
   }
 
   @override
-  String get untilDateHelp => '何日までは、Strava開始日以降で入っているいちばん新しい走行の日です。';
+  String get untilDateHelp => '何日までは、開始日以降で入っているいちばん新しい走行の日です。';
 
   @override
   String get syncManualHelp => '期間を選んで取得します。自動では取りに行きません。';
@@ -605,26 +605,26 @@ class AppLocalizationsJa extends AppLocalizations {
   String get sync1year => '前回から 1 年';
 
   @override
-  String get changeStartDate => 'Strava開始日を変更';
+  String get changeStartDate => '開始日を変更';
 
   @override
-  String get specifyStartDate => 'Strava開始日を指定';
+  String get specifyStartDate => '開始日を指定';
 
   @override
-  String get startDateHelp => 'Strava開始日を変えると、取り込んだ走行は消えて初期化されます。新しい日から取り直します。';
+  String get startDateHelp => '開始日を変えると、取り込んだ走行は消えて初期化されます。新しい日から取り直します。';
 
   @override
-  String get needStartDate => '先にStrava開始日を指定してください。';
+  String get needStartDate => '先に開始日を指定してください。';
 
   @override
   String get needConnect => '先に Strava 連携の画面から連携してください。';
 
   @override
-  String get changeStartTitle => 'Strava開始日を変えますか？';
+  String get changeStartTitle => '開始日を変えますか？';
 
   @override
   String get changeStartBody =>
-      '途中でStrava開始日だけ変えると、取得に抜けが出ることがあります。\n\nいま入っている走行データをすべて消してから、新しいStrava開始日から取り直します。';
+      '途中で開始日だけ変えると、取得に抜けが出ることがあります。\n\nいま入っている走行データをすべて消してから、新しい開始日から取り直します。';
 
   @override
   String get deleteAndContinue => '消して続ける';
@@ -814,16 +814,16 @@ class AppLocalizationsJa extends AppLocalizations {
   }
 
   @override
-  String get startDateUnchanged => 'Strava開始日は同じです。';
+  String get startDateUnchanged => '開始日は同じです。';
 
   @override
   String startDateChanged(String date) {
-    return 'Strava開始日を $date にしました。走行データは消してあります。ここから取り直してください。';
+    return '開始日を $date にしました。走行データは消してあります。ここから取り直してください。';
   }
 
   @override
   String changeStartConfirm(String date) {
-    return 'Strava開始日を $date にします。\n\nStrava開始日から、入っているいちばん新しい走行まで、抜けなく取れている必要があります。途中でStrava開始日だけ変えると、取得に抜けが出ることがあります。\n\nいま入っている走行データをすべて消してから、新しいStrava開始日から取り直します。';
+    return '開始日を $date にします。\n\n開始日から、入っているいちばん新しい走行まで、抜けなく取れている必要があります。途中で開始日だけ変えると、取得に抜けが出ることがあります。\n\nいま入っている走行データをすべて消してから、新しい開始日から取り直します。';
   }
 
   @override
