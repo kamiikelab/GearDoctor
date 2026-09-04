@@ -533,13 +533,17 @@ function HomeScreen({
             onClick={() => go("sync")}
             style={{
               cursor: "pointer",
-              flex: 1,
-              minWidth: 0,
+              flexShrink: 0,
               textAlign: "right",
+              lineHeight: 1.35,
             }}
           >
             <Text size="small" tone="secondary">
-              走行 2025-07-17〜2026-07-15（デモ）
+              走行 2025-07-17〜
+            </Text>
+            <br />
+            <Text size="small" tone="secondary">
+              2026-07-15（デモ）
             </Text>
           </div>
         </div>

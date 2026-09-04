@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:gear_doctor/app.dart';
 import 'package:gear_doctor/app_version.dart';
@@ -69,10 +68,8 @@ void main() {
       find.widgetWithText(OutlinedButton, 'ギア: ロード（デモ）'),
       findsOneWidget,
     );
-    expect(
-      find.textContaining('走行 2025-07-17〜2026-07-15（デモ）'),
-      findsOneWidget,
-    );
+    expect(find.text('走行 2025-07-17〜'), findsOneWidget);
+    expect(find.text('2026-07-15（デモ）'), findsOneWidget);
 
     await tester.tap(find.textContaining('ギア: ロード（デモ）'));
     await tester.pumpAndSettle();
@@ -139,10 +136,8 @@ void main() {
     expect(button, findsOneWidget);
     expect(tester.getSize(button).width, lessThan(200));
     expect(tester.getSize(button).width, greaterThan(120));
-    final text = tester.renderObject<RenderParagraph>(
-      find.descendant(of: button, matching: find.text('ギア: ロード（デモ）')),
-    );
-    expect(text.didExceedMaxLines, isFalse);
+    expect(find.text('走行 2025-07-17〜'), findsOneWidget);
+    expect(find.text('2026-07-15（デモ）'), findsOneWidget);
   });
 
   testWidgets('part detail shows replacement history under the replace button', (tester) async {

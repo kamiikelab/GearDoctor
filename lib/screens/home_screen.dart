@@ -12,21 +12,27 @@ import 'settings_screen.dart';
 import 'sync_screen.dart';
 import 'gear_screen.dart';
 
-String _homeRideRange(AppStore store, AppLocalizations l10n) {
+({String start, String? end}) _homeRideRangeLines(
+  AppStore store,
+  AppLocalizations l10n,
+) {
+  String startLine(String from) =>
+      l10n.lastSync(l10n.syncRange(from, ''));
+
   final from = store.settings.lastSyncFrom;
   if (from != null) {
     final to = store.newestSyncedOn;
-    if (to == null) {
-      return l10n.syncRangeOpen(formatDate(from));
-    }
-    return l10n.syncRange(formatDate(from), formatDate(to));
+    return (
+      start: startLine(formatDate(from)),
+      end: to == null ? '—' : formatDate(to),
+    );
   }
   final oldest = store.oldestSelectedRideOn;
   final newest = store.newestSelectedRideOn;
   if (oldest == null || newest == null) {
-    return l10n.notSynced;
+    return (start: l10n.notSynced, end: null);
   }
-  return l10n.syncRange(formatDate(oldest), formatDate(newest));
+  return (start: startLine(formatDate(oldest)), end: formatDate(newest));
 }
 
 class HomeScreen extends StatelessWidget {
@@ -51,11 +57,21 @@ class HomeScreen extends StatelessWidget {
                       isDemoGearId(store.selectedGear!.id),
                 ),
               );
-        final lastSync = markDemo(
-          _homeRideRange(store, l10n),
-          l10n,
-          demo: store.usingDemoRides,
-        );
+        final rideRange = _homeRideRangeLines(store, l10n);
+        final rideRangeStart = rideRange.end == null
+            ? markDemo(
+                rideRange.start,
+                l10n,
+                demo: store.usingDemoRides,
+              )
+            : rideRange.start;
+        final rideRangeEnd = rideRange.end == null
+            ? null
+            : markDemo(
+                rideRange.end!,
+                l10n,
+                demo: store.usingDemoRides,
+              );
         return Scaffold(
           appBar: AppBar(
             title: Text(l10n.appTitle),
@@ -83,66 +99,67 @@ class HomeScreen extends StatelessWidget {
                 ),
               Padding(
                 padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-                child: LayoutBuilder(
-                  builder: (context, constraints) {
-                    final gearMaxWidth = (constraints.maxWidth - 80).clamp(
-                      0.0,
-                      constraints.maxWidth,
-                    );
-                    return Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        ConstrainedBox(
-                          constraints: BoxConstraints(
-                            maxWidth: gearMaxWidth,
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: OutlinedButton(
+                          onPressed: () => _openGear(context),
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor:
+                                Theme.of(context).colorScheme.primary,
+                            backgroundColor: Theme.of(
+                              context,
+                            ).colorScheme.primaryContainer,
+                            side: BorderSide(
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
+                            minimumSize: Size.zero,
+                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 8,
+                            ),
                           ),
-                          child: OutlinedButton(
-                            onPressed: () => _openGear(context),
-                            style: OutlinedButton.styleFrom(
-                              foregroundColor:
-                                  Theme.of(context).colorScheme.primary,
-                              backgroundColor: Theme.of(
-                                context,
-                              ).colorScheme.primaryContainer,
-                              side: BorderSide(
-                                color: Theme.of(context).colorScheme.primary,
-                              ),
-                              minimumSize: Size.zero,
-                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 12,
-                                vertical: 8,
-                              ),
-                            ),
-                            child: Text(
-                              gearName,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: Theme.of(context).textTheme.labelLarge
-                                  ?.copyWith(
-                                    color: Theme.of(
-                                      context,
-                                    ).colorScheme.primary,
-                                  ),
-                            ),
+                          child: Text(
+                            gearName,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: Theme.of(context).textTheme.labelLarge
+                                ?.copyWith(
+                                  color: Theme.of(context).colorScheme.primary,
+                                ),
                           ),
                         ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: InkWell(
-                            onTap: () => _openSync(context),
-                            child: Text(
-                              l10n.lastSync(lastSync),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    InkWell(
+                      onTap: () => _openSync(context),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Text(
+                            rideRangeStart,
+                            textAlign: TextAlign.end,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: Theme.of(context).textTheme.bodySmall,
+                          ),
+                          if (rideRangeEnd != null)
+                            Text(
+                              rideRangeEnd,
                               textAlign: TextAlign.end,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: Theme.of(context).textTheme.bodySmall,
                             ),
-                          ),
-                        ),
-                      ],
-                    );
-                  },
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
               ),
               if (alerts.isNotEmpty)
