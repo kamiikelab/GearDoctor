@@ -106,6 +106,7 @@ class _ReplaceScreenState extends State<ReplaceScreen> {
                 rows: history,
                 todayUsed: widget.store.gearKmThrough(widget.store.now),
                 demoDistance: widget.store.usingDemoRides,
+                showUserHelp: widget.store.settings.showUserHelp,
                 onRowTap: (row) {
                   Navigator.of(context).push(
                     MaterialPageRoute<void>(

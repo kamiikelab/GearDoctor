@@ -506,9 +506,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get syncTitle => '走行を追加';
 
   @override
-  String selectedGearLine(String name) {
-    return '選んでいるギア: $name';
-  }
+  String get selectedGear => 'ギア';
 
   @override
   String get manualRideSection => '手入力';
@@ -629,7 +627,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get sync6months => '前回から 6 か月';
 
   @override
-  String get sync1year => '前回から 1 年';
+  String get sync1year => '前回から1年取り込む';
 
   @override
   String get changeStartDate => 'Strava開始日を変更';
@@ -639,7 +637,7 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get startDateHelp =>
-      'Strava開始日を変えると、取り込んだ走行は消えます。手入力は残ります。「前回から 1 年」で新しい日から取り直します。';
+      'Strava開始日を変えると、取り込んだ走行は消えます。手入力は残ります。「前回から1年取り込む」で新しい日から取り直します。';
 
   @override
   String get needStartDate => '先にStrava開始日を指定してください。';
@@ -652,7 +650,7 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get changeStartBody =>
-      '取り込んだ Strava の走行を消します。手入力は残ります。\n\nこの操作では取得しません。「前回から 1 年」で新しい Strava 開始日から取り直してください。';
+      '取り込んだ Strava の走行を消します。手入力は残ります。\n\nこの操作では取得しません。「前回から1年取り込む」で新しい Strava 開始日から取り直してください。';
 
   @override
   String get deleteAndContinue => '消して続ける';
@@ -846,12 +844,12 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String startDateChanged(String date) {
-    return 'Strava開始日を $date にしました。取り込んだ走行は消してあります。「前回から 1 年」で取り直してください。';
+    return 'Strava開始日を $date にしました。取り込んだ走行は消してあります。「前回から1年取り込む」で取り直してください。';
   }
 
   @override
   String changeStartConfirm(String date) {
-    return 'Strava開始日を $date にします。\n\n取り込んだ Strava の走行を消します。手入力は残ります。\n\nこの操作では取得しません。「前回から 1 年」で新しい Strava 開始日から取り直してください。';
+    return 'Strava開始日を $date にします。\n\n取り込んだ Strava の走行を消します。手入力は残ります。\n\nこの操作では取得しません。「前回から1年取り込む」で新しい Strava 開始日から取り直してください。';
   }
 
   @override

@@ -95,11 +95,10 @@ class _EditPartScreenState extends State<EditPartScreen> {
               hintText: l10n.registeredNameHint,
             ),
           ),
-          const SizedBox(height: 4),
-          Text(
-            l10n.registeredNameHelp,
-            style: Theme.of(context).textTheme.bodySmall,
-          ),
+          if (widget.store.settings.showUserHelp) ...[
+            const SizedBox(height: 4),
+            Text(l10n.registeredNameHelp, style: userHelpStyle(context)),
+          ],
           if (_isNew) ...[
             const SizedBox(height: 4),
             Text(

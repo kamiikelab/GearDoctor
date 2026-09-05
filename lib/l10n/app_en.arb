@@ -247,12 +247,7 @@
   },
   "disconnected": "Disconnected and removed the tokens.",
   "syncTitle": "Add ride",
-  "selectedGearLine": "Selected bike: {name}",
-  "@selectedGearLine": {
-    "placeholders": {
-      "name": {"type": "String"}
-    }
-  },
+  "selectedGear": "Bike",
   "manualRideSection": "Enter by hand",
   "importFromStrava": "Import from Strava",
   "notConnectedImportHint": "Not connected. Connect Strava in Settings.",
@@ -306,14 +301,14 @@
   "syncManualHelp": "Pick a period and import. Nothing is fetched automatically.",
   "sync3months": "Last 3 months",
   "sync6months": "Last 6 months",
-  "sync1year": "Last year",
+  "sync1year": "Import last year",
   "changeStartDate": "Change Strava start date",
   "specifyStartDate": "Set Strava start date",
-  "startDateHelp": "Changing the Strava start date deletes imported rides. Hand-entered rides stay. Use Last year to import again from the new date.",
+  "startDateHelp": "Changing the Strava start date deletes imported rides. Hand-entered rides stay. Use Import last year to import again from the new date.",
   "needStartDate": "Set a Strava start date first.",
   "needConnect": "Connect from the Strava connect screen first.",
   "changeStartTitle": "Change Strava start date?",
-  "changeStartBody": "Imported Strava rides will be deleted. Hand-entered rides stay.\n\nNothing is fetched now. Use Last year to import again from the new Strava start date.",
+  "changeStartBody": "Imported Strava rides will be deleted. Hand-entered rides stay.\n\nNothing is fetched now. Use Import last year to import again from the new Strava start date.",
   "deleteAndContinue": "Delete and continue",
   "dataRange": "Fetched Strava range",
   "emDash": "—",
@@ -441,13 +436,13 @@
     }
   },
   "startDateUnchanged": "Strava start date is unchanged.",
-  "startDateChanged": "Strava start date is now {date}. Imported rides were cleared. Use Last year to import again.",
+  "startDateChanged": "Strava start date is now {date}. Imported rides were cleared. Use Import last year to import again.",
   "@startDateChanged": {
     "placeholders": {
       "date": {"type": "String"}
     }
   },
-  "changeStartConfirm": "Set Strava start date to {date}.\n\nImported Strava rides will be deleted. Hand-entered rides stay.\n\nNothing is fetched now. Use Last year to import again from the new Strava start date.",
+  "changeStartConfirm": "Set Strava start date to {date}.\n\nImported Strava rides will be deleted. Hand-entered rides stay.\n\nNothing is fetched now. Use Import last year to import again from the new Strava start date.",
   "@changeStartConfirm": {
     "placeholders": {
       "date": {"type": "String"}

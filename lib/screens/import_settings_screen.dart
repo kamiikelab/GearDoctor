@@ -74,11 +74,19 @@ class _ImportSettingsScreenState extends State<ImportSettingsScreen> {
                   fontWeight: FontWeight.w600,
                 ),
               ),
-              const SizedBox(height: 8),
-              Text(
-                canManage ? l10n.settingsCsvScope : l10n.csvNeedGear,
-                style: Theme.of(context).textTheme.bodySmall,
-              ),
+              if (widget.store.settings.showUserHelp) ...[
+                const SizedBox(height: 8),
+                Text(
+                  canManage ? l10n.settingsCsvScope : l10n.csvNeedGear,
+                  style: userHelpStyle(context),
+                ),
+              ] else if (!canManage) ...[
+                const SizedBox(height: 8),
+                Text(
+                  l10n.csvNeedGear,
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
+              ],
               const SizedBox(height: 16),
               Text(l10n.csvCopyHint),
               const SizedBox(height: 8),
@@ -128,8 +136,10 @@ class _ImportSettingsScreenState extends State<ImportSettingsScreen> {
                     : null,
                 child: Text(l10n.insertExample),
               ),
-              const SizedBox(height: 8),
-              Text(l10n.settingsCsvHelp),
+              if (widget.store.settings.showUserHelp) ...[
+                const SizedBox(height: 8),
+                Text(l10n.settingsCsvHelp, style: userHelpStyle(context)),
+              ],
               const SizedBox(height: 8),
               FilledButton(
                 onPressed: canManage && !_readyToConfirm ? _preview : null,

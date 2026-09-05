@@ -62,11 +62,8 @@ class _SyncScreenState extends State<SyncScreen> {
                 l10n.manualRideSection,
                 style: Theme.of(context).textTheme.titleMedium,
               ),
-              const SizedBox(height: 4),
-              Text(
-                l10n.selectedGearLine(gearName),
-                style: Theme.of(context).textTheme.bodySmall,
-              ),
+              const SizedBox(height: 12),
+              SelectedGearHeading(name: gearName),
               const SizedBox(height: 12),
               Text(l10n.rideDate, style: Theme.of(context).textTheme.bodySmall),
               const SizedBox(height: 4),
@@ -351,13 +348,15 @@ class _RangeSummary extends StatelessWidget {
             from == null ? l10n.emDash : formatDate(from!),
             to == null ? l10n.emDash : formatDate(to!),
           );
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(l10n.dataRange, style: fieldLabelStyle(context)),
-        const SizedBox(height: 6),
-        Text(range, style: Theme.of(context).textTheme.titleMedium),
-      ],
+    return InfoPanel(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(l10n.dataRange, style: fieldLabelStyle(context)),
+          const SizedBox(height: 6),
+          Text(range, style: Theme.of(context).textTheme.titleMedium),
+        ],
+      ),
     );
   }
 }

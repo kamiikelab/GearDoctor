@@ -128,25 +128,28 @@ class HomeScreen extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(width: 8),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Text(
-                          rideRangeStart,
-                          textAlign: TextAlign.end,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: Theme.of(context).textTheme.bodySmall,
-                        ),
-                        if (rideRangeEnd != null)
+                    InfoPanel(
+                      expand: false,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
                           Text(
-                            rideRangeEnd,
+                            rideRangeStart,
                             textAlign: TextAlign.end,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: Theme.of(context).textTheme.bodySmall,
                           ),
-                      ],
+                          if (rideRangeEnd != null)
+                            Text(
+                              rideRangeEnd,
+                              textAlign: TextAlign.end,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: Theme.of(context).textTheme.bodySmall,
+                            ),
+                        ],
+                      ),
                     ),
                   ],
                 ),

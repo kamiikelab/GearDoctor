@@ -13,8 +13,10 @@ import 'package:gear_doctor/screens/gear_screen.dart';
 import 'package:gear_doctor/screens/home_screen.dart';
 import 'package:gear_doctor/screens/part_detail_screen.dart';
 import 'package:gear_doctor/screens/settings_screen.dart';
+import 'package:gear_doctor/screens/ride_history_screen.dart';
 import 'package:gear_doctor/screens/sync_screen.dart';
 import 'package:gear_doctor/state/app_store.dart';
+import 'package:gear_doctor/widgets/widgets.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 import 'l10n_harness.dart';
@@ -71,6 +73,28 @@ void main() {
     );
     expect(find.text('走行 2023-04-15〜'), findsOneWidget);
     expect(find.text('2026-07-15（デモ）'), findsOneWidget);
+    expect(
+      find.descendant(
+        of: find.byType(HomeScreen),
+        matching: find.byType(InfoPanel),
+      ),
+      findsOneWidget,
+    );
+    final homeScheme = Theme.of(tester.element(find.byType(HomeScreen))).colorScheme;
+    final homePanelFill = tester
+        .widget<DecoratedBox>(
+          find.descendant(
+            of: find.descendant(
+              of: find.byType(HomeScreen),
+              matching: find.byType(InfoPanel),
+            ),
+            matching: find.byType(DecoratedBox),
+          ).first,
+        )
+        .decoration as BoxDecoration;
+    expect(homePanelFill.color, homeScheme.surfaceContainerLow);
+    expect(homePanelFill.border, isNull);
+    expect(homePanelFill.color, isNot(homeScheme.surfaceContainerHighest));
 
     await tester.tap(find.textContaining('ギア: ロード（デモ）'));
     await tester.pumpAndSettle();
@@ -109,12 +133,20 @@ void main() {
     await tester.tap(find.text('走行を追加'));
     await tester.pumpAndSettle();
     expect(find.text('手入力'), findsOneWidget);
-    expect(find.textContaining('選んでいるギア: ロード'), findsOneWidget);
+    expect(find.text('ギア'), findsOneWidget);
+    expect(find.text('ロード'), findsOneWidget);
+    expect(
+      find.descendant(
+        of: find.byType(SyncScreen),
+        matching: find.byType(InfoPanel),
+      ),
+      findsNWidgets(2),
+    );
     expect(find.text('記録する'), findsOneWidget);
     expect(find.text('Strava から取り込む'), findsOneWidget);
     expect(find.textContaining('連携は任意です'), findsOneWidget);
     expect(find.text('Strava 連携'), findsOneWidget);
-    expect(find.text('前回から 1 年'), findsOneWidget);
+    expect(find.text('前回から1年取り込む'), findsOneWidget);
     expect(find.text('Strava開始日を変更'), findsOneWidget);
     expect(find.text('Stravaの取得済み範囲'), findsOneWidget);
     expect(find.text('2025-07-17〜—'), findsOneWidget);
@@ -150,6 +182,13 @@ void main() {
     await tester.tap(find.text('走行を確認'));
     await tester.pumpAndSettle();
     expect(find.text('このギアの走行'), findsOneWidget);
+    expect(
+      find.descendant(
+        of: find.byType(RideHistoryScreen),
+        matching: find.byType(InfoPanel),
+      ),
+      findsOneWidget,
+    );
     expect(find.text('種類'), findsOneWidget);
     expect(find.text('手入力'), findsWidgets);
     expect(find.text('2026-08-23'), findsOneWidget);
@@ -363,7 +402,7 @@ void main() {
       find.textContaining('Strava開始日を変えると、取り込んだ走行は消えます'),
       findsNothing,
     );
-    expect(find.text('前回から 1 年'), findsOneWidget);
+    expect(find.text('前回から1年取り込む'), findsOneWidget);
     expect(find.text('Strava 連携'), findsOneWidget);
 
     await tester.pumpWidget(
@@ -376,6 +415,22 @@ void main() {
     );
     await tester.pumpAndSettle();
     expect(find.text('名前から自動で決まります。'), findsNothing);
+    expect(find.text('ホームに出す名前。前と後ろは別々に登録します。'), findsNothing);
+
+    await tester.pumpWidget(l10nApp(home: GearScreen(store: store)));
+    await tester.pumpAndSettle();
+    expect(find.textContaining('Strava から取った自転車も'), findsNothing);
+
+    await tester.pumpWidget(
+      l10nApp(
+        home: PartDetailScreen(
+          store: store,
+          partId: partIdOnGear('p_chain', 'g_road'),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(find.textContaining('行をタップして日付'), findsNothing);
   });
 
   testWidgets('home add-ride opens Strava connect, gear button opens gear', (

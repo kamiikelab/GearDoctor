@@ -519,9 +519,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get syncTitle => 'Add ride';
 
   @override
-  String selectedGearLine(String name) {
-    return 'Selected bike: $name';
-  }
+  String get selectedGear => 'Bike';
 
   @override
   String get manualRideSection => 'Enter by hand';
@@ -649,7 +647,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sync6months => 'Last 6 months';
 
   @override
-  String get sync1year => 'Last year';
+  String get sync1year => 'Import last year';
 
   @override
   String get changeStartDate => 'Change Strava start date';
@@ -659,7 +657,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get startDateHelp =>
-      'Changing the Strava start date deletes imported rides. Hand-entered rides stay. Use Last year to import again from the new date.';
+      'Changing the Strava start date deletes imported rides. Hand-entered rides stay. Use Import last year to import again from the new date.';
 
   @override
   String get needStartDate => 'Set a Strava start date first.';
@@ -672,7 +670,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get changeStartBody =>
-      'Imported Strava rides will be deleted. Hand-entered rides stay.\n\nNothing is fetched now. Use Last year to import again from the new Strava start date.';
+      'Imported Strava rides will be deleted. Hand-entered rides stay.\n\nNothing is fetched now. Use Import last year to import again from the new Strava start date.';
 
   @override
   String get deleteAndContinue => 'Delete and continue';
@@ -873,12 +871,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String startDateChanged(String date) {
-    return 'Strava start date is now $date. Imported rides were cleared. Use Last year to import again.';
+    return 'Strava start date is now $date. Imported rides were cleared. Use Import last year to import again.';
   }
 
   @override
   String changeStartConfirm(String date) {
-    return 'Set Strava start date to $date.\n\nImported Strava rides will be deleted. Hand-entered rides stay.\n\nNothing is fetched now. Use Last year to import again from the new Strava start date.';
+    return 'Set Strava start date to $date.\n\nImported Strava rides will be deleted. Hand-entered rides stay.\n\nNothing is fetched now. Use Import last year to import again from the new Strava start date.';
   }
 
   @override

@@ -324,6 +324,28 @@ function PhoneButton({
   );
 }
 
+function InfoWell({
+  packed,
+  children,
+}: {
+  packed?: boolean;
+  children?: unknown;
+}) {
+  const t = useHostTheme();
+  return (
+    <div
+      style={{
+        background: t.fill.quaternary,
+        borderRadius: 8,
+        padding: packed ? "8px 10px" : "10px 12px",
+        alignSelf: packed ? "flex-end" : undefined,
+      }}
+    >
+      {children}
+    </div>
+  );
+}
+
 function Phone({
   title,
   onBack,
@@ -529,21 +551,23 @@ function HomeScreen({
           >
             ギア: {gear}（デモ）
           </div>
-          <div
-            style={{
-              flexShrink: 0,
-              textAlign: "right",
-              lineHeight: 1.35,
-            }}
-          >
-            <Text size="small" tone="secondary">
-              走行 2023-04-15〜
-            </Text>
-            <br />
-            <Text size="small" tone="secondary">
-              2026-07-15（デモ）
-            </Text>
-          </div>
+          <InfoWell packed>
+            <div
+              style={{
+                flexShrink: 0,
+                textAlign: "right",
+                lineHeight: 1.35,
+              }}
+            >
+              <Text size="small" tone="secondary">
+                走行 2023-04-15〜
+              </Text>
+              <br />
+              <Text size="small" tone="secondary">
+                2026-07-15（デモ）
+              </Text>
+            </div>
+          </InfoWell>
         </div>
         {alerts.length > 0 ? (
           <div
@@ -1261,9 +1285,14 @@ function SyncScreen({
       <Stack gap={14}>
         <Stack gap={14}>
           <Text weight="semibold">手入力</Text>
-          <Text size="small" tone="tertiary">
-            選んでいるギア: {gear}
-          </Text>
+          <InfoWell>
+            <Stack gap={4}>
+              <Text size="small" weight="semibold">
+                ギア
+              </Text>
+              <Text weight="semibold">{gear}</Text>
+            </Stack>
+          </InfoWell>
           <Stack gap={4}>
             <Text size="small" tone="secondary">
               日付
@@ -1292,20 +1321,22 @@ function SyncScreen({
           </Text>
         </div>
         <Stack gap={10}>
-          <Stack gap={4}>
-            <Text size="small" weight="semibold">
-              Stravaの取得済み範囲
-            </Text>
-            <Text weight="semibold">2025-07-17〜2026-07-15</Text>
-          </Stack>
+          <InfoWell>
+            <Stack gap={4}>
+              <Text size="small" weight="semibold">
+                Stravaの取得済み範囲
+              </Text>
+              <Text weight="semibold">2025-07-17〜2026-07-15</Text>
+            </Stack>
+          </InfoWell>
           <PhoneButton
-            label="前回から 1 年"
+            label="前回から1年取り込む"
             variant="primary"
             disabled={!connected}
             onClick={() => (connected ? go("home") : undefined)}
           />
           <Text size="small" tone="tertiary">
-            Strava開始日を変えると、取り込んだ走行は消えます。手入力は残ります。「前回から 1 年」で新しい日から取り直します。
+            Strava開始日を変えると、取り込んだ走行は消えます。手入力は残ります。「前回から1年取り込む」で新しい日から取り直します。
           </Text>
           <PhoneButton label="Strava開始日を変更" variant="ghost" onClick={() => go("home")} />
           <PhoneButton label="Strava 連携" variant="ghost" onClick={() => go("strava")} />
@@ -1326,9 +1357,14 @@ function RideHistoryScreen({
   return (
     <Phone title="このギアの走行" onBack={() => go("sync")}>
       <Stack gap={10}>
-        <Text size="small" tone="tertiary">
-          選んでいるギア: {gear}
-        </Text>
+        <InfoWell>
+          <Stack gap={4}>
+            <Text size="small" weight="semibold">
+              ギア
+            </Text>
+            <Text weight="semibold">{gear}</Text>
+          </Stack>
+        </InfoWell>
         <Text size="small" tone="tertiary">
           手入力の行をタップして日付・距離の修正や削除
         </Text>
@@ -1737,7 +1773,7 @@ export default function GearDoctorUiWireframe() {
 
           <H3>走行を追加</H3>
           <Callout tone="info" title="手書きと Strava は混ぜてよい">
-            同じギアでも両方置ける。手入力と取り込みは同じ画面。一覧は「走行を確認」で、種類列あり・新しい順。手入力は「走行を編集」の別画面。Strava開始日を変えたら取り込んだ走行を消し、「前回から 1 年」で取り直す。
+            同じギアでも両方置ける。手入力と取り込みは同じ画面。一覧は「走行を確認」で、種類列あり・新しい順。手入力は「走行を編集」の別画面。Strava開始日を変えたら取り込んだ走行を消し、「前回から1年取り込む」で取り直す。
           </Callout>
 
           <Card>

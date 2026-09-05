@@ -272,7 +272,7 @@ $settingsCsvHeader
     expect(again.settings.stravaConnected, isFalse);
   });
 
-  test('showUserHelp persists and survives resetToDemo', () async {
+  test('showUserHelp persists and resetToDemo turns it back on', () async {
     final store = await openStore();
     expect(store.settings.showUserHelp, isTrue);
     await store.setShowUserHelp(false);
@@ -282,7 +282,7 @@ $settingsCsvHeader
     expect(again.settings.showUserHelp, isFalse);
 
     await again.resetToDemo();
-    expect(again.settings.showUserHelp, isFalse);
+    expect(again.settings.showUserHelp, isTrue);
   });
 
   test('resetToDemo restores seed parts, rides, and clears Strava', () async {

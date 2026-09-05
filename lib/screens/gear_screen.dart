@@ -42,11 +42,10 @@ class GearScreen extends StatelessWidget {
                   fontWeight: FontWeight.w600,
                 ),
               ),
-              const SizedBox(height: 8),
-              Text(
-                l10n.gearBikesHelp,
-                style: Theme.of(context).textTheme.bodySmall,
-              ),
+              if (store.settings.showUserHelp) ...[
+                const SizedBox(height: 8),
+                Text(l10n.gearBikesHelp, style: userHelpStyle(context)),
+              ],
               if (store.usingDemoRides) ...[
                 const SizedBox(height: 8),
                 Text(

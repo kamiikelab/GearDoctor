@@ -25,11 +25,8 @@ class RideHistoryScreen extends StatelessWidget {
           body: ListView(
             padding: const EdgeInsets.all(16),
             children: [
-              Text(
-                l10n.selectedGearLine(gearName),
-                style: Theme.of(context).textTheme.bodySmall,
-              ),
-              const SizedBox(height: 4),
+              SelectedGearHeading(name: gearName),
+              const SizedBox(height: 8),
               Text(
                 l10n.rideHistoryHint,
                 style: Theme.of(context).textTheme.bodySmall,

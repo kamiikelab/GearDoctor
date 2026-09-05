@@ -998,11 +998,11 @@ abstract class AppLocalizations {
   /// **'Add ride'**
   String get syncTitle;
 
-  /// No description provided for @selectedGearLine.
+  /// No description provided for @selectedGear.
   ///
   /// In en, this message translates to:
-  /// **'Selected bike: {name}'**
-  String selectedGearLine(String name);
+  /// **'Bike'**
+  String get selectedGear;
 
   /// No description provided for @manualRideSection.
   ///
@@ -1229,7 +1229,7 @@ abstract class AppLocalizations {
   /// No description provided for @sync1year.
   ///
   /// In en, this message translates to:
-  /// **'Last year'**
+  /// **'Import last year'**
   String get sync1year;
 
   /// No description provided for @changeStartDate.
@@ -1247,7 +1247,7 @@ abstract class AppLocalizations {
   /// No description provided for @startDateHelp.
   ///
   /// In en, this message translates to:
-  /// **'Changing the Strava start date deletes imported rides. Hand-entered rides stay. Use Last year to import again from the new date.'**
+  /// **'Changing the Strava start date deletes imported rides. Hand-entered rides stay. Use Import last year to import again from the new date.'**
   String get startDateHelp;
 
   /// No description provided for @needStartDate.
@@ -1271,7 +1271,7 @@ abstract class AppLocalizations {
   /// No description provided for @changeStartBody.
   ///
   /// In en, this message translates to:
-  /// **'Imported Strava rides will be deleted. Hand-entered rides stay.\n\nNothing is fetched now. Use Last year to import again from the new Strava start date.'**
+  /// **'Imported Strava rides will be deleted. Hand-entered rides stay.\n\nNothing is fetched now. Use Import last year to import again from the new Strava start date.'**
   String get changeStartBody;
 
   /// No description provided for @deleteAndContinue.
@@ -1601,13 +1601,13 @@ abstract class AppLocalizations {
   /// No description provided for @startDateChanged.
   ///
   /// In en, this message translates to:
-  /// **'Strava start date is now {date}. Imported rides were cleared. Use Last year to import again.'**
+  /// **'Strava start date is now {date}. Imported rides were cleared. Use Import last year to import again.'**
   String startDateChanged(String date);
 
   /// No description provided for @changeStartConfirm.
   ///
   /// In en, this message translates to:
-  /// **'Set Strava start date to {date}.\n\nImported Strava rides will be deleted. Hand-entered rides stay.\n\nNothing is fetched now. Use Last year to import again from the new Strava start date.'**
+  /// **'Set Strava start date to {date}.\n\nImported Strava rides will be deleted. Hand-entered rides stay.\n\nNothing is fetched now. Use Import last year to import again from the new Strava start date.'**
   String changeStartConfirm(String date);
 
   /// No description provided for @pickTwoParts.

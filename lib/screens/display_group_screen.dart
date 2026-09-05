@@ -40,11 +40,10 @@ class _DisplayGroupScreenState extends State<DisplayGroupScreen> {
             padding: const EdgeInsets.all(16),
             keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
             children: [
-              Text(
-                l10n.groupHelp,
-                style: Theme.of(context).textTheme.bodySmall,
-              ),
-              const SizedBox(height: 12),
+              if (widget.store.settings.showUserHelp) ...[
+                Text(l10n.groupHelp, style: userHelpStyle(context)),
+                const SizedBox(height: 12),
+              ],
               Row(
                 children: [
                   Expanded(
@@ -131,13 +130,15 @@ class _DisplayGroupScreenState extends State<DisplayGroupScreen> {
           ),
           onChanged: (_) => setState(() {}),
         ),
-        const SizedBox(height: 4),
-        Text(
-          l10n.groupPreview(
-            _name.text.isEmpty ? l10n.groupNamePlaceholder : _name.text,
+        if (widget.store.settings.showUserHelp) ...[
+          const SizedBox(height: 4),
+          Text(
+            l10n.groupPreview(
+              _name.text.isEmpty ? l10n.groupNamePlaceholder : _name.text,
+            ),
+            style: userHelpStyle(context),
           ),
-          style: Theme.of(context).textTheme.bodySmall,
-        ),
+        ],
         const SizedBox(height: 16),
         FilledButton(
           onPressed: _saveCombine,

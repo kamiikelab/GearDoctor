@@ -18,6 +18,56 @@ TextStyle? userHelpStyle(BuildContext context) {
   );
 }
 
+class InfoPanel extends StatelessWidget {
+  const InfoPanel({
+    super.key,
+    required this.child,
+    this.expand = true,
+  });
+
+  final Widget child;
+  final bool expand;
+
+  @override
+  Widget build(BuildContext context) {
+    final panel = DecoratedBox(
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surfaceContainerLow,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        child: child,
+      ),
+    );
+    if (!expand) {
+      return panel;
+    }
+    return SizedBox(width: double.infinity, child: panel);
+  }
+}
+
+class SelectedGearHeading extends StatelessWidget {
+  const SelectedGearHeading({super.key, required this.name});
+
+  final String name;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return InfoPanel(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(l10n.selectedGear, style: fieldLabelStyle(context)),
+          const SizedBox(height: 4),
+          Text(name, style: Theme.of(context).textTheme.titleMedium),
+        ],
+      ),
+    );
+  }
+}
+
 String formatAmount(num value) {
   final digits = value.round().abs().toString();
   final buffer = StringBuffer();
@@ -363,6 +413,7 @@ class ReplacementHistoryTable extends StatelessWidget {
     required this.rows,
     required this.todayUsed,
     this.demoDistance = false,
+    this.showUserHelp = true,
     this.onRowTap,
   });
 
@@ -370,6 +421,7 @@ class ReplacementHistoryTable extends StatelessWidget {
   final List<HistoryRow> rows;
   final double todayUsed;
   final bool demoDistance;
+  final bool showUserHelp;
   final ValueChanged<HistoryRow>? onRowTap;
 
   @override
@@ -383,11 +435,8 @@ class ReplacementHistoryTable extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(l10n.historyTitle, style: Theme.of(context).textTheme.bodySmall),
-        if (onRowTap != null)
-          Text(
-            l10n.historyHint,
-            style: Theme.of(context).textTheme.bodySmall,
-          ),
+        if (onRowTap != null && showUserHelp)
+          Text(l10n.historyHint, style: userHelpStyle(context)),
         const SizedBox(height: 8),
         Table(
           columnWidths: const {

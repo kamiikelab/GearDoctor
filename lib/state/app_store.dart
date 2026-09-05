@@ -655,15 +655,9 @@ class AppStore extends ChangeNotifier {
     final repo = _requireRepo();
     final locale = catalogLocale;
     final localeCode = settings.localeCode;
-    final showUserHelp = settings.showUserHelp;
     await repo.clearAllTables();
     await seedDemoData(repo, locale: locale, localeCode: localeCode);
     await refresh();
-    if (settings.showUserHelp != showUserHelp) {
-      settings = settings.copyWith(showUserHelp: showUserHelp);
-      await repo.saveSettings(settings);
-      notifyListeners();
-    }
   }
 
   Future<void> changeSyncStart(DateTime from) async {

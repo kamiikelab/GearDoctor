@@ -120,6 +120,7 @@ class PartDetailScreen extends StatelessWidget {
                 rows: store.historyOf(part),
                 todayUsed: store.gearKmThrough(store.now),
                 demoDistance: store.usingDemoRides,
+                showUserHelp: store.settings.showUserHelp,
                 onRowTap: (row) {
                   Navigator.of(context).push(
                     MaterialPageRoute<void>(
