@@ -128,28 +128,25 @@ class HomeScreen extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(width: 8),
-                    InkWell(
-                      onTap: () => _openSync(context),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text(
+                          rideRangeStart,
+                          textAlign: TextAlign.end,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: Theme.of(context).textTheme.bodySmall,
+                        ),
+                        if (rideRangeEnd != null)
                           Text(
-                            rideRangeStart,
+                            rideRangeEnd,
                             textAlign: TextAlign.end,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: Theme.of(context).textTheme.bodySmall,
                           ),
-                          if (rideRangeEnd != null)
-                            Text(
-                              rideRangeEnd,
-                              textAlign: TextAlign.end,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: Theme.of(context).textTheme.bodySmall,
-                            ),
-                        ],
-                      ),
+                      ],
                     ),
                   ],
                 ),
@@ -209,12 +206,6 @@ class HomeScreen extends StatelessWidget {
   void _openGear(BuildContext context) {
     Navigator.of(context).push(
       MaterialPageRoute<void>(builder: (_) => GearScreen(store: store)),
-    );
-  }
-
-  void _openSync(BuildContext context) {
-    Navigator.of(context).push(
-      MaterialPageRoute<void>(builder: (_) => SyncScreen(store: store)),
     );
   }
 

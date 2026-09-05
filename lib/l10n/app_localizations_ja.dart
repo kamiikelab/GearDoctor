@@ -234,7 +234,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get settingsCsv => '部品登録の CSV';
 
   @override
-  String get displayGroups => '表示をまとめる / 分ける';
+  String get displayGroups => '部品の表示をまとめる / 分ける';
 
   @override
   String get registeredName => '登録名';
@@ -649,7 +649,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get deleteAndContinue => '消して続ける';
 
   @override
-  String get dataRange => 'データの範囲';
+  String get dataRange => 'Stravaの取得済み範囲';
 
   @override
   String get emDash => '—';

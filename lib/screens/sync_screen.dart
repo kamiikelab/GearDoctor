@@ -48,7 +48,7 @@ class _SyncScreenState extends State<SyncScreen> {
         final l10n = AppLocalizations.of(context);
         final connected = widget.store.settings.stravaConnected;
         final from = widget.store.settings.lastSyncFrom;
-        final to = widget.store.newestSyncedOn;
+        final to = widget.store.settings.lastSyncAt;
         final hasStart = from != null;
         final gear = widget.store.selectedGear;
         final gearName = gear == null ? l10n.gearUnselected : gear.name;
@@ -126,16 +126,7 @@ class _SyncScreenState extends State<SyncScreen> {
                 style: Theme.of(context).textTheme.bodySmall,
               ),
               const SizedBox(height: 8),
-              _RangeSummary(
-                from: from,
-                to: to,
-                demo: widget.store.usingDemoRides,
-              ),
-              const SizedBox(height: 8),
-              Text(
-                l10n.untilDateHelp,
-                style: Theme.of(context).textTheme.bodySmall,
-              ),
+              _RangeSummary(from: from, to: to),
               const SizedBox(height: 16),
               FilledButton(
                 onPressed: connected && !_busy ? _syncForward : null,
@@ -348,44 +339,26 @@ class _RangeSummary extends StatelessWidget {
   const _RangeSummary({
     required this.from,
     required this.to,
-    required this.demo,
   });
 
   final DateTime? from;
   final DateTime? to;
-  final bool demo;
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    if (from == null && to == null) {
-      return Text(
-        l10n.notSynced,
-        style: Theme.of(context).textTheme.titleMedium,
-      );
-    }
+    final range = from == null && to == null
+        ? l10n.emDash
+        : l10n.syncRange(
+            from == null ? l10n.emDash : formatDate(from!),
+            to == null ? l10n.emDash : formatDate(to!),
+          );
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(l10n.dataRange, style: Theme.of(context).textTheme.bodySmall),
         const SizedBox(height: 6),
-        Text(
-          markDemo(
-            l10n.stravaStartDate(from == null ? l10n.emDash : formatDate(from!)),
-            l10n,
-            demo: demo,
-          ),
-          style: Theme.of(context).textTheme.titleMedium,
-        ),
-        const SizedBox(height: 4),
-        Text(
-          markDemo(
-            l10n.untilDate(to == null ? l10n.emDash : formatDate(to!)),
-            l10n,
-            demo: demo,
-          ),
-          style: Theme.of(context).textTheme.titleMedium,
-        ),
+        Text(range, style: Theme.of(context).textTheme.titleMedium),
       ],
     );
   }

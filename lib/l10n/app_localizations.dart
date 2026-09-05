@@ -509,7 +509,7 @@ abstract class AppLocalizations {
   /// No description provided for @displayGroups.
   ///
   /// In en, this message translates to:
-  /// **'Group / split display'**
+  /// **'Group / split part display'**
   String get displayGroups;
 
   /// No description provided for @registeredName.
@@ -1265,7 +1265,7 @@ abstract class AppLocalizations {
   /// No description provided for @dataRange.
   ///
   /// In en, this message translates to:
-  /// **'Data range'**
+  /// **'Fetched Strava range'**
   String get dataRange;
 
   /// No description provided for @emDash.

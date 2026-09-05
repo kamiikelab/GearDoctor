@@ -79,7 +79,7 @@ void main() {
     expect(find.text('部品を追加'), findsOneWidget);
     expect(find.text('交換記録の CSV'), findsOneWidget);
     expect(find.text('部品登録の CSV'), findsOneWidget);
-    expect(find.text('表示をまとめる / 分ける'), findsOneWidget);
+    expect(find.text('部品の表示をまとめる / 分ける'), findsOneWidget);
 
     await tester.tap(find.text('部品を追加'));
     await tester.pumpAndSettle();
@@ -116,6 +116,8 @@ void main() {
     expect(find.text('Strava 連携'), findsOneWidget);
     expect(find.text('前回から 1 年'), findsOneWidget);
     expect(find.text('Strava開始日を変更'), findsOneWidget);
+    expect(find.text('Stravaの取得済み範囲'), findsOneWidget);
+    expect(find.text('2025-07-17〜—'), findsOneWidget);
     expect(find.text('このギアの走行'), findsNothing);
   });
 

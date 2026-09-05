@@ -110,13 +110,13 @@ class GearScreen extends StatelessWidget {
                   }
                   Navigator.of(context).push(
                     MaterialPageRoute<void>(
-                      builder: (_) => EditPartScreen(store: store),
+                      builder: (_) => ImportReplacementsScreen(store: store),
                     ),
                   );
                 },
-                child: Text(l10n.addPart),
+                child: Text(l10n.recordsCsv),
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 16),
               OutlinedButton(
                 onPressed: () {
                   if (store.usingDemoRides) {
@@ -128,11 +128,11 @@ class GearScreen extends StatelessWidget {
                   }
                   Navigator.of(context).push(
                     MaterialPageRoute<void>(
-                      builder: (_) => ImportReplacementsScreen(store: store),
+                      builder: (_) => EditPartScreen(store: store),
                     ),
                   );
                 },
-                child: Text(l10n.recordsCsv),
+                child: Text(l10n.addPart),
               ),
               const SizedBox(height: 8),
               OutlinedButton(

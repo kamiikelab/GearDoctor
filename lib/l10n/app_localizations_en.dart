@@ -241,7 +241,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsCsv => 'Part registration CSV';
 
   @override
-  String get displayGroups => 'Group / split display';
+  String get displayGroups => 'Group / split part display';
 
   @override
   String get registeredName => 'Registered name';
@@ -669,7 +669,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get deleteAndContinue => 'Delete and continue';
 
   @override
-  String get dataRange => 'Data range';
+  String get dataRange => 'Fetched Strava range';
 
   @override
   String get emDash => '—';

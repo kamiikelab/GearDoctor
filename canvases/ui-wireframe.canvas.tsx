@@ -530,9 +530,7 @@ function HomeScreen({
             ギア: {gear}（デモ）
           </div>
           <div
-            onClick={() => go("sync")}
             style={{
-              cursor: "pointer",
               flexShrink: 0,
               textAlign: "right",
               lineHeight: 1.35,
@@ -1296,13 +1294,9 @@ function SyncScreen({
         <Stack gap={10}>
           <Stack gap={4}>
             <Text size="small" tone="secondary">
-              データの範囲
+              Stravaの取得済み範囲
             </Text>
-            <Text weight="semibold">Strava開始日  2025-07-17</Text>
-            <Text weight="semibold">何日まで  2026-07-15</Text>
-            <Text size="small" tone="tertiary">
-              何日までは、Strava開始日以降で入っているいちばん新しい走行の日です。
-            </Text>
+            <Text weight="semibold">2025-07-17〜2026-07-15</Text>
           </Stack>
           <PhoneButton
             label="前回から 1 年"
@@ -1472,10 +1466,11 @@ function GearScreen({
         })}
         <PhoneButton label="自転車を追加" variant="primary" onClick={() => go("add-gear")} />
         <PhoneButton label="自転車を削除" variant="ghost" onClick={() => go("gear")} />
-        <PhoneButton label="部品を追加" variant="ghost" onClick={() => go("add")} />
         <PhoneButton label="交換記録の CSV" variant="ghost" onClick={() => go("import-csv")} />
+        <div style={{ height: 6 }} />
+        <PhoneButton label="部品を追加" variant="ghost" onClick={() => go("add")} />
         <PhoneButton label="部品登録の CSV" variant="ghost" onClick={() => go("import-settings")} />
-        <PhoneButton label="表示をまとめる / 分ける" variant="ghost" onClick={() => go("split-merge")} />
+        <PhoneButton label="部品の表示をまとめる / 分ける" variant="ghost" onClick={() => go("split-merge")} />
       </Stack>
     </Phone>
   );
@@ -1694,7 +1689,7 @@ export default function GearDoctorUiWireframe() {
         <Stack gap={16}>
           <H2>決まったこと</H2>
           <Text>
-            下部タブなし。交換したは詳細画面。ホームの主ボタンは「走行を追加」。ホームのギアは緑の枠ボタン。設定からギアと走行は出さない。部品は登録名だけで管理し、追加に F/R の種別は付けない。左右の合体は表示のまとめだけ。手入力と Strava は同じ画面。一覧は「走行を確認」の別画面で、表の大きさは交換記録と同じ。並びは新しい順。手入力は「走行を編集」の別画面、Strava は参照のみ。交換日も新しい順。デモのあいだは部品の追加・削除と CSV はエラーにし、先に走行を追加する。自転車の削除はギア画面。部品の削除は編集画面（解除後は初期18件も可）。
+            下部タブなし。交換したは詳細画面。ホームの主ボタンは「走行を追加」。ホームのギアは緑の枠ボタン。走行の範囲は表示だけ。設定からギアと走行は出さない。部品は登録名だけで管理し、追加に F/R の種別は付けない。左右の合体は表示のまとめだけ。手入力と Strava は同じ画面。一覧は「走行を確認」の別画面で、表の大きさは交換記録と同じ。並びは新しい順。手入力は「走行を編集」の別画面、Strava は参照のみ。交換日も新しい順。デモのあいだは部品の追加・削除と CSV はエラーにし、先に走行を追加する。自転車の削除はギア画面。部品の削除は編集画面（解除後は初期18件も可）。
           </Text>
           <Table
             headers={["画面", "上から下", "横並び"]}
@@ -1703,7 +1698,7 @@ export default function GearDoctorUiWireframe() {
               ["詳細", "距離 → バー → 交換日 → 操作 → 過去の交換記録", "交換した | 編集"],
               ["記録を編集", "日付 → メモ → 保存 → 削除", "なし（縦のみ）"],
               ["走行を編集", "日付 → 距離 → 保存 → 削除", "なし（縦のみ）"],
-              ["ギア", "大きなギア名 → 自転車の選択 → 自転車を追加 / 自転車を削除 / 部品追加 / 交換記録の CSV / 部品登録の CSV / まとめ", "なし（縦のみ）"],
+              ["ギア", "大きなギア名 → 自転車の選択 → 自転車を追加 / 自転車を削除 / 交換記録の CSV / 部品を追加 / 部品登録の CSV / 部品の表示をまとめる", "なし（縦のみ）"],
               ["自転車を追加", "名前 → 追加する", "なし（縦のみ）"],
               ["部品を追加 / 編集", "登録名 → 周期 → 目安 → しきい値 → 保存 / 削除", "距離 | 月"],
               ["交換記録の CSV", "ギア名 → 書き出し → 貼り付け → CSVを取り込み → 確定", "なし（縦のみ）"],
