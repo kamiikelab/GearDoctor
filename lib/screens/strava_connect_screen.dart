@@ -130,44 +130,35 @@ class _StravaConnectScreenState extends State<StravaConnectScreen> {
                 onPressed: _busy ? null : _connect,
                 child: Text(connected ? l10n.connectAgain : l10n.connect),
               ),
-              if (_waitingBrowser) ...[
+              if (_waitingBrowser &&
+                  !stravaUsesAppCallback &&
+                  _browserFailedToOpen &&
+                  _authorizeUrl != null) ...[
                 const SizedBox(height: 12),
                 Text(
-                  Platform.isIOS
-                      ? l10n.waitingBrowserIos
-                      : stravaUsesAppCallback
-                      ? l10n.waitingBrowserMobile
-                      : l10n.waitingBrowser,
+                  l10n.browserDidNotOpen,
+                  style: Theme.of(context).textTheme.bodySmall,
                 ),
-                if (!stravaUsesAppCallback &&
-                    _browserFailedToOpen &&
-                    _authorizeUrl != null) ...[
-                  const SizedBox(height: 12),
-                  Text(
-                    l10n.browserDidNotOpen,
-                    style: Theme.of(context).textTheme.bodySmall,
-                  ),
-                  const SizedBox(height: 8),
-                  SelectableText(
-                    _authorizeUrl.toString(),
-                    style: Theme.of(context).textTheme.bodySmall,
-                  ),
-                  const SizedBox(height: 8),
-                  OutlinedButton(
-                    onPressed: () async {
-                      await Clipboard.setData(
-                        ClipboardData(text: _authorizeUrl.toString()),
+                const SizedBox(height: 8),
+                SelectableText(
+                  _authorizeUrl.toString(),
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
+                const SizedBox(height: 8),
+                OutlinedButton(
+                  onPressed: () async {
+                    await Clipboard.setData(
+                      ClipboardData(text: _authorizeUrl.toString()),
+                    );
+                    if (mounted) {
+                      setState(
+                        () => _message =
+                            AppLocalizations.of(context).copiedAuthorizeUrl,
                       );
-                      if (mounted) {
-                        setState(
-                          () => _message =
-                              AppLocalizations.of(context).copiedAuthorizeUrl,
-                        );
-                      }
-                    },
-                    child: Text(l10n.copyAuthorizeUrl),
-                  ),
-                ],
+                    }
+                  },
+                  child: Text(l10n.copyAuthorizeUrl),
+                ),
               ],
               const SizedBox(height: 8),
               OutlinedButton(
@@ -244,11 +235,7 @@ class _StravaConnectScreenState extends State<StravaConnectScreen> {
     }
     setState(() {
       _busy = true;
-      _message = Platform.isIOS
-          ? l10n.waitingBrowserIos
-          : stravaUsesAppCallback
-          ? l10n.waitingBrowserMobile
-          : l10n.waitingForChrome;
+      _message = null;
       _waitingBrowser = true;
       _browserFailedToOpen = false;
     });
