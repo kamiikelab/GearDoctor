@@ -1,0 +1,23 @@
+---
+description: 枝の方針。正本は main。Cloud Agent は main から枝を切って PR。PC は main 直。同じ main へ同時に直接 push しない。
+alwaysApply: true
+---
+
+# 枝の方針（Cloud Agent と PC）
+
+正本（せいほん）はいつも `main`。これまでも `kamiikelab/main` に直接載せてきた。
+
+## すすめ方
+
+| 場所 | 枝 |
+| --- | --- |
+| 正本 | いつも `main` |
+| PC（Desktop） | `main` のまま。始めるとき `git pull` |
+| Cloud Agent（Web / iPhone） | `main` から枝を切って直し、PR を `main` に入れる |
+
+Cloud Agent はもともと「`main` から枝を切って push / PR」する動き。そのままでよい。こうすると PC と同時に `main` を書き換えなくて済む。
+
+## やらない方がよいこと
+
+- PC と Cloud の両方で、同じ `main` に同時に直接 push する（後から来た方が上書き・コンフリクトしやすい）。
+- Cloud 用に長い間生きる固定枝を正本にする。
