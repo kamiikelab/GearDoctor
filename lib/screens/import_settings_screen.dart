@@ -225,6 +225,14 @@ class _ImportSettingsScreenState extends State<ImportSettingsScreen> {
       _blockIfDemo();
       return;
     }
+    if (_csv.text.trim().isEmpty) {
+      setState(() {
+        _parsed = null;
+        _plan = null;
+        _message = null;
+      });
+      return;
+    }
     final parsed = parseSettingsCsv(_csv.text);
     SettingsImportPlan? plan;
     if (parsed.errors.isEmpty) {

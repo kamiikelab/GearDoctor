@@ -230,6 +230,14 @@ class _ImportReplacementsScreenState extends State<ImportReplacementsScreen> {
       _blockIfDemo();
       return;
     }
+    if (_csv.text.trim().isEmpty) {
+      setState(() {
+        _parsed = null;
+        _plan = null;
+        _message = null;
+      });
+      return;
+    }
     final parsed = parseReplacementCsv(
       _csv.text,
       startDate: widget.store.partOriginOn,
