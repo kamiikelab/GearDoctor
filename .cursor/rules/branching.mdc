@@ -17,6 +17,12 @@ alwaysApply: true
 
 Cloud Agent はもともと「`main` から枝を切って push / PR」する動き。そのままでよい。こうすると PC と同時に `main` を書き換えなくて済む。
 
+## マージの実行者
+
+- **Cloud Agent（Web / iPhone）はマージできない**（`gh` は読み取り専用でマージ手段が無い）。Cloud は **PR を上げるところまで**。CI がグリーンになったら知らせる。
+- **実際のマージは、GitHub の「Merge」ボタン（ユーザー）または PC 側のローカル Cursor エージェント（`gh pr merge`）が行う。**
+- PC 側のローカル会話では、そのエージェントがそのまま `gh pr merge` してよい。
+
 ## やらない方がよいこと
 
 - PC と Cloud の両方で、同じ `main` に同時に直接 push する（後から来た方が上書き・コンフリクトしやすい）。
