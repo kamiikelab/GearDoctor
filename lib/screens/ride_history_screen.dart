@@ -26,11 +26,13 @@ class RideHistoryScreen extends StatelessWidget {
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
             children: [
               SelectedGearHeading(name: gearName),
-              const SizedBox(height: 8),
-              Text(
-                l10n.rideHistoryHint,
-                style: Theme.of(context).textTheme.bodySmall,
-              ),
+              if (store.settings.showUserHelp) ...[
+                const SizedBox(height: 8),
+                Text(
+                  l10n.rideHistoryHint,
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
+              ],
               const SizedBox(height: 8),
               if (rides.isEmpty)
                 Text(

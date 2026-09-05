@@ -90,7 +90,7 @@ class _StravaConnectScreenState extends State<StravaConnectScreen> {
                 connected ? l10n.connected : l10n.notConnected,
                 style: Theme.of(context).textTheme.titleMedium,
               ),
-              if (!connected) ...[
+              if (!connected && widget.store.settings.showUserHelp) ...[
                 const SizedBox(height: 4),
                 Text(
                   l10n.stravaOptional,

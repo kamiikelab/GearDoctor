@@ -89,8 +89,10 @@ class _ImportReplacementsScreenState extends State<ImportReplacementsScreen> {
                 ),
               ],
               const SizedBox(height: 16),
-              Text(l10n.csvCopyHint),
-              const SizedBox(height: 8),
+              if (widget.store.settings.showUserHelp) ...[
+                Text(l10n.csvCopyHint),
+                const SizedBox(height: 8),
+              ],
               OutlinedButton(
                 onPressed: canManage ? _export : null,
                 child: Text(l10n.exportCurrentRecords),
@@ -226,6 +228,14 @@ class _ImportReplacementsScreenState extends State<ImportReplacementsScreen> {
   void _preview() {
     if (widget.store.usingDemoRides) {
       _blockIfDemo();
+      return;
+    }
+    if (_csv.text.trim().isEmpty) {
+      setState(() {
+        _parsed = null;
+        _plan = null;
+        _message = null;
+      });
       return;
     }
     final parsed = parseReplacementCsv(

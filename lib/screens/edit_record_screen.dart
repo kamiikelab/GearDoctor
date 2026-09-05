@@ -90,11 +90,13 @@ class _EditRecordScreenState extends State<EditRecordScreen> {
                   hintText: l10n.memoHint,
                 ),
               ),
-              const SizedBox(height: 8),
-              Text(
-                l10n.editRecordHelp,
-                style: Theme.of(context).textTheme.bodySmall,
-              ),
+              if (widget.store.settings.showUserHelp) ...[
+                const SizedBox(height: 8),
+                Text(
+                  l10n.editRecordHelp,
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
+              ],
               const SizedBox(height: 16),
               FilledButton(
                 onPressed: () async {
