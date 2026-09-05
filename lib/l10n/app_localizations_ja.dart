@@ -379,7 +379,13 @@ class AppLocalizationsJa extends AppLocalizations {
   String get editRecord => '記録を編集';
 
   @override
+  String get editRide => '走行を編集';
+
+  @override
   String get recordNotFound => '記録が見つかりません';
+
+  @override
+  String get rideNotFound => '走行が見つかりません';
 
   @override
   String get editRecordHelp => '日付を変えると、その期間の走行距離を数え直す';

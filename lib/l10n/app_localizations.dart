@@ -770,11 +770,23 @@ abstract class AppLocalizations {
   /// **'Edit record'**
   String get editRecord;
 
+  /// No description provided for @editRide.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit ride'**
+  String get editRide;
+
   /// No description provided for @recordNotFound.
   ///
   /// In en, this message translates to:
   /// **'Record not found'**
   String get recordNotFound;
+
+  /// No description provided for @rideNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Ride not found'**
+  String get rideNotFound;
 
   /// No description provided for @editRecordHelp.
   ///

@@ -367,7 +367,7 @@ class ReplacementHistoryTable extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
     final past = [...rows]
       ..sort(
-        (a, b) => a.replacement.replacedOn.compareTo(b.replacement.replacedOn),
+        (a, b) => b.replacement.replacedOn.compareTo(a.replacement.replacedOn),
       );
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -476,7 +476,7 @@ class RideHistoryTable extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final rows = [...rides]
-      ..sort((a, b) => a.startedOn.compareTo(b.startedOn));
+      ..sort((a, b) => b.startedOn.compareTo(a.startedOn));
     return Table(
       columnWidths: const {
         0: FlexColumnWidth(1.1),

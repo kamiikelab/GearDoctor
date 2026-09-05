@@ -390,7 +390,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get editRecord => 'Edit record';
 
   @override
+  String get editRide => 'Edit ride';
+
+  @override
   String get recordNotFound => 'Record not found';
+
+  @override
+  String get rideNotFound => 'Ride not found';
 
   @override
   String get editRecordHelp =>

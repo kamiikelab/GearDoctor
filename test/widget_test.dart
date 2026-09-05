@@ -131,6 +131,9 @@ void main() {
     );
     await tester.runAsync(store.load);
     await tester.runAsync(
+      () => store.addManualRide(on: parseDate('2026-07-01'), distanceKm: 18),
+    );
+    await tester.runAsync(
       () => store.addManualRide(on: parseDate('2026-08-23'), distanceKm: 32),
     );
 
@@ -148,10 +151,16 @@ void main() {
     expect(find.text('種類'), findsOneWidget);
     expect(find.text('手入力'), findsWidgets);
     expect(find.text('2026-08-23'), findsOneWidget);
+    expect(find.text('2026-07-01'), findsOneWidget);
     expect(find.text('32 km'), findsOneWidget);
+    expect(
+      tester.getTopLeft(find.text('2026-08-23')).dy,
+      lessThan(tester.getTopLeft(find.text('2026-07-01')).dy),
+    );
 
     await tester.tap(find.text('2026-08-23'));
     await tester.pumpAndSettle();
+    expect(find.text('走行を編集'), findsOneWidget);
     expect(find.text('保存'), findsOneWidget);
     expect(find.text('この走行を削除'), findsOneWidget);
 
@@ -160,8 +169,12 @@ void main() {
     expect(find.text('この走行を消しますか？'), findsOneWidget);
     await tester.tap(find.widgetWithText(TextButton, 'キャンセル'));
     await tester.pumpAndSettle();
-    final id = store.rides.single.id;
-    await tester.runAsync(() => store.deleteManualRide(id));
+    await tester.tap(find.widgetWithText(OutlinedButton, 'キャンセル'));
+    await tester.pumpAndSettle();
+    expect(find.text('このギアの走行'), findsOneWidget);
+    for (final ride in List.of(store.rides)) {
+      await tester.runAsync(() => store.deleteManualRide(ride.id));
+    }
     await tester.pumpAndSettle();
     expect(store.rides, isEmpty);
     expect(find.text('このギアの走行はまだありません。'), findsOneWidget);
@@ -251,6 +264,40 @@ void main() {
     expect(find.text('2025-11-12'), findsOneWidget);
     expect(find.text('9,920km（デモ）'), findsOneWidget);
     expect(find.text('12,800km（デモ）（今日）'), findsOneWidget);
+  });
+
+  testWidgets('replacement history is newest first', (tester) async {
+    tester.view.physicalSize = const Size(800, 4000);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    final store = AppStore(
+      database: AppDatabase(overridePath: '${dir.path}/app.db'),
+      now: parseDate('2026-08-23'),
+    );
+    await tester.runAsync(store.load);
+
+    await tester.pumpWidget(
+      l10nApp(
+        home: PartDetailScreen(
+          store: store,
+          partId: partIdOnGear('p_front_tire', 'g_road'),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('2025-05-01'), findsOneWidget);
+    expect(find.text('2024-01-15'), findsOneWidget);
+    expect(find.text('2023-04-02'), findsOneWidget);
+    expect(
+      tester.getTopLeft(find.text('2025-05-01')).dy,
+      lessThan(tester.getTopLeft(find.text('2024-01-15')).dy),
+    );
+    expect(
+      tester.getTopLeft(find.text('2024-01-15')).dy,
+      lessThan(tester.getTopLeft(find.text('2023-04-02')).dy),
+    );
   });
 
   testWidgets('settings reset shows a confirmation dialog', (tester) async {
@@ -444,7 +491,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Settings'), findsWidgets);
     expect(find.text('Match device'), findsOneWidget);
-    expect(find.text('Add ride'), findsOneWidget);
+    expect(find.text('Add ride', skipOffstage: false), findsOneWidget);
     expect(find.text('設定'), findsNothing);
 
     await tester.tap(find.byType(BackButton));

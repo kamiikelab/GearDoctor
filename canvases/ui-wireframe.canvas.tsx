@@ -21,7 +21,7 @@ import {
   useHostTheme,
 } from "cursor/canvas";
 
-type ScreenId = "home" | "detail" | "replace" | "edit-record" | "add" | "add-gear" | "split-merge" | "import-csv" | "import-settings" | "sync" | "rides" | "strava" | "settings" | "gear";
+type ScreenId = "home" | "detail" | "replace" | "edit-record" | "edit-ride" | "add" | "add-gear" | "split-merge" | "import-csv" | "import-settings" | "sync" | "rides" | "strava" | "settings" | "gear";
 type Position = "rear" | "front" | "single";
 type LimitMode = "recommended" | "previousCycle" | "custom";
 type CycleKind = "distance" | "months";
@@ -234,7 +234,7 @@ function HistoryTable({
             コメント
           </Text>
         </div>
-        {history.map((row) => (
+        {[...history].reverse().map((row) => (
           <div
             key={`${row.date}-${row.memo}`}
             onClick={() => onOpenRecord?.(row)}
@@ -833,6 +833,42 @@ function EditRecordScreen({
   );
 }
 
+function EditRideScreen({
+  editDate,
+  editKm,
+  onChangeDate,
+  onChangeKm,
+  go,
+}: {
+  editDate: string;
+  editKm: string;
+  onChangeDate: (value: string) => void;
+  onChangeKm: (value: string) => void;
+  go: (screen: ScreenId) => void;
+}) {
+  return (
+    <Phone title="走行を編集" onBack={() => go("rides")}>
+      <Stack gap={14}>
+        <Stack gap={4}>
+          <Text size="small" tone="secondary">
+            日付
+          </Text>
+          <TextInput value={editDate} onChange={onChangeDate} placeholder="YYYY-MM-DD" />
+        </Stack>
+        <Stack gap={4}>
+          <Text size="small" tone="secondary">
+            距離
+          </Text>
+          <TextInput value={editKm} onChange={onChangeKm} placeholder="km" />
+        </Stack>
+        <PhoneButton label="保存" variant="primary" onClick={() => go("rides")} />
+        <PhoneButton label="この走行を削除" variant="ghost" onClick={() => go("rides")} />
+        <PhoneButton label="キャンセル" variant="ghost" onClick={() => go("rides")} />
+      </Stack>
+    </Phone>
+  );
+}
+
 function AddScreen({
   go,
   cycleKind,
@@ -1329,17 +1365,23 @@ function RideHistoryScreen({
             </Text>
           </div>
           {[
-            { date: "2025-08-01", km: "15 km", kind: "Strava" },
             { date: "2026-09-03", km: "32 km", kind: "手入力" },
+            { date: "2025-08-01", km: "15 km", kind: "Strava" },
           ].map((row) => (
             <div
               key={row.date}
+              onClick={() => {
+                if (row.kind === "手入力") {
+                  go("edit-ride");
+                }
+              }}
               style={{
                 display: "grid",
                 gridTemplateColumns: "1.1fr 1fr 0.9fr",
                 gap: 4,
                 padding: 8,
                 borderTop: `1px solid ${t.stroke.tertiary}`,
+                cursor: row.kind === "手入力" ? "pointer" : "default",
               }}
             >
               <Text size="small">{row.date}</Text>
@@ -1495,6 +1537,8 @@ export default function GearDoctorUiWireframe() {
   });
   const [editRecordDate, setEditRecordDate] = useCanvasState("editRecordDate", "2025-03-01");
   const [editRecordMemo, setEditRecordMemo] = useCanvasState("editRecordMemo", "パンク後に交換");
+  const [editRideDate, setEditRideDate] = useCanvasState("editRideDate", "2026-09-03");
+  const [editRideKm, setEditRideKm] = useCanvasState("editRideKm", "32");
   const customLimitKm = 5000;
   const recommendedKm = 6000;
   const customLimitMonths = 12;
@@ -1567,6 +1611,14 @@ export default function GearDoctorUiWireframe() {
       <SyncScreen go={go} gear={gear} />
     ) : screen === "rides" ? (
       <RideHistoryScreen go={go} gear={gear} />
+    ) : screen === "edit-ride" ? (
+      <EditRideScreen
+        editDate={editRideDate}
+        editKm={editRideKm}
+        onChangeDate={setEditRideDate}
+        onChangeKm={setEditRideKm}
+        go={go}
+      />
     ) : screen === "import-csv" ? (
       <ImportCsvScreen go={go} gear={gear} />
     ) : screen === "import-settings" ? (
@@ -1625,6 +1677,9 @@ export default function GearDoctorUiWireframe() {
         <Pill active={screen === "rides"} onClick={() => setScreen("rides")}>
           走行を確認
         </Pill>
+        <Pill active={screen === "edit-ride"} onClick={() => setScreen("edit-ride")}>
+          走行を編集
+        </Pill>
         <Pill active={screen === "settings"} onClick={() => setScreen("settings")}>
           設定
         </Pill>
@@ -1639,7 +1694,7 @@ export default function GearDoctorUiWireframe() {
         <Stack gap={16}>
           <H2>決まったこと</H2>
           <Text>
-            下部タブなし。交換したは詳細画面。ホームの主ボタンは「走行を追加」。ホームのギアは緑の枠ボタン。設定からギアと走行は出さない。部品は登録名だけで管理し、追加に F/R の種別は付けない。左右の合体は表示のまとめだけ。走行は手書きか Strava かアプリ全体で排他。手入力と Strava は同じ画面。一覧は「走行を確認」の別画面で、表の大きさは交換記録と同じ。手書きは修正・削除、Strava は参照のみ。デモのあいだは部品の追加・削除と CSV はエラーにし、先に走行を追加する。自転車の削除はギア画面。部品の削除は編集画面（解除後は初期18件も可）。
+            下部タブなし。交換したは詳細画面。ホームの主ボタンは「走行を追加」。ホームのギアは緑の枠ボタン。設定からギアと走行は出さない。部品は登録名だけで管理し、追加に F/R の種別は付けない。左右の合体は表示のまとめだけ。手入力と Strava は同じ画面。一覧は「走行を確認」の別画面で、表の大きさは交換記録と同じ。並びは新しい順。手入力は「走行を編集」の別画面、Strava は参照のみ。交換日も新しい順。デモのあいだは部品の追加・削除と CSV はエラーにし、先に走行を追加する。自転車の削除はギア画面。部品の削除は編集画面（解除後は初期18件も可）。
           </Text>
           <Table
             headers={["画面", "上から下", "横並び"]}
@@ -1647,6 +1702,7 @@ export default function GearDoctorUiWireframe() {
               ["ホーム", "デモ案内 → ギアと走行の範囲 → 警告 → 部品 → 走行を追加", "ギア | 走行、R | F"],
               ["詳細", "距離 → バー → 交換日 → 操作 → 過去の交換記録", "交換した | 編集"],
               ["記録を編集", "日付 → メモ → 保存 → 削除", "なし（縦のみ）"],
+              ["走行を編集", "日付 → 距離 → 保存 → 削除", "なし（縦のみ）"],
               ["ギア", "大きなギア名 → 自転車の選択 → 自転車を追加 / 自転車を削除 / 部品追加 / 交換記録の CSV / 部品登録の CSV / まとめ", "なし（縦のみ）"],
               ["自転車を追加", "名前 → 追加する", "なし（縦のみ）"],
               ["部品を追加 / 編集", "登録名 → 周期 → 目安 → しきい値 → 保存 / 削除", "距離 | 月"],
@@ -1654,7 +1710,7 @@ export default function GearDoctorUiWireframe() {
               ["部品登録の CSV", "ギア名 → 書き出し → 貼り付け → CSVを取り込み → 確定", "なし（縦のみ）"],
               ["表示のまとめ", "2件選択 → どちらがF → 表示名", "なし（縦のみ）"],
               ["走行を追加", "手入力 → 走行を確認 → Strava から取り込む", "なし（縦のみ）"],
-              ["走行を確認", "表（日付・距離）→ 手書きなら修正・削除", "なし（縦のみ）"],
+              ["走行を確認", "表（日付・距離・種類、新しい順）", "なし（縦のみ）"],
               ["設定", "言語 → 初期化 → バージョン", "なし（縦のみ）"],
               ["Strava 連携", "状態 → ID/Secret → 連携 → 解除 → 連携方法", "なし（縦のみ）"],
             ]}
@@ -1677,7 +1733,7 @@ export default function GearDoctorUiWireframe() {
 
           <H3>走行を追加</H3>
           <Callout tone="info" title="手書きと Strava は混ぜてよい">
-            同じギアでも両方置ける。手入力と取り込みは同じ画面。一覧は「走行を確認」で、種類列あり。手入力だけ修正・削除。Strava開始日を変えたら取り込んだ走行を消し、「前回から 1 年」で取り直す。
+            同じギアでも両方置ける。手入力と取り込みは同じ画面。一覧は「走行を確認」で、種類列あり・新しい順。手入力は「走行を編集」の別画面。Strava開始日を変えたら取り込んだ走行を消し、「前回から 1 年」で取り直す。
           </Callout>
 
           <Card>
