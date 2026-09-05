@@ -53,6 +53,8 @@ flutter run -d linux
 
 `flutter` が見つからないときは、その端末で `source ~/.bashrc` を実行するか、新しい端末を開きます。APK は `build/app/outputs/flutter-apk/app-release.apk` です。作るたびに版が 0.0.1 上がり、設定画面の表示と揃います。
 
+`main` への PUSH と pull request では、GitHub Actions（Linux）が同じ `flutter test` を回します。APK のビルドは Codemagic のままです。
+
 ## ドキュメント
 
 詳細は [`docs/`](docs/) を参照してください。プライバシーポリシーは [`docs/privacy-policy.html`](docs/privacy-policy.html) です。
