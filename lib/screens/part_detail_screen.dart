@@ -45,7 +45,7 @@ class PartDetailScreen extends StatelessWidget {
         return Scaffold(
           appBar: AppBar(title: Text(store.titleOf(part))),
           body: ListView(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
             children: [
               Text(heading, style: Theme.of(context).textTheme.bodySmall),
               const SizedBox(height: 6),

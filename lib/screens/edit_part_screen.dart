@@ -83,7 +83,7 @@ class _EditPartScreenState extends State<EditPartScreen> {
     return Scaffold(
       appBar: AppBar(title: Text(_isNew ? l10n.addPart : l10n.editPart)),
       body: ListView(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
         keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
         children: [
           Text(l10n.registeredName, style: Theme.of(context).textTheme.bodySmall),

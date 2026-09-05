@@ -65,7 +65,7 @@ class _ImportSettingsScreenState extends State<ImportSettingsScreen> {
         return Scaffold(
           appBar: AppBar(title: Text(l10n.settingsCsv)),
           body: ListView(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
             keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
             children: [
               Text(

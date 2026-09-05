@@ -61,7 +61,7 @@ class _EditRecordScreenState extends State<EditRecordScreen> {
         return Scaffold(
           appBar: AppBar(title: Text(l10n.editRecord)),
           body: ListView(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
             keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
             children: [
               Text(

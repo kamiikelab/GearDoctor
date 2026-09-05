@@ -37,7 +37,7 @@ class _DisplayGroupScreenState extends State<DisplayGroupScreen> {
         return Scaffold(
           appBar: AppBar(title: Text(l10n.groupTitle)),
           body: ListView(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
             keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
             children: [
               if (widget.store.settings.showUserHelp) ...[
