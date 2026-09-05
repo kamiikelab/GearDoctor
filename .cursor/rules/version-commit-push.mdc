@@ -12,11 +12,13 @@ alwaysApply: true
 - 修正中は途中確認しない。実装を最後まで進める
 - 聞くまで版上げ・コミット・プッシュはしない
 - 画面案・ドキュメントだけなら聞かない
-- はい、と言われたらコミットし、`kamiikelab` へプッシュする（Cloud Agent は枝＋PR まで。マージは別ルール参照）
+- はい、と言われたら `pubspec.yaml` の `+`（ビルド番号）を1つ上げてコミットし、`kamiikelab` へプッシュ（PR）する（Cloud Agent は枝＋PR まで。マージは別ルール参照）
 - 表示版（`1.0.5` など）はユーザーが見える版を変えるときだけ手で上げる
 
 ## ビルド番号（`+`）
 
-- **ビルド番号は Codemagic がビルドのたびに自動採番する（App Store Connect / Google Play の最新 +1）。** そのため store 向けに `pubspec.yaml` の `+` を手で上げる必要はない。
-- アプリ内の版表記は `package_info_plus` で実際に採番された番号を出すので、そのまま整合する。
-- 手元の `./scripts/build_apk.sh` は従来どおりローカル成果物用に版を上げる（store のビルド番号は Codemagic が決める）。
+- ストア用のビルド番号は **リポジトリ側（`pubspec.yaml` の `+`）で管理する。Codemagic の設定はいじらない。**
+- Codemagic は `pubspec.yaml` の `+`（= iOS の CFBundleVersion / Android の versionCode）をそのまま使う。
+- **`main` へ push（PR マージ）するたびに Codemagic がビルドしてストアにアップロードするため、ストアに載る変更を含む PR は必ず `+` を1つ上げる。** 同じ `+` のまま再アップロードすると「value has already been used」で失敗する。
+- アプリ内の版表記は `package_info_plus` が実際のビルド番号（= その `+`）を出すので整合する。
+- 手元の `./scripts/build_apk.sh` は従来どおりローカル成果物用に版を上げる。
