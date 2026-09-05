@@ -120,11 +120,10 @@ class _SyncScreenState extends State<SyncScreen> {
                 l10n.importFromStrava,
                 style: Theme.of(context).textTheme.titleMedium,
               ),
-              const SizedBox(height: 4),
-              Text(
-                l10n.stravaHint,
-                style: Theme.of(context).textTheme.bodySmall,
-              ),
+              if (widget.store.settings.showUserHelp) ...[
+                const SizedBox(height: 4),
+                Text(l10n.stravaHint, style: userHelpStyle(context)),
+              ],
               const SizedBox(height: 8),
               _RangeSummary(from: from, to: to),
               const SizedBox(height: 16),
@@ -132,11 +131,10 @@ class _SyncScreenState extends State<SyncScreen> {
                 onPressed: connected && !_busy ? _syncForward : null,
                 child: Text(l10n.sync1year),
               ),
-              const SizedBox(height: 16),
-              Text(
-                l10n.startDateHelp,
-                style: Theme.of(context).textTheme.bodySmall,
-              ),
+              if (widget.store.settings.showUserHelp) ...[
+                const SizedBox(height: 16),
+                Text(l10n.startDateHelp, style: userHelpStyle(context)),
+              ],
               const SizedBox(height: 8),
               OutlinedButton(
                 onPressed: _busy ? null : _changeStartDate,
@@ -356,7 +354,7 @@ class _RangeSummary extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(l10n.dataRange, style: Theme.of(context).textTheme.bodySmall),
+        Text(l10n.dataRange, style: fieldLabelStyle(context)),
         const SizedBox(height: 6),
         Text(range, style: Theme.of(context).textTheme.titleMedium),
       ],

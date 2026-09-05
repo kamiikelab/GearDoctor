@@ -144,7 +144,9 @@ class _EditPartScreenState extends State<EditPartScreen> {
           SelectTile(
             selected: _mode == LimitMode.recommended,
             title: l10n.limitRecommended(formatAmount(_recommended), unit),
-            subtitle: l10n.limitRecommendedHelp,
+            subtitle: widget.store.settings.showUserHelp
+                ? l10n.limitRecommendedHelp
+                : null,
             onTap: () => setState(() => _mode = LimitMode.recommended),
           ),
           const SizedBox(height: 8),
@@ -153,7 +155,9 @@ class _EditPartScreenState extends State<EditPartScreen> {
             title: previous == null
                 ? l10n.limitAutoEmpty
                 : l10n.limitAuto(formatAmount(previous), unit),
-            subtitle: l10n.limitAutoHelp,
+            subtitle: widget.store.settings.showUserHelp
+                ? l10n.limitAutoHelp
+                : null,
             onTap: () => setState(() => _mode = LimitMode.previousCycle),
           ),
           const SizedBox(height: 8),
@@ -163,7 +167,9 @@ class _EditPartScreenState extends State<EditPartScreen> {
               _custom.text.isEmpty ? l10n.emDash : _custom.text,
               unit,
             ),
-            subtitle: l10n.limitCustomHelp,
+            subtitle: widget.store.settings.showUserHelp
+                ? l10n.limitCustomHelp
+                : null,
             onTap: () => setState(() => _mode = LimitMode.custom),
           ),
           if (_mode == LimitMode.custom) ...[

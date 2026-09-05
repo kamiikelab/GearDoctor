@@ -166,6 +166,7 @@ class AppSettings {
     this.stravaAthleteName,
     this.localeCode,
     this.rideSource,
+    this.showUserHelp = true,
   });
 
   final String? selectedGearId;
@@ -185,6 +186,9 @@ class AppSettings {
   /// `null` is demo / not yet chosen. App-wide: manual or Strava, never mixed.
   final RideSource? rideSource;
 
+  /// When false, hide user-help copy. Labels, values, and dialogs stay.
+  final bool showUserHelp;
+
   bool get stravaConnected =>
       stravaAccessToken != null && stravaAccessToken!.isNotEmpty;
 
@@ -201,6 +205,7 @@ class AppSettings {
     String? stravaAthleteName,
     String? localeCode,
     RideSource? rideSource,
+    bool? showUserHelp,
     bool clearGear = false,
     bool clearSync = false,
     bool clearTokens = false,
@@ -235,6 +240,7 @@ class AppSettings {
           : (stravaAthleteName ?? this.stravaAthleteName),
       localeCode: clearLocale ? null : (localeCode ?? this.localeCode),
       rideSource: clearRideSource ? null : (rideSource ?? this.rideSource),
+      showUserHelp: showUserHelp ?? this.showUserHelp,
     );
   }
 }

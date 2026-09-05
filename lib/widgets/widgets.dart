@@ -8,6 +8,16 @@ import '../models/models.dart';
 
 export 'app_text_field.dart';
 
+TextStyle? fieldLabelStyle(BuildContext context) {
+  return Theme.of(context).textTheme.titleSmall;
+}
+
+TextStyle? userHelpStyle(BuildContext context) {
+  return Theme.of(context).textTheme.bodySmall?.copyWith(
+    color: Theme.of(context).colorScheme.onSurfaceVariant,
+  );
+}
+
 String formatAmount(num value) {
   final digits = value.round().abs().toString();
   final buffer = StringBuffer();

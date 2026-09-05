@@ -33,6 +33,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get languageEnglish => 'English';
 
   @override
+  String get userHelp => 'Help text';
+
+  @override
+  String get userHelpOn => 'Show';
+
+  @override
+  String get userHelpOff => 'Hide';
+
+  @override
   String get connected => 'Connected';
 
   @override

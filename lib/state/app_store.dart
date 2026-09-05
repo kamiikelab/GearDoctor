@@ -602,6 +602,12 @@ class AppStore extends ChangeNotifier {
     await refresh();
   }
 
+  Future<void> setShowUserHelp(bool show) async {
+    settings = settings.copyWith(showUserHelp: show);
+    notifyListeners();
+    await _requireRepo().saveSettings(settings);
+  }
+
   Future<void> setLocaleCode(String? code) async {
     settings = code == null || code.isEmpty
         ? settings.copyWith(clearLocale: true)
@@ -649,9 +655,15 @@ class AppStore extends ChangeNotifier {
     final repo = _requireRepo();
     final locale = catalogLocale;
     final localeCode = settings.localeCode;
+    final showUserHelp = settings.showUserHelp;
     await repo.clearAllTables();
     await seedDemoData(repo, locale: locale, localeCode: localeCode);
     await refresh();
+    if (settings.showUserHelp != showUserHelp) {
+      settings = settings.copyWith(showUserHelp: showUserHelp);
+      await repo.saveSettings(settings);
+      notifyListeners();
+    }
   }
 
   Future<void> changeSyncStart(DateTime from) async {

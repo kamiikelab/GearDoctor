@@ -1293,7 +1293,7 @@ function SyncScreen({
         </div>
         <Stack gap={10}>
           <Stack gap={4}>
-            <Text size="small" tone="secondary">
+            <Text size="small" weight="semibold">
               Stravaの取得済み範囲
             </Text>
             <Text weight="semibold">2025-07-17〜2026-07-15</Text>
@@ -1501,6 +1501,15 @@ function SettingsScreen({
   return (
     <Phone title="設定" onBack={() => go("home")}>
       <Stack gap={14}>
+        <Stack gap={6}>
+          <Text size="small" tone="secondary">
+            ユーザー説明
+          </Text>
+          <Text size="small">あり</Text>
+          <Text size="small" tone="tertiary">
+            なし
+          </Text>
+        </Stack>
         <Stack gap={4}>
           <Text size="small" tone="secondary">
             初期化
@@ -1706,7 +1715,7 @@ export default function GearDoctorUiWireframe() {
               ["表示のまとめ", "2件選択 → どちらがF → 表示名", "なし（縦のみ）"],
               ["走行を追加", "手入力 → 走行を確認 → Strava から取り込む", "なし（縦のみ）"],
               ["走行を確認", "表（日付・距離・種類、新しい順）", "なし（縦のみ）"],
-              ["設定", "言語 → 初期化 → バージョン", "なし（縦のみ）"],
+              ["設定", "言語 → ユーザー説明 → 初期化 → バージョン", "なし（縦のみ）"],
               ["Strava 連携", "状態 → ID/Secret → 連携 → 解除 → 連携方法", "なし（縦のみ）"],
             ]}
           />

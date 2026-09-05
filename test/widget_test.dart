@@ -330,6 +330,54 @@ void main() {
     expect(store.parts.length, 18);
   });
 
+  testWidgets('settings can hide Strava help copy', (tester) async {
+    tester.view.physicalSize = const Size(800, 4000);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    final store = AppStore(
+      database: AppDatabase(overridePath: '${dir.path}/app.db'),
+      now: parseDate('2026-08-23'),
+    );
+    await tester.runAsync(store.load);
+
+    await tester.pumpWidget(l10nApp(home: SettingsScreen(store: store)));
+    await tester.pumpAndSettle();
+    expect(find.text('ユーザー説明'), findsOneWidget);
+    expect(find.text('あり'), findsOneWidget);
+    expect(find.text('なし'), findsOneWidget);
+    expect(find.textContaining('初回と同じデモ状態に戻します'), findsOneWidget);
+
+    await tester.runAsync(() => store.setShowUserHelp(false));
+    await tester.pumpAndSettle();
+    expect(store.settings.showUserHelp, isFalse);
+    expect(find.textContaining('初回と同じデモ状態に戻します'), findsNothing);
+
+    await tester.pumpWidget(l10nApp(home: SyncScreen(store: store)));
+    await tester.pumpAndSettle();
+    expect(find.text('Strava から取り込む'), findsOneWidget);
+    expect(find.text('Stravaの取得済み範囲'), findsOneWidget);
+    expect(find.textContaining('連携は任意です'), findsNothing);
+    expect(
+      find.textContaining('Strava開始日を変えると、取り込んだ走行は消えます'),
+      findsNothing,
+    );
+    expect(find.text('前回から 1 年'), findsOneWidget);
+    expect(find.text('Strava 連携'), findsOneWidget);
+
+    await tester.pumpWidget(
+      l10nApp(
+        home: EditPartScreen(
+          store: store,
+          partId: partIdOnGear('p_bar_tape', 'g_road'),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('名前から自動で決まります。'), findsNothing);
+  });
+
   testWidgets('home add-ride opens Strava connect, gear button opens gear', (
     tester,
   ) async {
@@ -398,6 +446,7 @@ void main() {
     );
     await tester.pumpAndSettle();
     expect(find.textContaining('推奨  5,000 km'), findsOneWidget);
+    expect(find.text('名前から自動で決まります。'), findsOneWidget);
     expect(find.textContaining('設定  5000 km'), findsOneWidget);
 
     await tester.tap(find.text('月'));

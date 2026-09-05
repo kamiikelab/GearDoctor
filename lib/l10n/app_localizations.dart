@@ -140,6 +140,24 @@ abstract class AppLocalizations {
   /// **'English'**
   String get languageEnglish;
 
+  /// No description provided for @userHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Help text'**
+  String get userHelp;
+
+  /// No description provided for @userHelpOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Show'**
+  String get userHelpOn;
+
+  /// No description provided for @userHelpOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide'**
+  String get userHelpOff;
+
   /// No description provided for @connected.
   ///
   /// In en, this message translates to:

@@ -52,13 +52,28 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
               const SizedBox(height: 16),
               Text(
+                l10n.userHelp,
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+              const SizedBox(height: 8),
+              SelectTile(
+                selected: widget.store.settings.showUserHelp,
+                title: l10n.userHelpOn,
+                onTap: () => widget.store.setShowUserHelp(true),
+              ),
+              const SizedBox(height: 8),
+              SelectTile(
+                selected: !widget.store.settings.showUserHelp,
+                title: l10n.userHelpOff,
+                onTap: () => widget.store.setShowUserHelp(false),
+              ),
+              const SizedBox(height: 16),
+              Text(
                 l10n.resetSection,
                 style: Theme.of(context).textTheme.bodySmall,
               ),
-              Text(
-                l10n.resetHint,
-                style: Theme.of(context).textTheme.bodySmall,
-              ),
+              if (widget.store.settings.showUserHelp)
+                Text(l10n.resetHint, style: userHelpStyle(context)),
               const SizedBox(height: 8),
               OutlinedButton(
                 onPressed: _busy ? null : _confirmResetToDemo,

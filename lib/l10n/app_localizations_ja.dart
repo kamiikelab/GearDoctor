@@ -33,6 +33,15 @@ class AppLocalizationsJa extends AppLocalizations {
   String get languageEnglish => 'English';
 
   @override
+  String get userHelp => 'ユーザー説明';
+
+  @override
+  String get userHelpOn => 'あり';
+
+  @override
+  String get userHelpOff => 'なし';
+
+  @override
   String get connected => '連携済み';
 
   @override

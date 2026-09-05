@@ -268,6 +268,7 @@ class AppRepository {
       stravaAthleteName: map['strava_athlete_name'],
       localeCode: map['locale_code'],
       rideSource: rideSourceFromName(map['ride_source']),
+      showUserHelp: map['show_user_help'] != '0',
     );
   }
 
@@ -320,6 +321,7 @@ class AppRepository {
     await put('strava_connected', settings.stravaConnected ? '1' : '0');
     await put('locale_code', settings.localeCode);
     await put('ride_source', settings.rideSource?.name);
+    await put('show_user_help', settings.showUserHelp ? '1' : '0');
     await put('app_initialized', '1');
   }
 
