@@ -546,7 +546,20 @@ class AppLocalizationsEn extends AppLocalizations {
   String get viewRides => 'View rides';
 
   @override
-  String get rideHistoryHint => 'Tap a row to edit date, distance, or delete';
+  String get rideHistoryHint =>
+      'Tap a hand-entered row to edit date, distance, or delete';
+
+  @override
+  String get rideKind => 'Kind';
+
+  @override
+  String get rideKindManual => 'Hand';
+
+  @override
+  String get rideKindStrava => 'Strava';
+
+  @override
+  String get rideKindDemo => 'Demo';
 
   @override
   String get deleteThisRide => 'Delete this ride';
@@ -598,7 +611,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String stravaStartDate(String value) {
-    return 'Start date  $value';
+    return 'Strava start date  $value';
   }
 
   @override
@@ -608,7 +621,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get untilDateHelp =>
-      'Through date is the newest ride on or after the start date.';
+      'Through date is the newest ride on or after the Strava start date.';
 
   @override
   String get syncManualHelp =>
@@ -624,27 +637,27 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sync1year => 'Last year';
 
   @override
-  String get changeStartDate => 'Change start date';
+  String get changeStartDate => 'Change Strava start date';
 
   @override
-  String get specifyStartDate => 'Set start date';
+  String get specifyStartDate => 'Set Strava start date';
 
   @override
   String get startDateHelp =>
-      'Changing the start date clears imported rides and resets them. They are fetched again from the new date.';
+      'Changing the Strava start date deletes imported rides. Hand-entered rides stay. Use Last year to import again from the new date.';
 
   @override
-  String get needStartDate => 'Set a start date first.';
+  String get needStartDate => 'Set a Strava start date first.';
 
   @override
   String get needConnect => 'Connect from the Strava connect screen first.';
 
   @override
-  String get changeStartTitle => 'Change start date?';
+  String get changeStartTitle => 'Change Strava start date?';
 
   @override
   String get changeStartBody =>
-      'Changing only the start date later can leave gaps.\n\nAll imported rides will be deleted, then fetched again from the new start date.';
+      'Imported Strava rides will be deleted. Hand-entered rides stay.\n\nNothing is fetched now. Use Last year to import again from the new Strava start date.';
 
   @override
   String get deleteAndContinue => 'Delete and continue';
@@ -841,16 +854,16 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get startDateUnchanged => 'Start date is unchanged.';
+  String get startDateUnchanged => 'Strava start date is unchanged.';
 
   @override
   String startDateChanged(String date) {
-    return 'Start date is now $date. Ride data was cleared. Import again from here.';
+    return 'Strava start date is now $date. Imported rides were cleared. Use Last year to import again.';
   }
 
   @override
   String changeStartConfirm(String date) {
-    return 'Set start date to $date.\n\nRides from the start date through the newest imported ride need to be complete. Changing only the start date later can leave gaps.\n\nAll imported rides will be deleted, then fetched again from the new start date.';
+    return 'Set Strava start date to $date.\n\nImported Strava rides will be deleted. Hand-entered rides stay.\n\nNothing is fetched now. Use Last year to import again from the new Strava start date.';
   }
 
   @override

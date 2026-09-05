@@ -52,68 +52,56 @@ class _SyncScreenState extends State<SyncScreen> {
         final hasStart = from != null;
         final gear = widget.store.selectedGear;
         final gearName = gear == null ? l10n.gearUnselected : gear.name;
-        final stravaMode = widget.store.isStravaRideMode;
-        final manualMode = widget.store.isManualRideMode;
-        final showForm = !stravaMode;
         return Scaffold(
           appBar: AppBar(title: Text(l10n.syncTitle)),
           body: ListView(
             padding: const EdgeInsets.all(16),
             keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
             children: [
-              if (showForm) ...[
-                Text(
-                  l10n.manualRideSection,
-                  style: Theme.of(context).textTheme.titleMedium,
+              Text(
+                l10n.manualRideSection,
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+              const SizedBox(height: 4),
+              Text(
+                l10n.selectedGearLine(gearName),
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+              const SizedBox(height: 12),
+              Text(l10n.rideDate, style: Theme.of(context).textTheme.bodySmall),
+              const SizedBox(height: 4),
+              OutlinedButton(
+                onPressed: _busy ? null : _pickRideDate,
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(formatDate(_rideDate)),
                 ),
-                const SizedBox(height: 4),
-                Text(
-                  l10n.selectedGearLine(gearName),
-                  style: Theme.of(context).textTheme.bodySmall,
+              ),
+              const SizedBox(height: 12),
+              Text(
+                l10n.rideDistance,
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+              const SizedBox(height: 4),
+              AppTextField(
+                controller: _km,
+                keyboardType: const TextInputType.numberWithOptions(
+                  decimal: true,
                 ),
-                const SizedBox(height: 12),
-                Text(l10n.rideDate, style: Theme.of(context).textTheme.bodySmall),
-                const SizedBox(height: 4),
-                OutlinedButton(
-                  onPressed: _busy ? null : _pickRideDate,
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(formatDate(_rideDate)),
-                  ),
+                inputFormatters: [
+                  FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
+                ],
+                decoration: InputDecoration(
+                  border: const OutlineInputBorder(),
+                  suffixText: l10n.unitKm,
                 ),
-                const SizedBox(height: 12),
-                Text(
-                  l10n.rideDistance,
-                  style: Theme.of(context).textTheme.bodySmall,
-                ),
-                const SizedBox(height: 4),
-                AppTextField(
-                  controller: _km,
-                  keyboardType: const TextInputType.numberWithOptions(
-                    decimal: true,
-                  ),
-                  inputFormatters: [
-                    FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
-                  ],
-                  decoration: InputDecoration(
-                    border: const OutlineInputBorder(),
-                    suffixText: l10n.unitKm,
-                  ),
-                ),
-                const SizedBox(height: 12),
-                FilledButton(
-                  onPressed: _busy ? null : _recordRide,
-                  child: Text(l10n.logReplacement),
-                ),
-                const SizedBox(height: 24),
-              ],
-              if (stravaMode) ...[
-                Text(
-                  l10n.selectedGearLine(gearName),
-                  style: Theme.of(context).textTheme.bodySmall,
-                ),
-                const SizedBox(height: 12),
-              ],
+              ),
+              const SizedBox(height: 12),
+              FilledButton(
+                onPressed: _busy ? null : _recordRide,
+                child: Text(l10n.logReplacement),
+              ),
+              const SizedBox(height: 24),
               OutlinedButton(
                 onPressed: _busy
                     ? null
@@ -134,7 +122,7 @@ class _SyncScreenState extends State<SyncScreen> {
               ),
               const SizedBox(height: 4),
               Text(
-                _stravaHint(l10n, manualMode: manualMode, stravaMode: stravaMode),
+                l10n.stravaHint,
                 style: Theme.of(context).textTheme.bodySmall,
               ),
               const SizedBox(height: 8),
@@ -177,13 +165,6 @@ class _SyncScreenState extends State<SyncScreen> {
                 },
                 child: Text(l10n.stravaConnect),
               ),
-              if (stravaMode) ...[
-                const SizedBox(height: 8),
-                OutlinedButton(
-                  onPressed: _busy ? null : _switchToManual,
-                  child: Text(l10n.switchToManual),
-                ),
-              ],
               if (_message != null) ...[
                 const SizedBox(height: 16),
                 Text(_message!),
@@ -193,20 +174,6 @@ class _SyncScreenState extends State<SyncScreen> {
         );
       },
     );
-  }
-
-  String _stravaHint(
-    AppLocalizations l10n, {
-    required bool manualMode,
-    required bool stravaMode,
-  }) {
-    if (manualMode) {
-      return l10n.stravaHintManual;
-    }
-    if (stravaMode) {
-      return l10n.stravaHintStrava;
-    }
-    return l10n.stravaHint;
   }
 
   Future<void> _pickRideDate() async {
@@ -271,16 +238,6 @@ class _SyncScreenState extends State<SyncScreen> {
       setState(() => _message = l10n.needConnect);
       return;
     }
-    if (widget.store.isManualRideMode) {
-      final confirmed = await _confirm(
-        title: l10n.switchToStravaTitle,
-        body: l10n.switchToStravaConfirm,
-        action: l10n.deleteAndContinue,
-      );
-      if (confirmed != true || !mounted) {
-        return;
-      }
-    }
     setState(() {
       _busy = true;
       _message = null;
@@ -316,41 +273,6 @@ class _SyncScreenState extends State<SyncScreen> {
       setState(() {
         _busy = false;
         _message = error is StravaAuthException ? error.message : '$error';
-      });
-    }
-  }
-
-  Future<void> _switchToManual() async {
-    final l10n = AppLocalizations.of(context);
-    final confirmed = await _confirm(
-      title: l10n.switchToManualTitle,
-      body: l10n.switchToManualConfirm,
-      action: l10n.deleteAndContinue,
-    );
-    if (confirmed != true || !mounted) {
-      return;
-    }
-    setState(() {
-      _busy = true;
-      _message = null;
-    });
-    try {
-      await widget.store.switchToManualRides();
-      if (!mounted) {
-        return;
-      }
-      setState(() {
-        _busy = false;
-        _km.clear();
-        _rideDate = widget.store.now;
-      });
-    } catch (error) {
-      if (!mounted) {
-        return;
-      }
-      setState(() {
-        _busy = false;
-        _message = '$error';
       });
     }
   }

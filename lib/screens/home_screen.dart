@@ -19,14 +19,6 @@ import 'gear_screen.dart';
   String startLine(String from) =>
       l10n.lastSync(l10n.syncRange(from, ''));
 
-  final from = store.settings.lastSyncFrom;
-  if (from != null) {
-    final to = store.newestSyncedOn;
-    return (
-      start: startLine(formatDate(from)),
-      end: to == null ? '—' : formatDate(to),
-    );
-  }
   final oldest = store.oldestSelectedRideOn;
   final newest = store.newestSelectedRideOn;
   if (oldest == null || newest == null) {

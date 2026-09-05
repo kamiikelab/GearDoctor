@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../data/seed.dart';
 import '../domain/dates.dart';
 import '../domain/usage.dart';
 import '../l10n/app_localizations.dart';
@@ -478,8 +479,9 @@ class RideHistoryTable extends StatelessWidget {
       ..sort((a, b) => a.startedOn.compareTo(b.startedOn));
     return Table(
       columnWidths: const {
-        0: FlexColumnWidth(1.0),
+        0: FlexColumnWidth(1.1),
         1: FlexColumnWidth(1.0),
+        2: FlexColumnWidth(0.9),
       },
       children: [
         TableRow(
@@ -489,6 +491,7 @@ class RideHistoryTable extends StatelessWidget {
           children: [
             historyTableCell(context, l10n.rideDate, header: true),
             historyTableCell(context, l10n.rideDistance, header: true),
+            historyTableCell(context, l10n.rideKind, header: true),
           ],
         ),
         for (final ride in rows)
@@ -497,17 +500,39 @@ class RideHistoryTable extends StatelessWidget {
               historyTableCell(
                 context,
                 formatDate(ride.startedOn),
-                onTap: onRowTap == null ? null : () => onRowTap!(ride),
+                onTap: _rowTap(ride),
               ),
               historyTableCell(
                 context,
                 '${formatAmount(ride.distanceKm)} ${l10n.unitKm}',
-                onTap: onRowTap == null ? null : () => onRowTap!(ride),
+                onTap: _rowTap(ride),
+              ),
+              historyTableCell(
+                context,
+                _kindLabel(l10n, ride.id),
+                onTap: _rowTap(ride),
               ),
             ],
           ),
       ],
     );
+  }
+
+  VoidCallback? _rowTap(Ride ride) {
+    if (onRowTap == null || !isManualRideId(ride.id)) {
+      return null;
+    }
+    return () => onRowTap!(ride);
+  }
+
+  String _kindLabel(AppLocalizations l10n, String id) {
+    if (isDemoRideId(id)) {
+      return l10n.rideKindDemo;
+    }
+    if (isManualRideId(id)) {
+      return l10n.rideKindManual;
+    }
+    return l10n.rideKindStrava;
   }
 }
 

@@ -444,20 +444,47 @@ $settingsCsvHeader
     expect(store.cards.any((card) => card.title == 'Tires'), isTrue);
   });
 
-  test('changing sync start deletes rides so coverage can restart', () async {
+  test('changing sync start deletes Strava rides and keeps manuals', () async {
     final store = await openStore();
     expect(store.rides, isNotEmpty);
     expect(formatDate(store.newestSyncedOn!), '2026-07-15');
 
     await store.changeSyncStart(parseDate('2024-01-01'));
-    expect(store.rides, isEmpty);
-    expect(store.newestSyncedOn, isNull);
+    expect(store.rides.every((ride) => isDemoRideId(ride.id)), isTrue);
     expect(formatDate(store.settings.lastSyncFrom!), '2024-01-01');
+    expect(formatDate(store.settings.lastSyncAt!), '2024-01-01');
 
-    final again = await openStore();
-    expect(again.rides, isEmpty);
-    expect(formatDate(again.settings.lastSyncFrom!), '2024-01-01');
-    expect(again.newestSyncedOn, isNull);
+    await store.saveStravaAuth(
+      StravaAuthResult(
+        accessToken: 'access-1',
+        refreshToken: 'refresh-1',
+        expiresAt: DateTime.utc(2030, 1, 1),
+        athleteId: '42',
+        athleteName: 'Ken Rider',
+        bikes: const [Gear(id: 'b1', name: 'Tarmac')],
+      ),
+    );
+    await store.addManualRide(on: parseDate('2026-08-23'), distanceKm: 32);
+    final repo = AppRepository(
+      await AppDatabase(overridePath: '${dir.path}/app.db').instance,
+    );
+    await repo.upsertRide(
+      Ride(
+        id: '99',
+        gearId: 'b1',
+        startedOn: parseDate('2025-08-01'),
+        distanceKm: 15,
+      ),
+    );
+    await store.refresh();
+    expect(store.rides.any((ride) => ride.id == '99'), isTrue);
+    expect(store.rides.any((ride) => isManualRideId(ride.id)), isTrue);
+
+    await store.changeSyncStart(parseDate('2025-01-01'));
+    expect(store.rides.any((ride) => ride.id == '99'), isFalse);
+    expect(store.rides.any((ride) => isManualRideId(ride.id)), isTrue);
+    expect(formatDate(store.settings.lastSyncFrom!), '2025-01-01');
+    expect(formatDate(store.settings.lastSyncAt!), '2025-01-01');
   });
 
   test('same start date does not delete rides', () async {
@@ -684,7 +711,7 @@ $settingsCsvHeader
 
     expect(store.usingDemoRides, isFalse);
     expect(store.settings.stravaConnected, isFalse);
-    expect(store.settings.lastSyncFrom, isNull);
+    expect(formatDate(store.settings.lastSyncFrom!), '2025-07-17');
     expect(store.rides.length, 1);
     expect(store.rides.single.id, startsWith('manual_'));
     expect(store.rides.single.gearId, 'g_road');
@@ -710,7 +737,6 @@ $settingsCsvHeader
   test('manual ride can be updated and deleted', () async {
     final store = await openStore();
     await store.addManualRide(on: parseDate('2026-08-23'), distanceKm: 32);
-    expect(store.settings.rideSource, RideSource.manual);
     final id = store.rides.single.id;
 
     await store.updateManualRide(
@@ -723,10 +749,9 @@ $settingsCsvHeader
 
     await store.deleteManualRide(id);
     expect(store.rides, isEmpty);
-    expect(store.settings.rideSource, RideSource.manual);
   });
 
-  test('syncForward after a manual ride deletes hand-entered rides', () async {
+  test('syncForward keeps hand-entered rides and still allows more', () async {
     final store = await openStore();
     await store.addGear('My Bike');
     await store.addManualRide(on: parseDate('2026-08-23'), distanceKm: 32);
@@ -771,31 +796,17 @@ $settingsCsvHeader
     });
 
     await store.syncForward(months: 1, client: client);
-    expect(store.rides.any((ride) => isManualRideId(ride.id)), isFalse);
-    expect(store.rides.single.id, '99');
-    expect(store.settings.rideSource, RideSource.strava);
-    await expectLater(
-      store.addManualRide(on: parseDate('2026-08-24'), distanceKm: 10),
-      throwsStateError,
+    expect(store.rides.any((ride) => isManualRideId(ride.id)), isTrue);
+    expect(store.rides.any((ride) => ride.id == '99'), isTrue);
+    await store.selectGear('b1');
+    await store.addManualRide(on: parseDate('2026-08-24'), distanceKm: 10);
+    expect(
+      store.rides.where((ride) => isManualRideId(ride.id)).length,
+      2,
     );
   });
 
-  test('switchToManualRides deletes Strava rides', () async {
-    final store = await openStore();
-    await store.convertDemoRidesForTest();
-    expect(store.settings.rideSource, RideSource.strava);
-    expect(store.rides, isNotEmpty);
-
-    await store.switchToManualRides();
-    expect(store.settings.rideSource, RideSource.manual);
-    expect(store.rides, isEmpty);
-    expect(store.settings.lastSyncFrom, isNull);
-
-    await store.addManualRide(on: parseDate('2026-08-23'), distanceKm: 12);
-    expect(store.rides.single.distanceKm, 12);
-  });
-
-  test('mixed rides backfill keeps manuals and drops Strava', () async {
+  test('manual and Strava rides can coexist on the same gear', () async {
     final store = await openStore();
     await store.addManualRide(on: parseDate('2026-08-23'), distanceKm: 32);
     final db = await AppDatabase(overridePath: '${dir.path}/app.db').instance;
@@ -808,12 +819,11 @@ $settingsCsvHeader
         distanceKm: 15,
       ),
     );
-    await repo.saveSettings(store.settings.copyWith(clearRideSource: true));
 
     final again = await openStore();
-    expect(again.settings.rideSource, RideSource.manual);
-    expect(again.rides.every((ride) => isManualRideId(ride.id)), isTrue);
-    expect(again.rides.any((ride) => ride.id == '99'), isFalse);
+    expect(again.rides.any((ride) => isManualRideId(ride.id)), isTrue);
+    expect(again.rides.any((ride) => ride.id == '99'), isTrue);
+    expect(again.selectedGearRides, hasLength(2));
   });
 
   test('addGear creates a named bike with default parts', () async {

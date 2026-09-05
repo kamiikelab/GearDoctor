@@ -260,7 +260,11 @@
   "rideUpdated": "Ride updated.",
   "rideDeleted": "Ride deleted.",
   "viewRides": "View rides",
-  "rideHistoryHint": "Tap a row to edit date, distance, or delete",
+  "rideHistoryHint": "Tap a hand-entered row to edit date, distance, or delete",
+  "rideKind": "Kind",
+  "rideKindManual": "Hand",
+  "rideKindStrava": "Strava",
+  "rideKindDemo": "Demo",
   "deleteThisRide": "Delete this ride",
   "gearRidesSection": "Rides on this bike",
   "gearRidesReadOnly": "Rides on this bike (view only)",
@@ -281,7 +285,7 @@
     }
   },
   "cancelEditRide": "Cancel edit",
-  "stravaStartDate": "Start date  {value}",
+  "stravaStartDate": "Strava start date  {value}",
   "@stravaStartDate": {
     "placeholders": {
       "value": {"type": "String"}
@@ -293,18 +297,18 @@
       "value": {"type": "String"}
     }
   },
-  "untilDateHelp": "Through date is the newest ride on or after the start date.",
+  "untilDateHelp": "Through date is the newest ride on or after the Strava start date.",
   "syncManualHelp": "Pick a period and import. Nothing is fetched automatically.",
   "sync3months": "Last 3 months",
   "sync6months": "Last 6 months",
   "sync1year": "Last year",
-  "changeStartDate": "Change start date",
-  "specifyStartDate": "Set start date",
-  "startDateHelp": "Changing the start date clears imported rides and resets them. They are fetched again from the new date.",
-  "needStartDate": "Set a start date first.",
+  "changeStartDate": "Change Strava start date",
+  "specifyStartDate": "Set Strava start date",
+  "startDateHelp": "Changing the Strava start date deletes imported rides. Hand-entered rides stay. Use Last year to import again from the new date.",
+  "needStartDate": "Set a Strava start date first.",
   "needConnect": "Connect from the Strava connect screen first.",
-  "changeStartTitle": "Change start date?",
-  "changeStartBody": "Changing only the start date later can leave gaps.\n\nAll imported rides will be deleted, then fetched again from the new start date.",
+  "changeStartTitle": "Change Strava start date?",
+  "changeStartBody": "Imported Strava rides will be deleted. Hand-entered rides stay.\n\nNothing is fetched now. Use Last year to import again from the new Strava start date.",
   "deleteAndContinue": "Delete and continue",
   "dataRange": "Data range",
   "emDash": "—",
@@ -431,14 +435,14 @@
       "newest": {"type": "String"}
     }
   },
-  "startDateUnchanged": "Start date is unchanged.",
-  "startDateChanged": "Start date is now {date}. Ride data was cleared. Import again from here.",
+  "startDateUnchanged": "Strava start date is unchanged.",
+  "startDateChanged": "Strava start date is now {date}. Imported rides were cleared. Use Last year to import again.",
   "@startDateChanged": {
     "placeholders": {
       "date": {"type": "String"}
     }
   },
-  "changeStartConfirm": "Set start date to {date}.\n\nRides from the start date through the newest imported ride need to be complete. Changing only the start date later can leave gaps.\n\nAll imported rides will be deleted, then fetched again from the new start date.",
+  "changeStartConfirm": "Set Strava start date to {date}.\n\nImported Strava rides will be deleted. Hand-entered rides stay.\n\nNothing is fetched now. Use Last year to import again from the new Strava start date.",
   "@changeStartConfirm": {
     "placeholders": {
       "date": {"type": "String"}

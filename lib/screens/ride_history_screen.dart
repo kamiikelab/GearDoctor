@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../data/seed.dart';
 import '../domain/dates.dart';
 import '../l10n/app_localizations.dart';
 import '../models/models.dart';
@@ -40,16 +41,11 @@ class _RideHistoryScreenState extends State<RideHistoryScreen> {
       listenable: widget.store,
       builder: (context, _) {
         final l10n = AppLocalizations.of(context);
-        final stravaMode = widget.store.isStravaRideMode;
         final gear = widget.store.selectedGear;
         final gearName = gear == null ? l10n.gearUnselected : gear.name;
         final rides = widget.store.selectedGearRides;
         return Scaffold(
-          appBar: AppBar(
-            title: Text(
-              stravaMode ? l10n.gearRidesReadOnly : l10n.gearRidesSection,
-            ),
-          ),
+          appBar: AppBar(title: Text(l10n.gearRidesSection)),
           body: ListView(
             padding: const EdgeInsets.all(16),
             keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
@@ -58,13 +54,11 @@ class _RideHistoryScreenState extends State<RideHistoryScreen> {
                 l10n.selectedGearLine(gearName),
                 style: Theme.of(context).textTheme.bodySmall,
               ),
-              if (!stravaMode) ...[
-                const SizedBox(height: 4),
-                Text(
-                  l10n.rideHistoryHint,
-                  style: Theme.of(context).textTheme.bodySmall,
-                ),
-              ],
+              const SizedBox(height: 4),
+              Text(
+                l10n.rideHistoryHint,
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
               const SizedBox(height: 8),
               if (rides.isEmpty)
                 Text(
@@ -74,7 +68,11 @@ class _RideHistoryScreenState extends State<RideHistoryScreen> {
               else
                 RideHistoryTable(
                   rides: rides,
-                  onRowTap: stravaMode ? null : _startEdit,
+                  onRowTap: (ride) {
+                    if (isManualRideId(ride.id)) {
+                      _startEdit(ride);
+                    }
+                  },
                 ),
               if (_editingRideId != null) ...[
                 const SizedBox(height: 24),

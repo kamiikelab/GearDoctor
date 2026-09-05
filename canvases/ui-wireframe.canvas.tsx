@@ -539,7 +539,7 @@ function HomeScreen({
             }}
           >
             <Text size="small" tone="secondary">
-              走行 2025-07-17〜
+              走行 2023-04-15〜
             </Text>
             <br />
             <Text size="small" tone="secondary">
@@ -1220,62 +1220,34 @@ function SyncScreen({
   gear: string;
 }) {
   const [connected, setConnected] = useCanvasState("stravaConnected", false);
-  const [rideMode, setRideMode] = useCanvasState<"demo" | "manual" | "strava">(
-    "rideSourceMode",
-    "demo",
-  );
   const [rideDate, setRideDate] = useCanvasState("manualRideDate", "2026-09-03");
   const [rideKm, setRideKm] = useCanvasState("manualRideKm", "32");
-  const nextMode = () => {
-    setRideMode(rideMode === "demo" ? "manual" : rideMode === "manual" ? "strava" : "demo");
-  };
-  const stravaHint =
-    rideMode === "manual"
-      ? "手入力の走行記録は、取り込みで消えます。"
-      : rideMode === "strava"
-        ? "Strava から取り込んだ走行は参照だけです。手入力はできません。"
-        : "連携は任意です。走行は手入力でも入れられます。";
   return (
     <Phone title="走行を追加" onBack={() => go("home")}>
       <Stack gap={14}>
-        <div onClick={nextMode} style={{ cursor: "pointer" }}>
-          <Text size="small" tone="secondary">
-            {rideMode === "demo"
-              ? "デモ（タップで手書き）"
-              : rideMode === "manual"
-                ? "手書き（タップで Strava）"
-                : "Strava（タップでデモ）"}
-          </Text>
-        </div>
-        {rideMode !== "strava" ? (
-          <Stack gap={14}>
-            <Text weight="semibold">手入力</Text>
-            <Text size="small" tone="tertiary">
-              選んでいるギア: {gear}
-            </Text>
-            <Stack gap={4}>
-              <Text size="small" tone="secondary">
-                日付
-              </Text>
-              <TextInput value={rideDate} onChange={setRideDate} />
-            </Stack>
-            <Stack gap={4}>
-              <Text size="small" tone="secondary">
-                距離
-              </Text>
-              <TextInput value={rideKm} onChange={setRideKm} placeholder="km" />
-            </Stack>
-            <PhoneButton label="記録する" variant="primary" onClick={() => go("home")} />
-          </Stack>
-        ) : (
+        <Stack gap={14}>
+          <Text weight="semibold">手入力</Text>
           <Text size="small" tone="tertiary">
             選んでいるギア: {gear}
           </Text>
-        )}
+          <Stack gap={4}>
+            <Text size="small" tone="secondary">
+              日付
+            </Text>
+            <TextInput value={rideDate} onChange={setRideDate} />
+          </Stack>
+          <Stack gap={4}>
+            <Text size="small" tone="secondary">
+              距離
+            </Text>
+            <TextInput value={rideKm} onChange={setRideKm} placeholder="km" />
+          </Stack>
+          <PhoneButton label="記録する" variant="primary" onClick={() => go("home")} />
+        </Stack>
         <PhoneButton label="走行を確認" variant="ghost" onClick={() => go("rides")} />
         <Text weight="semibold">Strava から取り込む</Text>
         <Text size="small" tone="tertiary">
-          {stravaHint}
+          連携は任意です。走行は手入力でも入れられます。
         </Text>
         <div
           onClick={() => setConnected(!connected)}
@@ -1290,10 +1262,10 @@ function SyncScreen({
             <Text size="small" tone="secondary">
               データの範囲
             </Text>
-            <Text weight="semibold">開始日  2025-07-17</Text>
+            <Text weight="semibold">Strava開始日  2025-07-17</Text>
             <Text weight="semibold">何日まで  2026-07-15</Text>
             <Text size="small" tone="tertiary">
-              何日までは、開始日以降で入っているいちばん新しい走行の日です。
+              何日までは、Strava開始日以降で入っているいちばん新しい走行の日です。
             </Text>
           </Stack>
           <PhoneButton
@@ -1303,13 +1275,10 @@ function SyncScreen({
             onClick={() => (connected ? go("home") : undefined)}
           />
           <Text size="small" tone="tertiary">
-            開始日を変えると、取り込んだ走行は消えて初期化されます。新しい日から取り直します。
+            Strava開始日を変えると、取り込んだ走行は消えます。手入力は残ります。「前回から 1 年」で新しい日から取り直します。
           </Text>
-          <PhoneButton label="開始日を変更" variant="ghost" onClick={() => go("home")} />
+          <PhoneButton label="Strava開始日を変更" variant="ghost" onClick={() => go("home")} />
           <PhoneButton label="Strava 連携" variant="ghost" onClick={() => go("strava")} />
-          {rideMode === "strava" ? (
-            <PhoneButton label="手入力に切り替える" variant="ghost" onClick={() => setRideMode("manual")} />
-          ) : null}
         </Stack>
       </Stack>
     </Phone>
@@ -1324,22 +1293,15 @@ function RideHistoryScreen({
   gear: string;
 }) {
   const t = useHostTheme();
-  const [rideMode] = useCanvasState<"demo" | "manual" | "strava">(
-    "rideSourceMode",
-    "demo",
-  );
-  const readOnly = rideMode === "strava";
   return (
-    <Phone title={readOnly ? "このギアの走行（参照のみ）" : "このギアの走行"} onBack={() => go("sync")}>
+    <Phone title="このギアの走行" onBack={() => go("sync")}>
       <Stack gap={10}>
         <Text size="small" tone="tertiary">
           選んでいるギア: {gear}
         </Text>
-        {readOnly ? null : (
-          <Text size="small" tone="tertiary">
-            行をタップして日付・距離の修正や削除
-          </Text>
-        )}
+        <Text size="small" tone="tertiary">
+          手入力の行をタップして日付・距離の修正や削除
+        </Text>
         <div
           style={{
             border: `1px solid ${t.stroke.secondary}`,
@@ -1350,7 +1312,7 @@ function RideHistoryScreen({
           <div
             style={{
               display: "grid",
-              gridTemplateColumns: "1fr 1fr",
+              gridTemplateColumns: "1.1fr 1fr 0.9fr",
               gap: 4,
               padding: "6px 8px",
               background: t.fill.tertiary,
@@ -1362,16 +1324,19 @@ function RideHistoryScreen({
             <Text size="small" tone="tertiary">
               距離
             </Text>
+            <Text size="small" tone="tertiary">
+              種類
+            </Text>
           </div>
           {[
-            { date: "2026-08-20", km: "18 km" },
-            { date: "2026-09-03", km: "32 km" },
+            { date: "2025-08-01", km: "15 km", kind: "Strava" },
+            { date: "2026-09-03", km: "32 km", kind: "手入力" },
           ].map((row) => (
             <div
               key={row.date}
               style={{
                 display: "grid",
-                gridTemplateColumns: "1fr 1fr",
+                gridTemplateColumns: "1.1fr 1fr 0.9fr",
                 gap: 4,
                 padding: 8,
                 borderTop: `1px solid ${t.stroke.tertiary}`,
@@ -1379,6 +1344,7 @@ function RideHistoryScreen({
             >
               <Text size="small">{row.date}</Text>
               <Text size="small">{row.km}</Text>
+              <Text size="small">{row.kind}</Text>
             </div>
           ))}
         </div>
@@ -1710,8 +1676,8 @@ export default function GearDoctorUiWireframe() {
           </Callout>
 
           <H3>走行を追加</H3>
-          <Callout tone="info" title="手書きと Strava は排他">
-            アプリ全体でどちらか一方。手入力と取り込みは同じ画面。一覧は「走行を確認」で、交換記録と同じ大きさの表。手書きは修正・削除、Strava は参照だけ。切り替えは確認のうえ、今の出どころの走行を消す。
+          <Callout tone="info" title="手書きと Strava は混ぜてよい">
+            同じギアでも両方置ける。手入力と取り込みは同じ画面。一覧は「走行を確認」で、種類列あり。手入力だけ修正・削除。Strava開始日を変えたら取り込んだ走行を消し、「前回から 1 年」で取り直す。
           </Callout>
 
           <Card>

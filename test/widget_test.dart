@@ -69,7 +69,7 @@ void main() {
       find.widgetWithText(OutlinedButton, 'ギア: ロード（デモ）'),
       findsOneWidget,
     );
-    expect(find.text('走行 2025-07-17〜'), findsOneWidget);
+    expect(find.text('走行 2023-04-15〜'), findsOneWidget);
     expect(find.text('2026-07-15（デモ）'), findsOneWidget);
 
     await tester.tap(find.textContaining('ギア: ロード（デモ）'));
@@ -115,7 +115,7 @@ void main() {
     expect(find.textContaining('連携は任意です'), findsOneWidget);
     expect(find.text('Strava 連携'), findsOneWidget);
     expect(find.text('前回から 1 年'), findsOneWidget);
-    expect(find.text('開始日を変更'), findsOneWidget);
+    expect(find.text('Strava開始日を変更'), findsOneWidget);
     expect(find.text('このギアの走行'), findsNothing);
   });
 
@@ -140,12 +140,13 @@ void main() {
     expect(find.text('記録する'), findsOneWidget);
     expect(find.text('Strava から取り込む'), findsOneWidget);
     expect(find.text('走行を確認'), findsOneWidget);
-    expect(find.textContaining('連携は任意です'), findsNothing);
-    expect(find.text('手入力の走行記録は、取り込みで消えます。'), findsOneWidget);
+    expect(find.textContaining('連携は任意です'), findsOneWidget);
 
     await tester.tap(find.text('走行を確認'));
     await tester.pumpAndSettle();
     expect(find.text('このギアの走行'), findsOneWidget);
+    expect(find.text('種類'), findsOneWidget);
+    expect(find.text('手入力'), findsWidgets);
     expect(find.text('2026-08-23'), findsOneWidget);
     expect(find.text('32 km'), findsOneWidget);
 
@@ -166,7 +167,7 @@ void main() {
     expect(find.text('このギアの走行はまだありません。'), findsOneWidget);
   });
 
-  testWidgets('strava mode hides the hand-entry form', (tester) async {
+  testWidgets('imported rides stay view-only and the hand-entry form stays', (tester) async {
     tester.view.physicalSize = const Size(800, 4000);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.resetPhysicalSize);
@@ -181,15 +182,16 @@ void main() {
 
     await tester.pumpWidget(l10nApp(home: SyncScreen(store: store)));
     await tester.pumpAndSettle();
-    expect(find.text('手入力'), findsNothing);
-    expect(find.text('記録する'), findsNothing);
+    expect(find.text('手入力'), findsOneWidget);
+    expect(find.text('記録する'), findsOneWidget);
     expect(find.text('Strava から取り込む'), findsOneWidget);
     expect(find.text('走行を確認'), findsOneWidget);
-    expect(find.text('手入力に切り替える'), findsOneWidget);
+    expect(find.text('手入力に切り替える'), findsNothing);
 
     await tester.tap(find.text('走行を確認'));
     await tester.pumpAndSettle();
-    expect(find.text('このギアの走行（参照のみ）'), findsOneWidget);
+    expect(find.text('このギアの走行'), findsOneWidget);
+    expect(find.text('Strava'), findsWidgets);
     expect(find.text('この走行を削除'), findsNothing);
     expect(find.text('保存'), findsNothing);
   });
@@ -214,7 +216,7 @@ void main() {
     expect(button, findsOneWidget);
     expect(tester.getSize(button).width, lessThan(200));
     expect(tester.getSize(button).width, greaterThan(120));
-    expect(find.text('走行 2025-07-17〜'), findsOneWidget);
+    expect(find.text('走行 2023-04-15〜'), findsOneWidget);
     expect(find.text('2026-07-15（デモ）'), findsOneWidget);
   });
 

@@ -76,10 +76,14 @@ double rideKmThrough({
 DateTime? newestRideOn({
   required List<Ride> rides,
   DateTime? fromInclusive,
+  String? gearId,
 }) {
   final start = fromInclusive == null ? null : dateOnly(fromInclusive);
   DateTime? newest;
   for (final ride in rides) {
+    if (gearId != null && ride.gearId != gearId) {
+      continue;
+    }
     final day = dateOnly(ride.startedOn);
     if (start != null && day.isBefore(start)) {
       continue;
