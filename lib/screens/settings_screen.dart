@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 import '../app_version.dart';
 import '../l10n/app_localizations.dart';
@@ -18,6 +19,25 @@ class SettingsScreen extends StatefulWidget {
 class _SettingsScreenState extends State<SettingsScreen> {
   String? _message;
   bool _busy = false;
+  String? _buildNumber;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadBuildNumber();
+  }
+
+  Future<void> _loadBuildNumber() async {
+    try {
+      final info = await PackageInfo.fromPlatform();
+      if (!mounted) {
+        return;
+      }
+      setState(() => _buildNumber = info.buildNumber);
+    } catch (_) {
+      // ビルド番号を取れない環境では表示版だけにする。
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -85,7 +105,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ],
               const SizedBox(height: 24),
               Text(
-                appVersionLabel,
+                (_buildNumber == null || _buildNumber!.isEmpty)
+                    ? appVersionLabel
+                    : '$appVersionLabel ($_buildNumber)',
                 style: Theme.of(context).textTheme.bodySmall,
               ),
               Align(

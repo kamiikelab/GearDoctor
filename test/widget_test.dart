@@ -17,6 +17,7 @@ import 'package:gear_doctor/screens/ride_history_screen.dart';
 import 'package:gear_doctor/screens/sync_screen.dart';
 import 'package:gear_doctor/state/app_store.dart';
 import 'package:gear_doctor/widgets/widgets.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 import 'l10n_harness.dart';
@@ -27,6 +28,13 @@ void main() {
   setUpAll(() {
     sqfliteFfiInit();
     databaseFactory = databaseFactoryFfi;
+    PackageInfo.setMockInitialValues(
+      appName: 'GearDoctor',
+      packageName: 'com.geardoctor.gear_doctor',
+      version: '1.0.5',
+      buildNumber: '31',
+      buildSignature: '',
+    );
   });
 
   setUp(() async {
@@ -363,7 +371,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('走行を追加'), findsNothing);
     expect(find.text('ギア'), findsNothing);
-    expect(find.text(appVersionLabel), findsOneWidget);
+    expect(find.text('$appVersionLabel (31)'), findsOneWidget);
     expect(find.text('プライバシーポリシー'), findsOneWidget);
     expect(find.text('部品を追加'), findsNothing);
     expect(find.text('交換記録の CSV'), findsNothing);
