@@ -23,7 +23,7 @@ class RideHistoryScreen extends StatelessWidget {
         return Scaffold(
           appBar: AppBar(title: Text(l10n.gearRidesSection)),
           body: ListView(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
             children: [
               SelectedGearHeading(name: gearName),
               const SizedBox(height: 8),

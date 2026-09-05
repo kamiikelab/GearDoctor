@@ -30,7 +30,7 @@ class _AddGearScreenState extends State<AddGearScreen> {
     return Scaffold(
       appBar: AppBar(title: Text(l10n.addBike)),
       body: ListView(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
         keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
         children: [
           Text(l10n.bikeName, style: Theme.of(context).textTheme.bodySmall),
