@@ -99,7 +99,7 @@ class _EditPartScreenState extends State<EditPartScreen> {
             const SizedBox(height: 4),
             Text(l10n.registeredNameHelp, style: userHelpStyle(context)),
           ],
-          if (_isNew) ...[
+          if (_isNew && widget.store.settings.showUserHelp) ...[
             const SizedBox(height: 4),
             Text(
               widget.store.oldestSelectedRideOn == null
@@ -112,11 +112,13 @@ class _EditPartScreenState extends State<EditPartScreen> {
           ],
           const SizedBox(height: 16),
           Text(l10n.cycle, style: Theme.of(context).textTheme.bodySmall),
-          const SizedBox(height: 4),
-          Text(
-            l10n.cycleHelp,
-            style: Theme.of(context).textTheme.bodySmall,
-          ),
+          if (widget.store.settings.showUserHelp) ...[
+            const SizedBox(height: 4),
+            Text(
+              l10n.cycleHelp,
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
+          ],
           const SizedBox(height: 8),
           Row(
             children: [
