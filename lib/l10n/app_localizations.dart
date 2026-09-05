@@ -998,12 +998,6 @@ abstract class AppLocalizations {
   /// **'Add ride'**
   String get syncTitle;
 
-  /// No description provided for @selectedGear.
-  ///
-  /// In en, this message translates to:
-  /// **'Bike'**
-  String get selectedGear;
-
   /// No description provided for @manualRideSection.
   ///
   /// In en, this message translates to:

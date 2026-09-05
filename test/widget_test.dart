@@ -133,8 +133,7 @@ void main() {
     await tester.tap(find.text('走行を追加'));
     await tester.pumpAndSettle();
     expect(find.text('手入力'), findsOneWidget);
-    expect(find.text('ギア'), findsOneWidget);
-    expect(find.text('ロード'), findsOneWidget);
+    expect(find.text('ギア: ロード'), findsOneWidget);
     expect(
       find.descendant(
         of: find.byType(SyncScreen),
@@ -145,6 +144,13 @@ void main() {
     expect(find.text('記録する'), findsOneWidget);
     expect(find.text('Strava から取り込む'), findsOneWidget);
     expect(find.textContaining('連携は任意です'), findsOneWidget);
+    final help = tester.widget<Text>(find.textContaining('連携は任意です'));
+    expect(
+      help.style?.color,
+      Theme.of(tester.element(find.textContaining('連携は任意です')))
+          .colorScheme
+          .tertiary,
+    );
     expect(find.text('Strava 連携'), findsOneWidget);
     expect(find.text('前回から1年取り込む'), findsOneWidget);
     expect(find.text('Strava開始日を変更'), findsOneWidget);

@@ -519,9 +519,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get syncTitle => 'Add ride';
 
   @override
-  String get selectedGear => 'Bike';
-
-  @override
   String get manualRideSection => 'Enter by hand';
 
   @override

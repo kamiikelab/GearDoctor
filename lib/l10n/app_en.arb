@@ -247,7 +247,6 @@
   },
   "disconnected": "Disconnected and removed the tokens.",
   "syncTitle": "Add ride",
-  "selectedGear": "Bike",
   "manualRideSection": "Enter by hand",
   "importFromStrava": "Import from Strava",
   "notConnectedImportHint": "Not connected. Connect Strava in Settings.",

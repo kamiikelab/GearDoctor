@@ -506,9 +506,6 @@ class AppLocalizationsJa extends AppLocalizations {
   String get syncTitle => '走行を追加';
 
   @override
-  String get selectedGear => 'ギア';
-
-  @override
   String get manualRideSection => '手入力';
 
   @override

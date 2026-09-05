@@ -14,7 +14,7 @@ TextStyle? fieldLabelStyle(BuildContext context) {
 
 TextStyle? userHelpStyle(BuildContext context) {
   return Theme.of(context).textTheme.bodySmall?.copyWith(
-    color: Theme.of(context).colorScheme.onSurfaceVariant,
+    color: Theme.of(context).colorScheme.tertiary,
   );
 }
 
@@ -36,7 +36,7 @@ class InfoPanel extends StatelessWidget {
         borderRadius: BorderRadius.circular(8),
       ),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
         child: child,
       ),
     );
@@ -56,13 +56,9 @@ class SelectedGearHeading extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     return InfoPanel(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(l10n.selectedGear, style: fieldLabelStyle(context)),
-          const SizedBox(height: 4),
-          Text(name, style: Theme.of(context).textTheme.titleMedium),
-        ],
+      child: Text(
+        l10n.gearLabel(name),
+        style: Theme.of(context).textTheme.titleMedium,
       ),
     );
   }
@@ -231,12 +227,14 @@ class SelectTile extends StatelessWidget {
     required this.selected,
     required this.title,
     this.subtitle,
+    this.helpSubtitle = false,
     required this.onTap,
   });
 
   final bool selected;
   final String title;
   final String? subtitle;
+  final bool helpSubtitle;
   final VoidCallback onTap;
 
   @override
@@ -268,9 +266,11 @@ class SelectTile extends StatelessWidget {
                 const SizedBox(height: 2),
                 Text(
                   subtitle!,
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: scheme.onSurfaceVariant,
-                  ),
+                  style: helpSubtitle
+                      ? userHelpStyle(context)
+                      : Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: scheme.onSurfaceVariant,
+                        ),
                 ),
               ],
             ],

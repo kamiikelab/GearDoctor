@@ -150,7 +150,6 @@
   "tokenSaved": "トークンを端末に保存しました（{name}）。",
   "disconnected": "連携を解除し、トークンを消しました。",
   "syncTitle": "走行を追加",
-  "selectedGear": "ギア",
   "manualRideSection": "手入力",
   "importFromStrava": "Strava から取り込む",
   "notConnectedImportHint": "未連携。設定の Strava 連携から。",

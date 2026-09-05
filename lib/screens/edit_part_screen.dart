@@ -146,6 +146,7 @@ class _EditPartScreenState extends State<EditPartScreen> {
             subtitle: widget.store.settings.showUserHelp
                 ? l10n.limitRecommendedHelp
                 : null,
+            helpSubtitle: true,
             onTap: () => setState(() => _mode = LimitMode.recommended),
           ),
           const SizedBox(height: 8),
@@ -157,6 +158,7 @@ class _EditPartScreenState extends State<EditPartScreen> {
             subtitle: widget.store.settings.showUserHelp
                 ? l10n.limitAutoHelp
                 : null,
+            helpSubtitle: true,
             onTap: () => setState(() => _mode = LimitMode.previousCycle),
           ),
           const SizedBox(height: 8),
@@ -169,6 +171,7 @@ class _EditPartScreenState extends State<EditPartScreen> {
             subtitle: widget.store.settings.showUserHelp
                 ? l10n.limitCustomHelp
                 : null,
+            helpSubtitle: true,
             onTap: () => setState(() => _mode = LimitMode.custom),
           ),
           if (_mode == LimitMode.custom) ...[

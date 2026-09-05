@@ -337,7 +337,7 @@ function InfoWell({
       style={{
         background: t.fill.quaternary,
         borderRadius: 8,
-        padding: packed ? "8px 10px" : "10px 12px",
+        padding: packed ? "6px 10px" : "6px 12px",
         alignSelf: packed ? "flex-end" : undefined,
       }}
     >
@@ -1286,12 +1286,7 @@ function SyncScreen({
         <Stack gap={14}>
           <Text weight="semibold">手入力</Text>
           <InfoWell>
-            <Stack gap={4}>
-              <Text size="small" weight="semibold">
-                ギア
-              </Text>
-              <Text weight="semibold">{gear}</Text>
-            </Stack>
+            <Text weight="semibold">ギア: {gear}</Text>
           </InfoWell>
           <Stack gap={4}>
             <Text size="small" tone="secondary">
@@ -1358,12 +1353,7 @@ function RideHistoryScreen({
     <Phone title="このギアの走行" onBack={() => go("sync")}>
       <Stack gap={10}>
         <InfoWell>
-          <Stack gap={4}>
-            <Text size="small" weight="semibold">
-              ギア
-            </Text>
-            <Text weight="semibold">{gear}</Text>
-          </Stack>
+          <Text weight="semibold">ギア: {gear}</Text>
         </InfoWell>
         <Text size="small" tone="tertiary">
           手入力の行をタップして日付・距離の修正や削除
