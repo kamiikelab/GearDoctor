@@ -1,0 +1,180 @@
+import 'package:flutter/material.dart';
+import 'package:package_info_plus/package_info_plus.dart';
+
+import '../app_version.dart';
+import '../l10n/app_localizations.dart';
+import '../state/app_store.dart';
+import '../strava/open_browser.dart';
+import '../widgets/widgets.dart';
+
+class SettingsScreen extends StatefulWidget {
+  const SettingsScreen({super.key, required this.store});
+
+  final AppStore store;
+
+  @override
+  State<SettingsScreen> createState() => _SettingsScreenState();
+}
+
+class _SettingsScreenState extends State<SettingsScreen> {
+  String? _message;
+  bool _busy = false;
+  String? _buildNumber;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadBuildNumber();
+  }
+
+  Future<void> _loadBuildNumber() async {
+    try {
+      final info = await PackageInfo.fromPlatform();
+      if (!mounted) {
+        return;
+      }
+      setState(() => _buildNumber = info.buildNumber);
+    } catch (_) {
+      // ビルド番号を取れない環境では表示版だけにする。
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ListenableBuilder(
+      listenable: widget.store,
+      builder: (context, _) {
+        final l10n = AppLocalizations.of(context);
+        final localeCode = widget.store.settings.localeCode;
+        return Scaffold(
+          appBar: AppBar(title: Text(l10n.settings)),
+          body: ListView(
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+            children: [
+              Text(l10n.language, style: Theme.of(context).textTheme.bodySmall),
+              const SizedBox(height: 8),
+              SelectTile(
+                selected: localeCode == null,
+                title: l10n.languageSystem,
+                onTap: () => widget.store.setLocaleCode(null),
+              ),
+              const SizedBox(height: 8),
+              SelectTile(
+                selected: localeCode == 'ja',
+                title: l10n.languageJapanese,
+                onTap: () => widget.store.setLocaleCode('ja'),
+              ),
+              const SizedBox(height: 8),
+              SelectTile(
+                selected: localeCode == 'en',
+                title: l10n.languageEnglish,
+                onTap: () => widget.store.setLocaleCode('en'),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                l10n.userHelp,
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+              const SizedBox(height: 8),
+              SelectTile(
+                selected: widget.store.settings.showUserHelp,
+                title: l10n.userHelpOn,
+                onTap: () => widget.store.setShowUserHelp(true),
+              ),
+              const SizedBox(height: 8),
+              SelectTile(
+                selected: !widget.store.settings.showUserHelp,
+                title: l10n.userHelpOff,
+                onTap: () => widget.store.setShowUserHelp(false),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                l10n.resetSection,
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+              if (widget.store.settings.showUserHelp)
+                Text(l10n.resetHint, style: userHelpStyle(context)),
+              const SizedBox(height: 8),
+              OutlinedButton(
+                onPressed: _busy ? null : _confirmResetToDemo,
+                child: Text(l10n.resetToDemo),
+              ),
+              if (_message != null) ...[
+                const SizedBox(height: 12),
+                Text(_message!),
+              ],
+              const SizedBox(height: 24),
+              Text(
+                (_buildNumber == null || _buildNumber!.isEmpty)
+                    ? appVersionLabel
+                    : '$appVersionLabel ($_buildNumber)',
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: TextButton(
+                  style: TextButton.styleFrom(
+                    padding: EdgeInsets.zero,
+                    minimumSize: Size.zero,
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  ),
+                  onPressed: _openPrivacyPolicy,
+                  child: Text(l10n.privacyPolicy),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _openPrivacyPolicy() async {
+    final l10n = AppLocalizations.of(context);
+    final lang = Localizations.localeOf(context).languageCode;
+    final opened = await openInBrowser(privacyPolicyUri(lang));
+    if (!opened && mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.couldNotOpenBrowser)),
+      );
+    }
+  }
+
+  Future<void> _confirmResetToDemo() async {
+    final l10n = AppLocalizations.of(context);
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(l10n.resetConfirmTitle),
+          content: Text(l10n.resetConfirmBody),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: Text(l10n.cancel),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: Text(l10n.resetConfirmAction),
+            ),
+          ],
+        );
+      },
+    );
+    if (confirmed != true || !mounted) {
+      return;
+    }
+    setState(() {
+      _busy = true;
+      _message = null;
+    });
+    await widget.store.resetToDemo();
+    if (!mounted) {
+      return;
+    }
+    setState(() {
+      _busy = false;
+      _message = AppLocalizations.of(context).resetDone;
+    });
+  }
+}

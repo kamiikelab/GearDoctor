@@ -1,0 +1,471 @@
+{
+  "@@locale": "en",
+  "appTitle": "GearDoctor",
+  "startupFailed": "Couldn't start\n{error}",
+  "@startupFailed": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  },
+  "settings": "Settings",
+  "language": "Language",
+  "languageSystem": "Match device",
+  "languageJapanese": "日本語",
+  "languageEnglish": "English",
+  "userHelp": "Help text",
+  "userHelpOn": "Show",
+  "userHelpOff": "Hide",
+  "connected": "Connected",
+  "notConnected": "Not connected",
+  "stravaOptional": "Strava connection is optional.",
+  "stravaHint": "Connecting is optional. You can also enter rides by hand.",
+  "stravaConnect": "Strava connect",
+  "stravaSync": "Add ride",
+  "gear": "Bikes",
+  "gearHint": "The bike whose distance is calculated, and its replacement records.",
+  "resetSection": "Reset",
+  "resetHint": "Clears Strava, rides, parts, and records, then restores the first-run demo.",
+  "resetToDemo": "Reset to demo",
+  "resetConfirmTitle": "Reset to the first-run state?",
+  "resetConfirmBody": "This deletes Strava connection, rides, part settings, and replacement records.\n\nThe app returns to the same demo as first launch.",
+  "cancel": "Cancel",
+  "resetConfirmAction": "Delete and reset",
+  "resetDone": "Reset to the demo state.",
+  "ok": "OK",
+  "save": "Save",
+  "gearUnselected": "None selected",
+  "gearLabel": "Bike: {name}",
+  "@gearLabel": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "gearNone": "Bike: none selected",
+  "lastSync": "Rides {range}",
+  "@lastSync": {
+    "placeholders": {
+      "range": {"type": "String"}
+    }
+  },
+  "notSynced": "No rides",
+  "syncRangeOpen": "{from}–—",
+  "@syncRangeOpen": {
+    "placeholders": {
+      "from": {"type": "String"}
+    }
+  },
+  "syncRange": "{from}–{to}",
+  "@syncRange": {
+    "placeholders": {
+      "from": {"type": "String"},
+      "to": {"type": "String"}
+    }
+  },
+  "demoBanner": "Add a ride to leave the demo.",
+  "alertCount": "{count} at threshold",
+  "@alertCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "demoSuffix": " (demo)",
+  "selectedSuffix": " (selected)",
+  "demoSelectedSuffix": " (demo, selected)",
+  "todaySuffix": " (today)",
+  "unitKm": "km",
+  "unitMonths": "mo",
+  "limitModeRecommended": "Default",
+  "limitModeAuto": "Auto",
+  "limitModeCustom": "Custom",
+  "limitModeAutoFallback": "Auto (default)",
+  "statusOk": "OK",
+  "statusSoon": "Soon",
+  "statusOverdue": "Replace",
+  "statusLine": "{status} · {percent}%",
+  "@statusLine": {
+    "placeholders": {
+      "status": {"type": "String"},
+      "percent": {"type": "int"}
+    }
+  },
+  "statusLineSide": "{side}: {status} · {percent}%",
+  "@statusLineSide": {
+    "placeholders": {
+      "side": {"type": "String"},
+      "status": {"type": "String"},
+      "percent": {"type": "int"}
+    }
+  },
+  "demoRequiresSyncTitle": "Add a ride first",
+  "demoRequiresSyncMessage": "You can't add, delete, or import parts while the demo is on.",
+  "gearDemoCsvHint": "You can't add, delete, or import parts during the demo. Add a ride first.",
+  "gearEmptyHint": "Add a bike, or import from Strava, and they will appear here.",
+  "gearBikesHelp": "You can pick bikes imported from Strava or added by name. Adding parts, settings, records, and CSV apply to the selected bike. The initial parts are the same.",
+  "addBike": "Add bike",
+  "deleteBike": "Delete bike",
+  "deleteBikeTitle": "Delete this bike?",
+  "deleteBikeConfirm": "This also deletes {name}'s parts, replacement records, and rides.",
+  "@deleteBikeConfirm": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "cannotDeleteStravaBike": "Bikes imported from Strava can't be deleted here.",
+  "bikeName": "Name",
+  "bikeNameHint": "Road",
+  "addBikeAction": "Add",
+  "bikeNameRequired": "Enter a name",
+  "gearSelectHint": "Select a bike above to add parts and records.",
+  "addPart": "Add part",
+  "editPart": "Edit part",
+  "recordsCsv": "Replacement records CSV",
+  "settingsCsv": "Part registration CSV",
+  "displayGroups": "Group / split part display",
+  "registeredName": "Registered name",
+  "registeredNameHint": "Name (front tire, HR battery, …)",
+  "registeredNameHelp": "Name shown on Home. Register left and right separately.",
+  "firstReplacementNoRide": "The first replacement date is this bike's oldest ride. If there are no rides yet, it is today.",
+  "firstReplacementWithRide": "The first replacement date is this bike's oldest ride ({date}). You don't enter it.",
+  "@firstReplacementWithRide": {
+    "placeholders": {
+      "date": {"type": "String"}
+    }
+  },
+  "cycle": "Interval",
+  "cycleHelp": "Distance or months, not both.",
+  "cycleDistance": "Distance",
+  "cycleMonths": "Months",
+  "limit": "Replacement target",
+  "limitRecommended": "Default  {amount} {unit}",
+  "@limitRecommended": {
+    "placeholders": {
+      "amount": {"type": "String"},
+      "unit": {"type": "String"}
+    }
+  },
+  "limitRecommendedHelp": "Set automatically from the name.",
+  "limitAutoEmpty": "Auto  —",
+  "limitAuto": "Auto  {amount} {unit}",
+  "@limitAuto": {
+    "placeholders": {
+      "amount": {"type": "String"},
+      "unit": {"type": "String"}
+    }
+  },
+  "limitAutoHelp": "Gap between the last two replacements. Recalculated each time.",
+  "limitCustom": "Custom  {amount} {unit}",
+  "@limitCustom": {
+    "placeholders": {
+      "amount": {"type": "String"},
+      "unit": {"type": "String"}
+    }
+  },
+  "limitCustomHelp": "You type the number.",
+  "customValue": "Custom value",
+  "threshold": "Alert threshold",
+  "nameRequired": "Enter a registered name",
+  "customLimitInvalid": "Custom target must be a number of 1 or more",
+  "thresholdInvalid": "Threshold must be an integer from 1 to 100",
+  "selectGearFirstPart": "Select a bike before adding a part",
+  "partDetail": "Part details",
+  "partNotFound": "Part not found",
+  "afterMonths": "Time since replacement",
+  "afterDistance": "Distance since replacement",
+  "thresholdPct": "Threshold {pct}%",
+  "@thresholdPct": {
+    "placeholders": {
+      "pct": {"type": "int"}
+    }
+  },
+  "lastReplacementNone": "Last replacement: none",
+  "lastReplacement": "Last replacement {date}",
+  "@lastReplacement": {
+    "placeholders": {
+      "date": {"type": "String"}
+    }
+  },
+  "replaced": "Replaced",
+  "edit": "Edit",
+  "historyTitle": "Past replacements",
+  "historyHint": "Tap a row to edit date, comment, or delete",
+  "historyDistanceHeader": "Bike distance",
+  "replacedOn": "Date",
+  "comment": "Comment",
+  "recordReplace": "Log replacement",
+  "replaceDateHelp": "Default is today. If you forgot, change it to the real date.",
+  "memo": "Memo",
+  "memoHint": "Product name, reason, … (optional)",
+  "logReplacement": "Save record",
+  "editRecord": "Edit record",
+  "editRide": "Edit ride",
+  "recordNotFound": "Record not found",
+  "rideNotFound": "Ride not found",
+  "editRecordHelp": "Changing the date recounts distance for that period",
+  "cannotDeleteLastRecord": "The last record can't be deleted",
+  "deleteThisRecord": "Delete this record",
+  "deleteThisPart": "Delete this part",
+  "deletePartTitle": "Delete this part?",
+  "deletePartConfirm": "This also deletes replacement records for {name}. Any display group is split.",
+  "@deletePartConfirm": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "connectAgain": "Reconnect",
+  "connect": "Connect",
+  "disconnect": "Disconnect",
+  "howToConnect": "How to connect",
+  "clientIdHint": "Number from your Strava API app",
+  "clientSecretHint": "Value shown with Show on the Strava API page",
+  "waitingBrowser": "When Chrome shows a page, close that page. Closing it turns the connect button green again. The app will not come to the front.",
+  "waitingBrowserMobile": "Strava’s approval screen opens. After you approve, you return to this app.",
+  "waitingBrowserIos": "If iPhone asks to open the web, tap Continue. If you are signed out, Strava’s login appears. If you are already signed in and have approved this app, it may return right away.",
+  "browserDidNotOpen": "Chrome didn't open by itself. Copy the URL below and open it in Chrome.",
+  "copyAuthorizeUrl": "Copy authorize URL",
+  "copiedAuthorizeUrl": "Copied the authorize URL. Paste it in Chrome's address bar.",
+  "connectStep1": "1. Create an app in Strava API settings",
+  "stravaPaidApi": "The Strava API needs a paid subscription.",
+  "connectStep2": "2. Enter Client ID and Client Secret above",
+  "noAccessToken": "This app does not use the Access Token field.",
+  "connectStep3": "3. Tap Connect",
+  "connectStep3Help": "On a phone, you return to the app after you approve. On a computer, Chrome opens. After you approve, a 127.0.0.1 page appears. You must close that page. If you don't, the connect button stays gray. On a computer the app will not come to the front. When this screen shows Connected and the button is green again, it worked. Get ride records from Add ride.",
+  "connectStep3HelpIos": "Tap Connect, then Continue when iPhone asks to open the web. If you are signed out, Strava’s login appears. If you are already signed in and have approved this app, it may return right away. Success is when this screen shows Connected and the button is green again. Get ride records from Add ride.",
+  "connectStep4": "4. If Chrome doesn't open",
+  "connectStep4Help": "After Connect, copy the authorize URL and paste it in Chrome. Then close the info page as in step 3; the button turns green.",
+  "enterClientIdSecret": "Enter Client ID and Client Secret.",
+  "portBusy": "Couldn't open port {port}. Quit the other process and connect again.",
+  "@portBusy": {
+    "placeholders": {
+      "port": {"type": "int"}
+    }
+  },
+  "tokenSaved": "Saved the token on this device ({name}).",
+  "@tokenSaved": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "disconnected": "Disconnected and removed the tokens.",
+  "syncTitle": "Add ride",
+  "manualRideSection": "Enter by hand",
+  "importFromStrava": "Import from Strava",
+  "notConnectedImportHint": "Not connected. Connect Strava in Settings.",
+  "goToStravaConnect": "Strava connect",
+  "rideDate": "Date",
+  "rideDistance": "Distance",
+  "needGearForRide": "Select a bike before logging a ride",
+  "invalidRideDistance": "Distance must be greater than 0",
+  "rideRecorded": "Ride saved.",
+  "rideUpdated": "Ride updated.",
+  "rideDeleted": "Ride deleted.",
+  "viewRides": "View rides",
+  "rideHistoryHint": "Tap a hand-entered row to edit date, distance, or delete",
+  "rideKind": "Kind",
+  "rideKindManual": "Hand",
+  "rideKindStrava": "Strava",
+  "rideKindDemo": "Demo",
+  "deleteThisRide": "Delete this ride",
+  "gearRidesSection": "Rides on this bike",
+  "gearRidesReadOnly": "Rides on this bike (view only)",
+  "noGearRides": "No rides on this bike yet.",
+  "stravaHintManual": "Hand-entered rides are deleted when you import.",
+  "stravaHintStrava": "Strava rides are view only. You cannot enter rides by hand.",
+  "switchToStravaTitle": "Switch to Strava?",
+  "switchToStravaConfirm": "All hand-entered rides will be deleted, then imported. This applies to every bike.",
+  "switchToManual": "Switch to hand entry",
+  "switchToManualTitle": "Switch to hand entry?",
+  "switchToManualConfirm": "All rides imported from Strava will be deleted. The Strava connection stays.",
+  "deleteRideTitle": "Delete this ride?",
+  "deleteRideConfirm": "Delete {km} km on {date}.",
+  "@deleteRideConfirm": {
+    "placeholders": {
+      "date": {"type": "String"},
+      "km": {"type": "String"}
+    }
+  },
+  "cancelEditRide": "Cancel edit",
+  "stravaStartDate": "Strava start date  {value}",
+  "@stravaStartDate": {
+    "placeholders": {
+      "value": {"type": "String"}
+    }
+  },
+  "untilDate": "Through  {value}",
+  "@untilDate": {
+    "placeholders": {
+      "value": {"type": "String"}
+    }
+  },
+  "untilDateHelp": "Through date is the newest ride on or after the Strava start date.",
+  "syncManualHelp": "Pick a period and import. Nothing is fetched automatically.",
+  "sync3months": "Last 3 months",
+  "sync6months": "Last 6 months",
+  "sync1year": "Import last year",
+  "changeStartDate": "Change Strava start date",
+  "specifyStartDate": "Set Strava start date",
+  "startDateHelp": "Changing the Strava start date deletes imported rides. Hand-entered rides stay. Use Import last year to import again from the new date.",
+  "needStartDate": "Set a Strava start date first.",
+  "needConnect": "Connect from the Strava connect screen first.",
+  "changeStartTitle": "Change Strava start date?",
+  "changeStartBody": "Imported Strava rides will be deleted. Hand-entered rides stay.\n\nNothing is fetched now. Use Import last year to import again from the new Strava start date.",
+  "deleteAndContinue": "Delete and continue",
+  "dataRange": "Fetched Strava range",
+  "emDash": "—",
+  "csvCopyHint": "Shown in the field so you can copy it.",
+  "recordsCsvHint": "Registered name,Date,Memo",
+  "settingsCsvHint": "Registered name,Interval,Target,Default,Custom,Threshold,Group,Position",
+  "exportCurrentRecords": "Export current records",
+  "exportCurrentSettings": "Export current settings",
+  "insertExample": "Insert example",
+  "importCsv": "Import CSV",
+  "confirm": "Confirm",
+  "fixThese": "Fix these",
+  "recordsCsvScope": "Import and export only this bike's replacement records. Other bikes stay as they are.",
+  "recordsCsvHelp": "Parts are not created. Rows match by registered name (e.g. front tire). Records on this bike for names in the CSV are replaced.",
+  "settingsCsvScope": "Import and export only this bike's part settings. Other bikes stay as they are.",
+  "settingsCsvHelp": "Rows match by registered name. Missing names add parts. Settings and groups in the CSV replace this bike only. Replacement records don't change.",
+  "noNewRows": "There are no new rows.",
+  "replaceCount": "Replace {count}",
+  "@replaceCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "partsApplyCount": "{count} parts",
+  "@partsApplyCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "exportedEmptyRecords": "No replacement records. Exported the header only.",
+  "exportedCount": "{count} rows put in the field and copied.",
+  "@exportedCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "exportedEmptySettings": "No parts. Exported the header only.",
+  "importedSettings": "Updated {updated}, added {created}{groups} on this bike.",
+  "@importedSettings": {
+    "placeholders": {
+      "updated": {"type": "int"},
+      "created": {"type": "int"},
+      "groups": {"type": "String"}
+    }
+  },
+  "importedRecords": "Imported {added}. Older records on this bike for names in the CSV were replaced.",
+  "@importedRecords": {
+    "placeholders": {
+      "added": {"type": "int"}
+    }
+  },
+  "skippedDuplicates": " Skipped {count} duplicates inside the CSV.",
+  "@skippedDuplicates": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "groupTitle": "Display groups",
+  "groupHelp": "Home shows one row. The parts stay separate.",
+  "groupTogether": "Show grouped",
+  "groupSplit": "Show split",
+  "groupNeedTwo": "Not enough parts to group. Add two with registered names first.",
+  "groupNameHint": "Tires",
+  "groupPreview": "Home shows “{name}”. Left is R, right is F",
+  "@groupPreview": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "groupNamePlaceholder": "(name)",
+  "noGroups": "There are no groups.",
+  "groupToRemove": "Group to split",
+  "afterSplit": "Names after split (registered names)",
+  "groupSplitHelp": "Registered names don't change. Don't append F/R.",
+  "enterGroupName": "Enter a group name",
+  "partsNotFound": "Parts not found",
+  "sameCycleOnly": "Only parts with the same interval can be grouped",
+  "selectGroupToSplit": "Select a group to split",
+  "clientId": "Client ID",
+  "clientSecret": "Client Secret",
+  "csvLabel": "CSV",
+  "csvNeedGear": "Select a bike to use this screen.",
+  "skipCsvDuplicatesPreview": ", skip {count} duplicates inside the CSV",
+  "@skipCsvDuplicatesPreview": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "groupsCountPreview": ", {count} groups",
+  "@groupsCountPreview": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "replaceResetHelp": "Logging the replacement date for {name} restarts only this position's {usage}.",
+  "@replaceResetHelp": {
+    "placeholders": {
+      "name": {"type": "String"},
+      "usage": {"type": "String"}
+    }
+  },
+  "usageDistance": "distance",
+  "usageMonths": "elapsed months",
+  "statusPercent": "{percent}% · {status}",
+  "@statusPercent": {
+    "placeholders": {
+      "percent": {"type": "int"},
+      "status": {"type": "String"}
+    }
+  },
+  "syncFetchedEmpty": "Fetched {from} through {to}. There were no bike rides in this period.",
+  "@syncFetchedEmpty": {
+    "placeholders": {
+      "from": {"type": "String"},
+      "to": {"type": "String"}
+    }
+  },
+  "syncFetched": "Fetched {from} through {to}. {count} bike rides. Newest ride is {newest}.",
+  "@syncFetched": {
+    "placeholders": {
+      "from": {"type": "String"},
+      "to": {"type": "String"},
+      "count": {"type": "int"},
+      "newest": {"type": "String"}
+    }
+  },
+  "startDateUnchanged": "Strava start date is unchanged.",
+  "startDateChanged": "Strava start date is now {date}. Imported rides were cleared. Use Import last year to import again.",
+  "@startDateChanged": {
+    "placeholders": {
+      "date": {"type": "String"}
+    }
+  },
+  "changeStartConfirm": "Set Strava start date to {date}.\n\nImported Strava rides will be deleted. Hand-entered rides stay.\n\nNothing is fetched now. Use Import last year to import again from the new Strava start date.",
+  "@changeStartConfirm": {
+    "placeholders": {
+      "date": {"type": "String"}
+    }
+  },
+  "pickTwoParts": "1. Pick two parts",
+  "pickFront": "2. Which is F",
+  "groupedNameStep": "3. Group name",
+  "pickedSuffix": " (selected)",
+  "partIsFront": "{name} is F",
+  "@partIsFront": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "stopGrouping": "Stop grouping “{name}”. Cards will use registered names.",
+  "@stopGrouping": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "pickTwoAndFront": "Pick two parts and which one is F",
+  "waitingForChrome": "Waiting for Strava approval in Chrome…",
+  "closeChromeSuccess": "When Chrome shows a page, close it. Success is when the connect button turns green again.",
+  "privacyPolicy": "Privacy policy",
+  "couldNotOpenBrowser": "Couldn’t open the browser."
+}

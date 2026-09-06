@@ -1,0 +1,4 @@
+{
+  "name": "GearDoctor",
+  "install": "bash .cursor/install.sh"
+}
