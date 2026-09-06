@@ -31,7 +31,7 @@ void main() {
     PackageInfo.setMockInitialValues(
       appName: 'GearDoctor',
       packageName: 'com.geardoctor.gear_doctor',
-      version: '1.0.5',
+      version: '1.0.6',
       buildNumber: '31',
       buildSignature: '',
     );
