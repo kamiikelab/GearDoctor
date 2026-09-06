@@ -11,7 +11,9 @@ GearDoctor の詳細ドキュメントを置くフォルダです。
 | [Strava 連携](Strava連携.md) | 走行記録の取得方法と距離の集計（同期は未確定） |
 | [画面設計](画面設計.md) | 主要画面と操作の流れ。Canvas ソースは [`canvases/`](../canvases/) |
 | [技術選定](技術選定.md) | プラットフォーム、言語、利用サービス（採用済み） |
-| [開発と配布](開発と配布.md) | PC 実行、APK の作り方、Android は Releases、iPhone は App Store |
+| [開発と配布](開発と配布.md) | 索引。Android と iPhone の配布先 |
+| [開発と配布（Android）](開発と配布-Android.md) | PC 実行、APK、GitHub Releases。Play には出さない |
+| [開発と配布（iPhone）](開発と配布-iPhone.md) | Codemagic、版の `+`、TestFlight、App Store 審査 |
 | [Google Play 公開](GooglePlay公開.md) | Android は Play に出さない（方針） |
 | [プライバシーポリシー](privacy-policy.html) | 端末に残す情報と、Strava へ送るもの |
 

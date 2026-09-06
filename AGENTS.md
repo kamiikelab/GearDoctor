@@ -1,6 +1,6 @@
 # AGENTS.md
 
-GearDoctor（Dart / Flutter）で作業するエージェント向けの運用ルールです。詳細手順は [`docs/開発と配布.md`](docs/開発と配布.md) を参照してください。ここには「テストとビルドの役割分担」を要点だけ記します。
+GearDoctor（Dart / Flutter）で作業するエージェント向けの運用ルールです。詳細手順は [`docs/開発と配布.md`](docs/開発と配布.md)（[Android](docs/開発と配布-Android.md) / [iPhone](docs/開発と配布-iPhone.md)）を参照してください。ここには「テストとビルドの役割分担」を要点だけ記します。
 
 ## テストとビルドの役割分担
 

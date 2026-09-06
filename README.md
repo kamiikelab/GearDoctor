@@ -2,7 +2,7 @@
 
 ロードバイクの部品交換を、走行距離と交換日から管理するアプリです。タイヤなどの消耗品を自分で交換する人向けです。交換した部品とその時期を記録し、次の交換時期を知らせます。
 
-Android は [GitHub Releases](https://github.com/kamiikelab/GearDoctor/releases) の APK で入れます。**Google Play には出しません。** iPhone は App Store（Codemagic → App Store Connect）です。実装は Dart / Flutter です。詳細は [`docs/技術選定.md`](docs/技術選定.md)、入れ方は [`docs/開発と配布.md`](docs/開発と配布.md) を参照してください。
+Android は [GitHub Releases](https://github.com/kamiikelab/GearDoctor/releases) の APK で入れます。**Google Play には出しません。** iPhone は App Store（Codemagic → App Store Connect）です。実装は Dart / Flutter です。詳細は [`docs/技術選定.md`](docs/技術選定.md)、入れ方は [`docs/開発と配布.md`](docs/開発と配布.md)（[Android](docs/開発と配布-Android.md) / [iPhone](docs/開発と配布-iPhone.md)）を参照してください。
 
 ## 入れ方（Android）
 
@@ -41,7 +41,7 @@ GearDoctor/
 
 ## 動かし方
 
-手順の全体は [`docs/開発と配布.md`](docs/開発と配布.md) です。
+手順の全体は [`docs/開発と配布.md`](docs/開発と配布.md) です。Android は [`docs/開発と配布-Android.md`](docs/開発と配布-Android.md)、iPhone は [`docs/開発と配布-iPhone.md`](docs/開発と配布-iPhone.md) です。
 
 リポジトリのフォルダで:
 

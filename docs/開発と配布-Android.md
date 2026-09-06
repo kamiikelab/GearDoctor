@@ -1,0 +1,184 @@
+# 開発と配布（Android）
+
+実装は PC（このリポジトリがある WSL）で行います。**Android は GitHub Releases の APK で配り、Google Play には出しません。** iPhone は [開発と配布（iPhone）](開発と配布-iPhone.md) です。
+
+## いまの状態（この PC）
+
+- Flutter SDK: `~/flutter`（入り済み。`~/.bashrc` で PATH 済み）
+- アプリの画面と端末内 SQLite: 実装済み
+- テスト: `flutter test` で確認できる
+- Java: `~/jdk-17`（Temurin 17）
+- Android SDK: `~/Android/Sdk`（コマンドラインツール）
+- APK: `./scripts/build_apk.sh` で作る。作るたびに版が 0.0.1 上がる。成果物は `build/app/outputs/flutter-apk/app-release.apk`
+- Linux デスクトップ用の clang / cmake / ninja / pkg-config: 入り済み（`flutter run -d linux` 用）
+
+作業はリポジトリのフォルダで行います。新しい端末を開けば `flutter` と Android SDK が使えます。まだ通っていないときは、その端末で `source ~/.bashrc` を実行します。
+
+## APK を作る
+
+リポジトリのフォルダで:
+
+```
+./scripts/build_apk.sh
+```
+
+作るたびに版を 0.0.1 ずつ上げます（`1.0.0+1` の次は `1.0.1+2`）。設定画面の表示版も同じです。`+` の後ろは Android の上書き用（versionCode）で、画面には出しません。iPhone と同じ `pubspec.yaml` の `+` を使います。上げ方は [版ルール](../.cursor/rules/version-commit-push.mdc) です。
+
+できたファイルは `build/app/outputs/flutter-apk/app-release.apk` です。スクリプトは Windows のデスクトップへもコピーします。
+
+```
+/mnt/c/Users/<Windowsのユーザー名>/Desktop/GearDoctor-1.0.1.apk
+```
+
+同じ版でもう一度だけ作るときは `./scripts/build_apk.sh --no-bump` です。入れ方は下の「2. APK ファイルを渡して入れる」です。署名は開発用の debug 鍵です。同じ PC で作り直した APK なら上書き更新できます。別の PC で作ると、一度アンインストールしてから入れ直す必要があります。
+
+新しい版を配るときは、できた APK を [GitHub Releases](https://github.com/kamiikelab/GearDoctor/releases) に付けます。タグを切っても App Store の審査は始まりません。Codemagic は起動しないでください。
+
+## 次の作業（順）
+
+1. デスクトップの APK をスマホに入れて起動する
+2. Strava にアプリを登録し、認可してトークンを端末に保存する（[Strava 連携](Strava連携.md)）
+3. 「走行を追加」から走行を取り、部品の距離を確認する
+
+スマホでの Strava 認可は、許可するとアプリに戻ります。パソコンでは `127.0.0.1` に案内が出るので、その画面を閉じます。パソコンではアプリが手前に切り替わりません。連携ボタンが緑に戻れば成功です。パソコンで Chrome が自動で開かないときだけ、許可用 URL をコピーして開きます。
+
+### 1. PC のウィンドウで動かす
+
+Flutter の Linux 向け実行です。WSL2 のウィンドウ（WSLg）にアプリが出ます。見た目はデスクトップ窓ですが、画面の流れとデータの確認には使えます。審査や実機確認の代わりにはなりません。
+
+1. Windows 側の WSL が GUI を出せること（最近の Windows 11 + WSL2 なら標準で可）
+2. WSL でビルド道具を入れる（管理者パスワードが必要です）
+
+```
+sudo apt-get update
+sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev libsqlite3-dev fonts-noto-cjk
+```
+
+`fonts-noto-cjk` は、WSL の画面や Canvas で漢字が□や化けて見えるときに入れます。アプリ本体には Noto Sans JP を同梱してあるので、`flutter run` し直すと漢字が出ます（ホットリロードだけではフォントは入りません）。
+
+3. アプリを起動する
+
+リポジトリのフォルダで:
+
+```
+flutter test
+flutter run -d linux
+```
+
+初回起動ではデモ用の部品・走行・ギアが SQLite に入ります。ホームのギア名・走行の範囲・距離に「（デモ）」が付けば成功です。最初の実走行（手入力または Strava）でデモ走行は消え、印も消えます。設定の「初期状態に戻す」でも同じデモ状態に戻せます（確認ダイアログあり）。
+
+止まらない起動（開発中の再読み込み用）:
+
+```
+flutter run -d linux
+```
+
+テストだけなら、上記の `apt-get` も Android SDK も不要です。
+
+```
+flutter test
+```
+
+### 2. Android で動かす
+
+SDK は WSL の `~/Android/Sdk` に入っています。
+
+```
+export JAVA_HOME="$HOME/jdk-17"
+export ANDROID_HOME="$HOME/Android/Sdk"
+export PATH="$JAVA_HOME/bin:$HOME/flutter/bin:$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$PATH"
+flutter config --android-sdk "$ANDROID_HOME"
+flutter doctor
+```
+
+`~/.bashrc` に同じ変数を書いてあるので、新しい端末なら `source ~/.bashrc` だけで足ります。`flutter doctor` の Android toolchain が通れば準備完了です。
+
+実機へは APK を渡すか、USB デバッグで `flutter run` します。入れ方は下の「Android に入れる方法」です。
+
+### 3. Strava の実取得
+
+いまやるのは、作った APK を入れて起動することです。走行を取るのは、認可が通ってからです。画面ごとの細かい値は [Strava 連携](Strava連携.md) にもあります。
+
+#### 3-1. いま開いているページからアプリを登録する
+
+開いている [https://developers.strava.com/](https://developers.strava.com/) は、API の説明ページです。Client ID はここには出ません。
+
+1. ページ内の **Create & Manage Your App** を開く  
+   ログインしていなければ Strava のログインを求められるので、GearDoctor で使いたい自分のアカウントで入る。
+2. 移動先はだいたい [https://www.strava.com/settings/api](https://www.strava.com/settings/api)（My API Application）です。
+3. アプリをまだ作っていないときは **Create App**（または同等の作成ボタン）を押す。  
+   **2026-06-30 以降、Standard Tier（自分用・少人数アプリ）の API は Strava の有料サブスクリプションが必要です。** 無料アカウントの Access Token では続きません。「APIアクセスはサブスクライバー専用」と出たら、同じアカウントでサブスクを開始してからやり直します。すでに有料プランに入っているなら、追加料金はなく、そのアカウントでログインし直してください。
+4. 作成フォームに次を入れる。
+
+| 項目 | 入れる値 | 補足 |
+| --- | --- | --- |
+| Application Name | `GearDoctor` | 名前は任意 |
+| Category | 任意 | Lifestyle などでよい |
+| Club | 空 | 空でよい |
+| Website | `http://127.0.0.1` | 公開サイトは不要。Playground 用の `developers.strava.com` にはしない |
+| Authorization Callback Domain | `127.0.0.1` | **`http://` もポートもパスも付けない。** スマホも同じ値のまま。アプリは PC では `127.0.0.1:8742`、スマホでは `geardoctor://127.0.0.1/callback` で受ける |
+
+5. 保存すると **My API Application** に次が出ます。
+
+| 表示 | 使うか |
+| --- | --- |
+| **Client ID** | 使う。数字。Strava 連携画面または `strava_secrets.json` に入れる |
+| **Client Secret** | 使う。「Show」で出す。Git に載せない |
+| Access Token / Refresh Token | **使わない。** ページに出ているトークンは Playground 用。GearDoctor は「連携する」で別途取る |
+| Rate Limit | 見なくてよい |
+
+新しいアプリは最初 **自分のアカウントだけ** が連携できる状態です。少人数の GearDoctor の確認にはそれで足ります。
+
+6. Client ID と Client Secret を控えたら、このタブは閉じてよいです。API Playground や cURL の説明は、いまは不要です。
+
+#### 3-2. 認可してトークンを端末に保存する
+
+1. GearDoctor を PC で起動する（`flutter run -d linux`）または Android の APK を入れる
+2. 走行を追加の **Strava 連携** を開き、Client ID と Client Secret を貼る（またはリポジトリ直下の `strava_secrets.json`）
+3. **連携する** を押す。パソコンでは Chrome が自動で開き、許可すると 127.0.0.1 に案内が出る。スマホでは許可するとアプリに戻る
+4. パソコンでは案内の画面を閉じる。アプリが手前に切り替わることはない。連携ボタンが緑に戻り「連携済み」なら成功。トークンは端末に残る
+
+画面内の「連携方法」と [Strava 連携](Strava連携.md) も参照してください。
+
+#### 3-3. 走行を追加から取り込む
+
+連携済みなら、ホームの「走行を追加」から「前回から1年取り込む」で走行と自転車を取ります。Strava開始日の変更は、取り込んだ走行の消去を伴います。手入力は残します。取り直しは「前回から1年取り込む」です。失敗時の続きは [Strava 連携](Strava連携.md) です。
+
+## GitHub Actions（テスト）
+
+`kamiikelab/GearDoctor` の `main` への PUSH と pull request で、GitHub の Linux（`ubuntu-latest`）が `flutter test` を回します。Flutter は手元と同じ 3.47.1 です。APK は作りません。公開リポジトリの標準ランナーは無料です。
+
+設定ファイルは [`.github/workflows/test.yml`](../.github/workflows/test.yml) です。結果は GitHub の Actions タブです。同じ枝で新しい PUSH があると、前の実行は打ち切ります。
+
+## Android に入れる方法
+
+開発中は USB、仲間へ配るときは APK です。いずれも `./scripts/build_apk.sh` または `flutter run` できる状態が前提です。
+
+### 1. USB で PC から入れる（開発用）
+
+自分の端末を PC につないで入れます。更新のたびにすぐ上書きできます。
+
+1. Android で「設定」→「デバイス情報」→「ビルド番号」を 7 回タップし、開発者向けオプションを有効にする
+2. 「開発者向けオプション」で **USB デバッグ** をオンにする
+3. USB で PC に接続し、端末に表示される許可を承認する
+4. PC で `flutter run`、または作った APK を `adb install` する
+
+初回だけ端末側の許可が必要です。この方法は開発者向けで、仲間に USB デバッグを頼む必要はありません。
+
+### 2. APK ファイルを渡して入れる（自分の実機と利用者向け）
+
+Play ストアは使いません。案内するのは [Releases](https://github.com/kamiikelab/GearDoctor/releases) です。Android の Chrome で、次の順に進めてください。
+
+1. [GearDoctor 1.0.6](https://github.com/kamiikelab/GearDoctor/releases/tag/v1.0.6) を開く
+2. `GearDoctor-1.0.6.apk` をタップしてダウンロードする
+3. ダウンロードが終わったら開く
+4. 「このアプリをインストールしますか？」で **インストール** を押す
+5. 「デバイスを保護するため、アプリをブロックしました」と出たら **詳細** を押し、続けて **インストールする** を押す
+
+これでインストールは完了です。一度入れると、次の版の APK を開くと更新として上書きできます。アンインストールは通常のアプリと同じです。
+
+機種によっては「この提供元からのアプリを許可」と出ることがあります。そのときは Chrome（またはファイルアプリ）だけ許可します。Google の保護機能が止めるのは、Play を経由しない APK ではよくあります。出所がこの Releases だと分かっているときだけ、インストールを続けてください。
+
+## 利用者に渡すとき
+
+渡すのはソースではなく **Android の APK** です。案内するのは上記の「2. APK ファイルを渡して入れる」です。USB デバッグは不要です。新しい Android 版を配るときは、APK を作って同じ Releases に添付します。iPhone の IPA は Releases に載せません。
