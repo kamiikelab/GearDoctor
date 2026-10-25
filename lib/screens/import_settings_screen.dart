@@ -129,6 +129,7 @@ class _ImportSettingsScreenState extends State<ImportSettingsScreen> {
                                 .map((group) => groupForGear(group, 'example'))
                                 .toList(),
                             header: l10n.settingsCsvHint,
+                            locale: widget.store.catalogLocale,
                           );
                           _parsed = null;
                           _plan = null;
@@ -192,6 +193,7 @@ class _ImportSettingsScreenState extends State<ImportSettingsScreen> {
       parts: widget.store.parts,
       groups: widget.store.groups,
       header: l10n.settingsCsvHint,
+      locale: widget.store.catalogLocale,
     );
     setState(() {
       _csv.text = csv;
@@ -233,12 +235,14 @@ class _ImportSettingsScreenState extends State<ImportSettingsScreen> {
       });
       return;
     }
-    final parsed = parseSettingsCsv(_csv.text);
+    final l10n = AppLocalizations.of(context);
+    final parsed = parseSettingsCsv(_csv.text, messages: l10n);
     SettingsImportPlan? plan;
     if (parsed.errors.isEmpty) {
       plan = planSettingsImport(
         rows: parsed.rows,
         parts: widget.store.parts,
+        messages: l10n,
       );
     }
     setState(() {

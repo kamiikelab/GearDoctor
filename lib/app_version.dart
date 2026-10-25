@@ -6,6 +6,10 @@ const privacyPolicyPage =
 String get appVersionLabel => '$appName $appVersion';
 
 Uri privacyPolicyUri(String languageCode) {
-  final lang = languageCode == 'ja' ? 'ja' : 'en';
+  final lang = switch (languageCode) {
+    'ja' => 'ja',
+    'fr' => 'fr',
+    _ => 'en',
+  };
   return Uri.parse(privacyPolicyPage).replace(queryParameters: {'lang': lang});
 }

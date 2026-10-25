@@ -11,6 +11,7 @@ import 'package:gear_doctor/domain/replacement_csv.dart';
 import 'package:gear_doctor/domain/settings_csv.dart';
 import 'package:gear_doctor/models/models.dart';
 import 'package:gear_doctor/state/app_store.dart';
+import 'package:gear_doctor/user_message.dart';
 import 'package:gear_doctor/strava/strava_oauth.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
@@ -457,6 +458,45 @@ $settingsCsvHeader
     expect(store.cards.any((card) => card.title == 'Tires'), isTrue);
   });
 
+  test('switching language does not rename saved bikes or parts', () async {
+    final store = await openStore();
+    expect(store.selectedGear?.name, 'ロード');
+    expect(store.partById(roadPart('p_chain'))!.registeredName, 'チェーン');
+    await store.setLocaleCode('fr');
+    expect(store.selectedGear?.name, 'ロード');
+    expect(store.partById(roadPart('p_chain'))!.registeredName, 'チェーン');
+  });
+
+  test('french device locale seeds french demo', () async {
+    final store = AppStore(
+      database: AppDatabase(overridePath: '${dir.path}/app.db'),
+      now: parseDate('2026-08-23'),
+      deviceLocale: 'fr',
+    );
+    await store.load();
+    expect(store.selectedGear?.name, 'Route');
+    expect(
+      store.gears.map((gear) => gear.name),
+      containsAll(['Route', 'Cyclo-cross', 'Vélo CLM']),
+    );
+    expect(store.partById(roadPart('p_chain'))!.registeredName, 'Chaîne');
+    expect(store.partById(roadPart('p_front_tire'))!.registeredName, 'Pneu avant');
+    expect(store.cards.any((card) => card.title == 'Pneus'), isTrue);
+    expect(
+      store.replacements.where((item) => item.memo.isNotEmpty).map((item) => item.memo).toSet(),
+      {'Remplacé après une crevaison', 'Entaille du flanc'},
+    );
+  });
+
+  test('resetToDemo writes the french catalog when french is selected', () async {
+    final store = await openStore();
+    await store.setLocaleCode('fr');
+    await store.resetToDemo();
+    expect(store.settings.localeCode, 'fr');
+    expect(store.selectedGear?.name, 'Route');
+    expect(store.partById(roadPart('p_chain'))!.registeredName, 'Chaîne');
+  });
+
   test('changing sync start deletes Strava rides and keeps manuals', () async {
     final store = await openStore();
     expect(store.rides, isNotEmpty);
@@ -897,7 +937,7 @@ $settingsCsvHeader
     await store.selectGear('b1');
     await expectLater(
       store.deleteGear('b1'),
-      throwsA(isA<StateError>()),
+      throwsA(isA<UserMessage>()),
     );
     expect(store.gears.any((gear) => gear.id == 'b1'), isTrue);
   });

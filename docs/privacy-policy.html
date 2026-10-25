@@ -33,6 +33,7 @@
   <nav class="lang" aria-label="Language">
     <a id="link-ja" href="?lang=ja">日本語</a>
     <a id="link-en" href="?lang=en">English</a>
+    <a id="link-fr" href="?lang=fr">Français</a>
   </nav>
 
   <article id="ja" lang="ja">
@@ -234,28 +235,125 @@
     </p>
   </article>
 
+  <article id="fr" lang="fr" hidden>
+    <h1>Politique de confidentialité de GearDoctor</h1>
+    <p class="meta">Date d'effet : 6 septembre 2026</p>
+
+    <p>
+      Ce document explique comment GearDoctor (l'« application »), qui indique quand remplacer les pièces d'un vélo, traite vos informations.
+      L'application est exploitée par son développeur (GitHub : <a href="https://github.com/kamiikelab/GearDoctor">kamiikelab/GearDoctor</a>).
+    </p>
+
+    <h2>1. Principe</h2>
+    <p>
+      L'application ne dispose pas de serveur du développeur. Les relevés de pièces et les totaux de sorties restent sur l'appareil où vous l'installez.
+      Elle utilise Internet seulement quand vous connectez Strava et quand vous synchronisez des sorties.
+    </p>
+
+    <h2>2. Informations conservées sur l'appareil</h2>
+    <p>L'application enregistre sur l'appareil :</p>
+    <ul>
+      <li>Les noms de pièces, les intervalles de remplacement, les objectifs et les seuils d'alerte</li>
+      <li>Les dates de remplacement et les commentaires</li>
+      <li>Les sorties saisies ou importées (date, distance et vélo concerné)</li>
+      <li>Le vélo utilisé pour les totaux, et la date de début Strava de la période</li>
+      <li>Le choix de la langue d'affichage</li>
+      <li>Votre nom affiché Strava et votre identifiant</li>
+      <li>Le Client ID Strava, le Client Secret, le jeton d'accès et le jeton de rafraîchissement (sur Android et iPhone, dans le coffre chiffré de l'appareil ; sinon, dans la base de données de l'appareil)</li>
+    </ul>
+    <p>
+      Au premier lancement, des pièces et des sorties de démonstration sont enregistrées au même endroit.
+      La première vraie sortie que vous ajoutez (saisie ou importée depuis Strava) supprime les sorties de démonstration.
+    </p>
+
+    <h2>3. Informations envoyées à l'extérieur</h2>
+    <p>
+      Le seul service contacté par l'application est Strava. Elle n'envoie rien à un serveur du développeur, à des régies publicitaires ni à des services d'analyse.
+    </p>
+    <p>Elle contacte Strava seulement quand vous faites une action :</p>
+    <ul>
+      <li>Lors de la connexion : elle échange un code d'autorisation contre des jetons, dans la limite de l'accès que vous accordez sur l'écran Strava.</li>
+      <li>Lors de la synchronisation : elle lit votre liste de vélos et les sorties de la période que vous choisissez.</li>
+      <li>Lors de la déconnexion : elle révoque l'autorisation Strava quand c'est possible.</li>
+    </ul>
+    <p>
+      L'import des sorties utilise la date, la distance et les identifiants de vélo.
+      Il ne récupère pas les traces GPS ni le détail de la carte, et n'utilise pas l'autorisation de localisation.
+    </p>
+    <p>
+      Le traitement des données par Strava est décrit dans la <a href="https://www.strava.com/legal/privacy">politique de confidentialité de Strava</a>.
+    </p>
+
+    <h2>4. Ce que l'application n'utilise pas</h2>
+    <ul>
+      <li>La publicité</li>
+      <li>L'analyse d'usage ou l'envoi de rapports de plantage</li>
+      <li>La création de compte (l'application n'a pas d'inscription propre)</li>
+      <li>La localisation</li>
+      <li>L'accès automatique aux contacts, aux photos ou aux fichiers</li>
+    </ul>
+    <p>
+      Les CSV des relevés et des réglages de pièces n'apparaissent dans le champ à l'écran et le presse-papiers que lorsque vous les exportez.
+      L'application n'envoie pas ces fichiers d'elle-même.
+    </p>
+
+    <h2>5. Finalité</h2>
+    <ul>
+      <li>Vous indiquer quand une pièce est à remplacer, selon la distance ou les mois écoulés</li>
+      <li>N'ajouter à la distance d'une pièce que les sorties du vélo sélectionné</li>
+      <li>Conserver la connexion Strava et importer les sorties de la période que vous choisissez</li>
+    </ul>
+    <p>Nous n'utilisons pas ces informations à d'autres fins, ne les vendons pas et ne les transmettons pas à des tiers.</p>
+
+    <h2>6. Conservation et suppression</h2>
+    <p>Les informations restent sur l'appareil jusqu'à ce que vous les supprimiez. Vous pouvez le faire ainsi :</p>
+    <ul>
+      <li>Déconnecter : retire les jetons Strava et, si possible, révoque l'autorisation Strava.</li>
+      <li>Réglages → Revenir à la démo : supprime la connexion Strava, les sorties, les réglages des pièces et les relevés, puis rétablit la démo du premier lancement.</li>
+      <li>Désinstaller l'application : supprime aussi la base de données de l'appareil.</li>
+    </ul>
+    <p>
+      Comme l'application ne conserve pas vos données sur un serveur, il n'y a pas de demande de « suppression de compte » à adresser au développeur.
+      Les actions sur l'appareil suffisent.
+    </p>
+
+    <h2>7. Enfants</h2>
+    <p>
+      L'application ne s'adresse pas aux enfants. Elle n'a pas de fonction destinée aux moins de 13 ans et ne collecte pas leurs informations.
+    </p>
+
+    <h2>8. Modifications</h2>
+    <p>
+      Si les informations traitées ou les services connectés changent, nous mettrons ce document à jour, nous changerons la date d'effet et nous le publierons.
+    </p>
+
+    <h2>9. Contact</h2>
+    <p>
+      Les questions sur cette politique peuvent être envoyées aux
+      <a href="https://github.com/kamiikelab/GearDoctor/issues/new">Issues GitHub</a>.
+    </p>
+  </article>
+
   <script>
     (function () {
       var params = new URLSearchParams(location.search);
       var requested = params.get('lang');
-      var lang = requested === 'en' || requested === 'ja'
+      var nav = (navigator.language || '').toLowerCase();
+      var lang = requested === 'ja' || requested === 'en' || requested === 'fr'
         ? requested
-        : ((navigator.language || '').toLowerCase().indexOf('ja') === 0 ? 'ja' : 'en');
-      var ja = document.getElementById('ja');
-      var en = document.getElementById('en');
-      var linkJa = document.getElementById('link-ja');
-      var linkEn = document.getElementById('link-en');
-      var showJa = lang === 'ja';
-      ja.hidden = !showJa;
-      en.hidden = showJa;
-      document.documentElement.lang = showJa ? 'ja' : 'en';
-      if (showJa) {
-        linkJa.setAttribute('aria-current', 'true');
-        linkEn.removeAttribute('aria-current');
-      } else {
-        linkEn.setAttribute('aria-current', 'true');
-        linkJa.removeAttribute('aria-current');
-      }
+        : (nav.indexOf('ja') === 0 ? 'ja' : (nav.indexOf('fr') === 0 ? 'fr' : 'en'));
+      ['ja', 'en', 'fr'].forEach(function (code) {
+        var article = document.getElementById(code);
+        var link = document.getElementById('link-' + code);
+        var show = code === lang;
+        article.hidden = !show;
+        if (show) {
+          link.setAttribute('aria-current', 'true');
+          document.documentElement.lang = code;
+        } else {
+          link.removeAttribute('aria-current');
+        }
+      });
     })();
   </script>
 </body>

@@ -259,6 +259,18 @@ void main() {
     expect(recommendedLimitFor('Front brake pads', CycleKind.distance), 1500);
     expect(recommendedLimitFor('Heart rate battery', CycleKind.months), 12);
     expect(recommendedLimitFor('Bar tape', CycleKind.distance), 5000);
+    expect(recommendedLimitFor('Pneu avant', CycleKind.distance), 6000);
+    expect(recommendedLimitFor('Chaîne', CycleKind.distance), 4000);
+    expect(recommendedLimitFor('chaine', CycleKind.distance), 4000);
+    expect(recommendedLimitFor('Plaquettes avant', CycleKind.distance), 1500);
+    expect(recommendedLimitFor('Câble avant', CycleKind.distance), 5000);
+    expect(recommendedLimitFor('cable', CycleKind.distance), 5000);
+    expect(recommendedLimitFor('Liquide de frein', CycleKind.distance), 10000);
+    expect(recommendedLimitFor('huile', CycleKind.distance), 10000);
+    expect(recommendedLimitFor('Disque avant', CycleKind.distance), 8000);
+    expect(recommendedLimitFor('Guidoline', CycleKind.distance), 5000);
+    expect(recommendedLimitFor('Galet', CycleKind.distance), 5000);
+    expect(recommendedLimitFor('Pile du cardio', CycleKind.months), 12);
   });
 
   test('previous cycle is the last completed interval, or start date if only one replacement', () {

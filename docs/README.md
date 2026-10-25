@@ -16,5 +16,6 @@ GearDoctor の詳細ドキュメントを置くフォルダです。
 | [開発と配布（iPhone）](開発と配布-iPhone.md) | Codemagic、版の `+`、TestFlight、App Store 審査 |
 | [Google Play 公開](GooglePlay公開.md) | Android は Play に出さない（方針） |
 | [プライバシーポリシー](privacy-policy.html) | 端末に残す情報と、Strava へ送るもの |
+| [フランス語対応](フランス語対応.md) | 日本語・英語・フランス語にするときの確認リスト |
 
 資料を追加したら、この一覧を更新してください。

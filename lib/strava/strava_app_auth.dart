@@ -1,6 +1,7 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_web_auth_2/flutter_web_auth_2.dart';
 
+import '../l10n/active_locale.dart';
 import 'strava_config.dart';
 import 'strava_oauth.dart';
 
@@ -15,10 +16,10 @@ Future<Uri> authenticateStravaInAppBrowser(Uri authorizeUrl) async {
   } on PlatformException catch (e) {
     if (e.code.toUpperCase() == 'CANCELED' ||
         e.code.toUpperCase() == 'CANCELLED') {
-      throw StravaAuthException('認可が取り消されました');
+      throw StravaAuthException(activeL10n.authCancelled);
     }
     throw StravaAuthException(
-      e.message ?? 'ブラウザでの認可に失敗しました（${e.code}）',
+      e.message ?? activeL10n.browserAuthFailed(e.code),
     );
   }
 }

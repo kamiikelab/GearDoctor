@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'l10n/active_locale.dart';
 import 'l10n/app_localizations.dart';
 import 'screens/home_screen.dart';
 import 'state/app_store.dart';
@@ -24,11 +25,9 @@ class _GearDoctorAppState extends State<GearDoctorApp> {
     _ownsStore = widget.store == null;
     _store = widget.store ??
         AppStore(
-          deviceLocale:
-              WidgetsBinding.instance.platformDispatcher.locale.languageCode ==
-                      'ja'
-                  ? 'ja'
-                  : 'en',
+          deviceLocale: supportedLanguageCode(
+            WidgetsBinding.instance.platformDispatcher.locale.languageCode,
+          ),
         );
     if (_ownsStore) {
       _store.load();
@@ -55,19 +54,18 @@ class _GearDoctorAppState extends State<GearDoctorApp> {
           locale: switch (code) {
             'ja' => const Locale('ja'),
             'en' => const Locale('en'),
+            'fr' => const Locale('fr'),
             _ => null,
           },
           supportedLocales: AppLocalizations.supportedLocales,
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           localeResolutionCallback: (locale, _) {
-            if (code == 'ja') {
-              return const Locale('ja');
+            if (code == 'ja' || code == 'en' || code == 'fr') {
+              return Locale(code!);
             }
-            if (code == 'en') {
-              return const Locale('en');
-            }
-            if (locale?.languageCode == 'ja') {
-              return const Locale('ja');
+            final device = locale?.languageCode;
+            if (device == 'ja' || device == 'fr') {
+              return Locale(device!);
             }
             return const Locale('en');
           },

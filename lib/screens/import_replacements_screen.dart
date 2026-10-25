@@ -238,15 +238,18 @@ class _ImportReplacementsScreenState extends State<ImportReplacementsScreen> {
       });
       return;
     }
+    final l10n = AppLocalizations.of(context);
     final parsed = parseReplacementCsv(
       _csv.text,
       startDate: widget.store.partOriginOn,
+      messages: l10n,
     );
     ReplacementImportPlan? plan;
     if (parsed.errors.isEmpty) {
       plan = planReplacementImport(
         rows: parsed.rows,
         parts: widget.store.parts,
+        messages: l10n,
       );
     }
     setState(() {

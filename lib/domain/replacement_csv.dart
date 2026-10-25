@@ -1,3 +1,5 @@
+import '../l10n/active_locale.dart';
+import '../l10n/app_localizations.dart';
 import '../models/models.dart';
 import 'dates.dart';
 
@@ -51,7 +53,9 @@ class ReplacementImportResult {
 ReplacementCsvParseResult parseReplacementCsv(
   String raw, {
   DateTime? startDate,
+  AppLocalizations? messages,
 }) {
+  final l10n = messages ?? activeL10n;
   final text = raw.replaceFirst('\uFEFF', '').replaceAll('\r\n', '\n').replaceAll('\r', '\n');
   final lines = text.split('\n');
   final errors = <String>[];
@@ -67,7 +71,13 @@ ReplacementCsvParseResult parseReplacementCsv(
     final fields = parseCsvLine(line);
     if (!sawHeader) {
       if (!_isHeader(fields)) {
-        errors.add('1行目は 登録名,交換日,メモ または Registered name,Date,Memo にしてください。');
+        errors.add(
+          l10n.csvRecordsHeaderError(
+            replacementCsvHeader,
+            replacementCsvHeaderEn,
+            replacementCsvHeaderFr,
+          ),
+        );
         return ReplacementCsvParseResult(rows: const [], errors: errors);
       }
       sawHeader = true;
@@ -77,7 +87,7 @@ ReplacementCsvParseResult parseReplacementCsv(
       continue;
     }
     if (fields.length < 2) {
-      errors.add('$lineNumber 行目: 登録名と交換日が必要です。');
+      errors.add(l10n.csvNeedNameAndDate(lineNumber));
       continue;
     }
     final name = fields[0].trim();
@@ -86,19 +96,19 @@ ReplacementCsvParseResult parseReplacementCsv(
         ? ''
         : fields.sublist(2).join(',').trim();
     if (name.isEmpty) {
-      errors.add('$lineNumber 行目: 登録名が空です。');
+      errors.add(l10n.csvEmptyName(lineNumber));
       continue;
     }
     if (dateRaw.isEmpty) {
       if (startDate == null) {
-        errors.add('$lineNumber 行目: 交換日が空です。YYYY/MM/DD を入れるか、空のままにするとこのギアの最初の走行日になります。');
+        errors.add(l10n.csvEmptyDate(lineNumber));
         continue;
       }
       dateRaw = formatCsvDate(startDate);
     }
     final replacedOn = parseCsvDate(dateRaw);
     if (replacedOn == null) {
-      errors.add('$lineNumber 行目: 交換日は YYYY/MM/DD にしてください。');
+      errors.add(l10n.csvBadDate(lineNumber));
       continue;
     }
     rows.add(
@@ -112,9 +122,9 @@ ReplacementCsvParseResult parseReplacementCsv(
   }
 
   if (!sawHeader) {
-    errors.add('CSV が空です。');
+    errors.add(l10n.csvEmpty);
   } else if (rows.isEmpty && errors.isEmpty) {
-    errors.add('データ行がありません。');
+    errors.add(l10n.csvNoRows);
   }
   return ReplacementCsvParseResult(rows: rows, errors: errors);
 }
@@ -122,7 +132,9 @@ ReplacementCsvParseResult parseReplacementCsv(
 ReplacementImportPlan planReplacementImport({
   required List<ReplacementCsvRow> rows,
   required List<Part> parts,
+  AppLocalizations? messages,
 }) {
+  final l10n = messages ?? activeL10n;
   final byName = <String, List<Part>>{};
   for (final part in parts) {
     byName.putIfAbsent(part.registeredName, () => []).add(part);
@@ -135,15 +147,11 @@ ReplacementImportPlan planReplacementImport({
   for (final row in rows) {
     final matches = byName[row.registeredName] ?? const <Part>[];
     if (matches.isEmpty) {
-      errors.add(
-        '${row.lineNumber} 行目: 登録名「${row.registeredName}」の部品がありません。先に部品を追加してください。',
-      );
+      errors.add(l10n.csvPartMissing(row.lineNumber, row.registeredName));
       continue;
     }
     if (matches.length > 1) {
-      errors.add(
-        '${row.lineNumber} 行目: 登録名「${row.registeredName}」が複数あります。',
-      );
+      errors.add(l10n.csvDuplicateName(row.lineNumber, row.registeredName));
       continue;
     }
     final part = matches.single;
@@ -207,7 +215,9 @@ bool _isHeader(List<String> fields) {
     return false;
   }
   final first = fields.first.trim().toLowerCase();
-  return first == '登録名' || first == 'registered name';
+  return first == '登録名' ||
+      first == 'registered name' ||
+      first == 'nom enregistré';
 }
 
 String formatCsvDate(DateTime value) {
@@ -234,6 +244,7 @@ DateTime? parseCsvDate(String value) {
 
 const replacementCsvHeader = '登録名,交換日,メモ';
 const replacementCsvHeaderEn = 'Registered name,Date,Memo';
+const replacementCsvHeaderFr = 'Nom enregistré,Date,Mémo';
 
 String replacementCsvExample(
   List<String> registeredNames, {

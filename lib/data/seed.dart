@@ -2,6 +2,7 @@ import 'package:sqflite/sqflite.dart';
 
 import '../domain/dates.dart';
 import '../domain/usage.dart';
+import '../l10n/active_locale.dart';
 import '../models/models.dart';
 import 'app_repository.dart';
 
@@ -25,11 +26,9 @@ bool isStravaRideId(String id) => !isDemoRideId(id) && !isManualRideId(id);
 class DemoRequiresSyncException implements Exception {
   const DemoRequiresSyncException();
 
-  static const title = '先に走行を追加してください';
-  static const message = 'デモのあいだは部品の追加・削除と CSV は使えません。';
-
   @override
-  String toString() => '$title。$message';
+  String toString() =>
+      '${activeL10n.demoRequiresSyncTitle}。${activeL10n.demoRequiresSyncMessage}';
 }
 
 String partIdOnGear(String catalogId, String gearId) => '$catalogId@$gearId';
@@ -50,6 +49,7 @@ class _CatalogPart {
     this.id,
     this.nameJa,
     this.nameEn,
+    this.nameFr,
     this.cycle,
     this.recommended,
     this.custom,
@@ -59,12 +59,17 @@ class _CatalogPart {
   final String id;
   final String nameJa;
   final String nameEn;
+  final String nameFr;
   final CycleKind cycle;
   final int recommended;
   final int custom;
   final int order;
 
-  String nameFor(String locale) => locale == 'en' ? nameEn : nameJa;
+  String nameFor(String locale) => switch (locale) {
+        'en' => nameEn,
+        'fr' => nameFr,
+        _ => nameJa,
+      };
 }
 
 class _CatalogGroup {
@@ -72,6 +77,7 @@ class _CatalogGroup {
     this.id,
     this.nameJa,
     this.nameEn,
+    this.nameFr,
     this.frontPartId,
     this.rearPartId,
   );
@@ -79,39 +85,44 @@ class _CatalogGroup {
   final String id;
   final String nameJa;
   final String nameEn;
+  final String nameFr;
   final String frontPartId;
   final String rearPartId;
 
-  String nameFor(String locale) => locale == 'en' ? nameEn : nameJa;
+  String nameFor(String locale) => switch (locale) {
+        'en' => nameEn,
+        'fr' => nameFr,
+        _ => nameJa,
+      };
 }
 
 const _catalogParts = [
-  _CatalogPart('p_front_tire', '前タイヤ', 'Front tire', CycleKind.distance, 6000, 5000, 0),
-  _CatalogPart('p_rear_tire', '後タイヤ', 'Rear tire', CycleKind.distance, 6000, 5000, 1),
-  _CatalogPart('p_chain', 'チェーン', 'Chain', CycleKind.distance, 4000, 4000, 2),
-  _CatalogPart('p_front_pad', '前ブレーキパッド', 'Front brake pads', CycleKind.distance, 1500, 1500, 3),
-  _CatalogPart('p_rear_pad', '後ブレーキパッド', 'Rear brake pads', CycleKind.distance, 1500, 1500, 4),
-  _CatalogPart('p_front_cable', '前ワイヤー', 'Front cable', CycleKind.distance, 5000, 5000, 5),
-  _CatalogPart('p_rear_cable', '後ワイヤー', 'Rear cable', CycleKind.distance, 5000, 5000, 6),
-  _CatalogPart('p_front_oil', '前ブレーキオイル', 'Front brake fluid', CycleKind.distance, 10000, 10000, 7),
-  _CatalogPart('p_rear_oil', '後ブレーキオイル', 'Rear brake fluid', CycleKind.distance, 10000, 10000, 8),
-  _CatalogPart('p_front_disc', '前ディスク', 'Front disc', CycleKind.distance, 8000, 8000, 9),
-  _CatalogPart('p_rear_disc', '後ディスク', 'Rear disc', CycleKind.distance, 8000, 8000, 10),
-  _CatalogPart('p_bar_tape', 'バーテープ', 'Bar tape', CycleKind.distance, 5000, 5000, 11),
-  _CatalogPart('p_speed_batt', 'スピードセンサ電池', 'Speed sensor battery', CycleKind.months, 12, 12, 12),
-  _CatalogPart('p_power_batt', 'パワーセンサ電池', 'Power meter battery', CycleKind.months, 12, 12, 13),
-  _CatalogPart('p_remote_batt', 'リモコン電池', 'Remote battery', CycleKind.months, 12, 12, 14),
-  _CatalogPart('p_hr_batt', '心拍計電池', 'Heart rate battery', CycleKind.months, 12, 12, 15),
-  _CatalogPart('p_rear_light_batt', 'リヤライト電池', 'Rear light battery', CycleKind.months, 12, 12, 16),
-  _CatalogPart('p_pulley', 'プーリー', 'Pulley', CycleKind.distance, 5000, 5000, 17),
+  _CatalogPart('p_front_tire', '前タイヤ', 'Front tire', 'Pneu avant', CycleKind.distance, 6000, 5000, 0),
+  _CatalogPart('p_rear_tire', '後タイヤ', 'Rear tire', 'Pneu arrière', CycleKind.distance, 6000, 5000, 1),
+  _CatalogPart('p_chain', 'チェーン', 'Chain', 'Chaîne', CycleKind.distance, 4000, 4000, 2),
+  _CatalogPart('p_front_pad', '前ブレーキパッド', 'Front brake pads', 'Plaquettes avant', CycleKind.distance, 1500, 1500, 3),
+  _CatalogPart('p_rear_pad', '後ブレーキパッド', 'Rear brake pads', 'Plaquettes arrière', CycleKind.distance, 1500, 1500, 4),
+  _CatalogPart('p_front_cable', '前ワイヤー', 'Front cable', 'Câble avant', CycleKind.distance, 5000, 5000, 5),
+  _CatalogPart('p_rear_cable', '後ワイヤー', 'Rear cable', 'Câble arrière', CycleKind.distance, 5000, 5000, 6),
+  _CatalogPart('p_front_oil', '前ブレーキオイル', 'Front brake fluid', 'Liquide de frein avant', CycleKind.distance, 10000, 10000, 7),
+  _CatalogPart('p_rear_oil', '後ブレーキオイル', 'Rear brake fluid', 'Liquide de frein arrière', CycleKind.distance, 10000, 10000, 8),
+  _CatalogPart('p_front_disc', '前ディスク', 'Front disc', 'Disque avant', CycleKind.distance, 8000, 8000, 9),
+  _CatalogPart('p_rear_disc', '後ディスク', 'Rear disc', 'Disque arrière', CycleKind.distance, 8000, 8000, 10),
+  _CatalogPart('p_bar_tape', 'バーテープ', 'Bar tape', 'Guidoline', CycleKind.distance, 5000, 5000, 11),
+  _CatalogPart('p_speed_batt', 'スピードセンサ電池', 'Speed sensor battery', 'Pile du capteur de vitesse', CycleKind.months, 12, 12, 12),
+  _CatalogPart('p_power_batt', 'パワーセンサ電池', 'Power meter battery', 'Pile du capteur de puissance', CycleKind.months, 12, 12, 13),
+  _CatalogPart('p_remote_batt', 'リモコン電池', 'Remote battery', 'Pile de la télécommande', CycleKind.months, 12, 12, 14),
+  _CatalogPart('p_hr_batt', '心拍計電池', 'Heart rate battery', 'Pile du cardiofréquencemètre', CycleKind.months, 12, 12, 15),
+  _CatalogPart('p_rear_light_batt', 'リヤライト電池', 'Rear light battery', 'Pile du feu arrière', CycleKind.months, 12, 12, 16),
+  _CatalogPart('p_pulley', 'プーリー', 'Pulley', 'Galet', CycleKind.distance, 5000, 5000, 17),
 ];
 
 const _catalogGroups = [
-  _CatalogGroup('grp_tire', 'タイヤ', 'Tires', 'p_front_tire', 'p_rear_tire'),
-  _CatalogGroup('grp_pad', 'ブレーキパッド', 'Brake pads', 'p_front_pad', 'p_rear_pad'),
-  _CatalogGroup('grp_cable', 'ワイヤー', 'Cables', 'p_front_cable', 'p_rear_cable'),
-  _CatalogGroup('grp_oil', 'ブレーキオイル', 'Brake fluid', 'p_front_oil', 'p_rear_oil'),
-  _CatalogGroup('grp_disc', 'ディスク', 'Discs', 'p_front_disc', 'p_rear_disc'),
+  _CatalogGroup('grp_tire', 'タイヤ', 'Tires', 'Pneus', 'p_front_tire', 'p_rear_tire'),
+  _CatalogGroup('grp_pad', 'ブレーキパッド', 'Brake pads', 'Plaquettes', 'p_front_pad', 'p_rear_pad'),
+  _CatalogGroup('grp_cable', 'ワイヤー', 'Cables', 'Câbles', 'p_front_cable', 'p_rear_cable'),
+  _CatalogGroup('grp_oil', 'ブレーキオイル', 'Brake fluid', 'Liquide de frein', 'p_front_oil', 'p_rear_oil'),
+  _CatalogGroup('grp_disc', 'ディスク', 'Discs', 'Disques', 'p_front_disc', 'p_rear_disc'),
 ];
 
 List<Part> defaultParts({String locale = 'ja'}) {
@@ -151,12 +162,23 @@ List<DisplayGroup> defaultGroups({String locale = 'ja'}) {
   ];
 }
 
+String _demoText(String locale, String ja, String en, String fr) {
+  return switch (locale) {
+    'en' => en,
+    'fr' => fr,
+    _ => ja,
+  };
+}
+
 String inferCatalogLocale(List<Part> parts, {required String fallback}) {
   final jaById = {
     for (final part in defaultParts(locale: 'ja')) part.id: part.registeredName,
   };
   final enById = {
     for (final part in defaultParts(locale: 'en')) part.id: part.registeredName,
+  };
+  final frById = {
+    for (final part in defaultParts(locale: 'fr')) part.id: part.registeredName,
   };
   for (final part in parts) {
     final id = catalogIdOf(part.id);
@@ -165,6 +187,9 @@ String inferCatalogLocale(List<Part> parts, {required String fallback}) {
     }
     if (enById[id] == part.registeredName) {
       return 'en';
+    }
+    if (frById[id] == part.registeredName) {
+      return 'fr';
     }
   }
   return fallback;
@@ -194,15 +219,15 @@ Future<void> seedDemoData(
 }) async {
   final road = Gear(
     id: demoRoadId,
-    name: locale == 'en' ? 'Road' : 'ロード',
+    name: _demoText(locale, 'ロード', 'Road', 'Route'),
   );
   final cx = Gear(
     id: demoCxId,
-    name: locale == 'en' ? 'Cyclocross' : 'シクロクロス',
+    name: _demoText(locale, 'シクロクロス', 'Cyclocross', 'Cyclo-cross'),
   );
   final tt = Gear(
     id: demoTtId,
-    name: locale == 'en' ? 'TT bike' : 'TTバイク',
+    name: _demoText(locale, 'TTバイク', 'TT bike', 'Vélo CLM'),
   );
   await repo.upsertGear(road);
   await repo.upsertGear(cx);
@@ -228,8 +253,13 @@ Future<void> seedDemoData(
     locale: locale,
   );
 
-  final puncture = locale == 'en' ? 'Replaced after a puncture' : 'パンク後に交換';
-  final sidewall = locale == 'en' ? 'Sidewall cut' : 'サイドカット';
+  final puncture = _demoText(
+    locale,
+    'パンク後に交換',
+    'Replaced after a puncture',
+    'Remplacé après une crevaison',
+  );
+  final sidewall = _demoText(locale, 'サイドカット', 'Sidewall cut', 'Entaille du flanc');
   final replacements = <Replacement>[
     _rep('r_ft1', 'p_front_tire', '2023-04-02', ''),
     _rep('r_ft2', 'p_front_tire', '2024-01-15', puncture),
@@ -431,7 +461,10 @@ Future<void> migrateToPerGearParts(Database db) async {
       repo,
       id,
       startDate: oldestRideOn(rides: rides, gearId: id) ?? DateTime.now(),
-      locale: 'ja',
+      locale: inferCatalogLocale(
+        await repo.loadParts(gearId: sourceGearId),
+        fallback: 'ja',
+      ),
     );
   }
 }

@@ -1,4 +1,6 @@
+import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:gear_doctor/l10n/app_localizations.dart';
 import 'package:gear_doctor/data/seed.dart';
 import 'package:gear_doctor/domain/dates.dart';
 import 'package:gear_doctor/domain/replacement_csv.dart';
@@ -156,5 +158,21 @@ Registered name,Date,Memo
     expect(parsed.rows, hasLength(1));
     expect(parsed.rows.single.registeredName, 'チェーン');
     expect(parsed.rows.single.memo, 'old');
+  });
+
+  test('parses a French header and reports a bad date in French', () {
+    final parsed = parseReplacementCsv('''
+Nom enregistré,Date,Mémo
+Chaîne,2024/01/01,crevaison
+''');
+    expect(parsed.errors, isEmpty);
+    expect(parsed.rows.single.registeredName, 'Chaîne');
+    final french = lookupAppLocalizations(const Locale('fr'));
+    final bad = parseReplacementCsv(
+      'Nom enregistré,Date,Mémo\nChaîne,hier,\n',
+      messages: french,
+    );
+    expect(bad.errors.single, french.csvBadDate(2));
+    expect(bad.errors.single, isNot(contains('行目')));
   });
 }

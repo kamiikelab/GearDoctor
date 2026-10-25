@@ -70,6 +70,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 title: l10n.languageEnglish,
                 onTap: () => widget.store.setLocaleCode('en'),
               ),
+              const SizedBox(height: 8),
+              SelectTile(
+                selected: localeCode == 'fr',
+                title: l10n.languageFrench,
+                onTap: () => widget.store.setLocaleCode('fr'),
+              ),
               const SizedBox(height: 16),
               Text(
                 l10n.userHelp,

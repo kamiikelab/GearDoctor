@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 import '../domain/dates.dart';
+import '../l10n/active_locale.dart';
 import '../models/models.dart';
 import 'strava_oauth.dart';
 
@@ -65,13 +66,13 @@ Ride? rideFromActivity(Map<String, dynamic> json) {
 
 void throwIfStravaFailed(http.Response response) {
   if (response.statusCode == 429) {
-    throw StravaAuthException('Strava の回数制限に当たりました。しばらくしてからやり直してください。');
+    throw StravaAuthException(activeL10n.rateLimited);
   }
   if (response.statusCode == 401) {
-    throw StravaAuthException('Strava の認可が無効です。Strava 連携の画面から再連携してください。');
+    throw StravaAuthException(activeL10n.authInvalid, unauthorized: true);
   }
   if (response.statusCode < 200 || response.statusCode >= 300) {
-    throw StravaAuthException('Strava からの取得に失敗しました（${response.statusCode}）');
+    throw StravaAuthException(activeL10n.stravaFetchFailed(response.statusCode));
   }
 }
 
@@ -94,9 +95,7 @@ Future<StravaTokens> ensureAccessToken({
     );
   }
   if (clientId.isEmpty || clientSecret.isEmpty) {
-    throw StravaAuthException(
-      'トークンの更新に Client ID と Secret が必要です。Strava 連携の画面を確認してください。',
-    );
+    throw StravaAuthException(activeL10n.tokenRefreshNeedsSecret);
   }
   final refreshed = await refreshAccessToken(
     client: client,
@@ -146,7 +145,7 @@ Future<List<Ride>> fetchBikeRides({
     throwIfStravaFailed(response);
     final json = jsonDecode(response.body);
     if (json is! List) {
-      throw StravaAuthException('走行一覧の応答が読み取れませんでした');
+      throw StravaAuthException(activeL10n.activitiesUnreadable);
     }
     for (final item in json) {
       if (item is! Map) {
@@ -161,9 +160,7 @@ Future<List<Ride>> fetchBikeRides({
       break;
     }
     if (page == stravaMaxActivityPages) {
-      throw StravaAuthException(
-        '一度に取れる量を超えました。期間を短くしてやり直してください。',
-      );
+      throw StravaAuthException(activeL10n.tooManyActivities);
     }
   }
   return rides;

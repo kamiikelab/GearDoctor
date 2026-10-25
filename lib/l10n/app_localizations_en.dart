@@ -913,4 +913,217 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get couldNotOpenBrowser => 'Couldn’t open the browser.';
+
+  @override
+  String get languageFrench => 'Français';
+
+  @override
+  String get selectGearFirstRecord =>
+      'Select a bike before logging a replacement';
+
+  @override
+  String get selectGearFirstCsv => 'Select a bike before importing a CSV';
+
+  @override
+  String get selectGearFirstGroup =>
+      'Select a bike before grouping the display';
+
+  @override
+  String get rideNotOnThisBike => 'This is not a ride on this bike';
+
+  @override
+  String get cannotEditStravaRide => 'Strava rides cannot be edited';
+
+  @override
+  String get cannotDeleteStravaRide => 'Strava rides cannot be deleted';
+
+  @override
+  String get databaseNotOpen => 'The database is not open yet';
+
+  @override
+  String csvRecordsHeaderError(String ja, String en, String fr) {
+    return 'Line 1 must be $ja, $en, or $fr.';
+  }
+
+  @override
+  String csvSettingsHeaderError(String ja, String en, String fr) {
+    return 'Line 1 must be $ja, $en, or $fr.';
+  }
+
+  @override
+  String csvNeedNameAndDate(int line) {
+    return 'Line $line: registered name and date are required.';
+  }
+
+  @override
+  String csvEmptyName(int line) {
+    return 'Line $line: the registered name is empty.';
+  }
+
+  @override
+  String csvEmptyDate(int line) {
+    return 'Line $line: the date is empty. Enter YYYY/MM/DD, or leave it empty to use this bike\'s first ride.';
+  }
+
+  @override
+  String csvBadDate(int line) {
+    return 'Line $line: the date must be YYYY/MM/DD.';
+  }
+
+  @override
+  String get csvEmpty => 'The CSV is empty.';
+
+  @override
+  String get csvNoRows => 'There are no data rows.';
+
+  @override
+  String csvPartMissing(int line, String name) {
+    return 'Line $line: there is no part named \"$name\". Add the part first.';
+  }
+
+  @override
+  String csvDuplicateName(int line, String name) {
+    return 'Line $line: there is more than one part named \"$name\".';
+  }
+
+  @override
+  String csvSettingsNeedFields(int line) {
+    return 'Line $line: registered name, interval, target, default, custom, and threshold are required.';
+  }
+
+  @override
+  String csvBadCycle(int line) {
+    return 'Line $line: the interval must be Distance or Months.';
+  }
+
+  @override
+  String csvBadLimitMode(int line) {
+    return 'Line $line: the target must be Default, Auto, or Custom.';
+  }
+
+  @override
+  String csvBadRecommended(int line) {
+    return 'Line $line: the default value must be an integer of 1 or more.';
+  }
+
+  @override
+  String csvBadCustom(int line) {
+    return 'Line $line: the custom value must be an integer of 1 or more.';
+  }
+
+  @override
+  String csvBadThreshold(int line) {
+    return 'Line $line: the threshold must be an integer from 1 to 100.';
+  }
+
+  @override
+  String csvBadSide(int line) {
+    return 'Line $line: the position must be F or R.';
+  }
+
+  @override
+  String csvSideNeedsGroup(int line) {
+    return 'Line $line: enter a group name when a position is set.';
+  }
+
+  @override
+  String csvGroupNeedsSide(int line) {
+    return 'Line $line: the position must be F or R when a group is set.';
+  }
+
+  @override
+  String csvDuplicateInFile(int line, String name) {
+    return 'Line $line: the registered name \"$name\" is duplicated in the CSV.';
+  }
+
+  @override
+  String csvNameAmbiguous(int line, String name) {
+    return 'Line $line: there is more than one part named \"$name\".';
+  }
+
+  @override
+  String csvGroupNeedsBothSides(String name) {
+    return 'Group \"$name\" needs one F and one R.';
+  }
+
+  @override
+  String csvGroupOverlap(String name) {
+    return 'Parts in group \"$name\" overlap another group.';
+  }
+
+  @override
+  String get authCancelled => 'Authorization was cancelled';
+
+  @override
+  String authFailed(String error) {
+    return 'Authorization failed ($error)';
+  }
+
+  @override
+  String get authStateMismatch =>
+      'The authorization response did not match. Connect again.';
+
+  @override
+  String get authCodeMissing =>
+      'There is no authorization code. Check code= in the address bar.';
+
+  @override
+  String get pasteCode => 'Paste the code';
+
+  @override
+  String get pasteCodeUnreadable =>
+      'Could not read a code from what you pasted';
+
+  @override
+  String tokenFailed(int code) {
+    return 'Could not get a token ($code)';
+  }
+
+  @override
+  String get tokenIncomplete => 'The token response is incomplete';
+
+  @override
+  String get stravaUserFallback => 'Strava user';
+
+  @override
+  String get listenNotStarted => 'Listening has not started';
+
+  @override
+  String get listenTimedOut =>
+      'Timed out waiting for the browser. Connect again.';
+
+  @override
+  String get authAborted => 'Connection cancelled';
+
+  @override
+  String get rateLimited => 'Strava rate limit reached. Try again later.';
+
+  @override
+  String get authInvalid =>
+      'Strava authorization is no longer valid. Reconnect from the Strava screen.';
+
+  @override
+  String stravaFetchFailed(int code) {
+    return 'Could not fetch from Strava ($code)';
+  }
+
+  @override
+  String get tokenRefreshNeedsSecret =>
+      'Refreshing the token needs Client ID and Secret. Check the Strava connect screen.';
+
+  @override
+  String get activitiesUnreadable => 'Could not read the ride list response';
+
+  @override
+  String get tooManyActivities =>
+      'This is more than can be fetched at once. Shorten the period and try again.';
+
+  @override
+  String browserAuthFailed(String code) {
+    return 'Authorization in the browser failed ($code)';
+  }
+
+  @override
+  String get loopbackSuccess =>
+      'Connected to GearDoctor. Close this tab. The app will not come to the front. Success is when the connect button turns green again.';
 }

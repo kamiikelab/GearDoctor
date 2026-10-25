@@ -886,4 +886,209 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get couldNotOpenBrowser => 'ブラウザを開けませんでした。';
+
+  @override
+  String get languageFrench => 'Français';
+
+  @override
+  String get selectGearFirstRecord => 'ギアを選んでから交換を記録してください。';
+
+  @override
+  String get selectGearFirstCsv => 'ギアを選んでから CSV を取り込んでください。';
+
+  @override
+  String get selectGearFirstGroup => 'ギアを選んでから表示をまとめてください。';
+
+  @override
+  String get rideNotOnThisBike => 'このギアの走行ではありません';
+
+  @override
+  String get cannotEditStravaRide => 'Strava の走行は直せません';
+
+  @override
+  String get cannotDeleteStravaRide => 'Strava の走行は消せません';
+
+  @override
+  String get databaseNotOpen => 'データベースがまだ開いていません';
+
+  @override
+  String csvRecordsHeaderError(String ja, String en, String fr) {
+    return '1行目は $ja、$en、または $fr にしてください。';
+  }
+
+  @override
+  String csvSettingsHeaderError(String ja, String en, String fr) {
+    return '1行目は $ja、$en、または $fr にしてください。';
+  }
+
+  @override
+  String csvNeedNameAndDate(int line) {
+    return '$line 行目: 登録名と交換日が必要です。';
+  }
+
+  @override
+  String csvEmptyName(int line) {
+    return '$line 行目: 登録名が空です。';
+  }
+
+  @override
+  String csvEmptyDate(int line) {
+    return '$line 行目: 交換日が空です。YYYY/MM/DD を入れるか、空のままにするとこのギアの最初の走行日になります。';
+  }
+
+  @override
+  String csvBadDate(int line) {
+    return '$line 行目: 交換日は YYYY/MM/DD にしてください。';
+  }
+
+  @override
+  String get csvEmpty => 'CSV が空です。';
+
+  @override
+  String get csvNoRows => 'データ行がありません。';
+
+  @override
+  String csvPartMissing(int line, String name) {
+    return '$line 行目: 登録名「$name」の部品がありません。先に部品を追加してください。';
+  }
+
+  @override
+  String csvDuplicateName(int line, String name) {
+    return '$line 行目: 登録名「$name」が複数あります。';
+  }
+
+  @override
+  String csvSettingsNeedFields(int line) {
+    return '$line 行目: 登録名、周期、目安、推奨の値、設定の値、しきい値が必要です。';
+  }
+
+  @override
+  String csvBadCycle(int line) {
+    return '$line 行目: 周期は 距離 か 月 にしてください。';
+  }
+
+  @override
+  String csvBadLimitMode(int line) {
+    return '$line 行目: 目安は 推奨、自動、設定 のどれかにしてください。';
+  }
+
+  @override
+  String csvBadRecommended(int line) {
+    return '$line 行目: 推奨の値は 1 以上の整数にしてください。';
+  }
+
+  @override
+  String csvBadCustom(int line) {
+    return '$line 行目: 設定の値は 1 以上の整数にしてください。';
+  }
+
+  @override
+  String csvBadThreshold(int line) {
+    return '$line 行目: しきい値は 1 から 100 の整数です。';
+  }
+
+  @override
+  String csvBadSide(int line) {
+    return '$line 行目: 位置は F か R にしてください。';
+  }
+
+  @override
+  String csvSideNeedsGroup(int line) {
+    return '$line 行目: 位置があるときはまとめの名前も入れてください。';
+  }
+
+  @override
+  String csvGroupNeedsSide(int line) {
+    return '$line 行目: まとめがあるときは位置を F か R にしてください。';
+  }
+
+  @override
+  String csvDuplicateInFile(int line, String name) {
+    return '$line 行目: 登録名「$name」が CSV 内で重複しています。';
+  }
+
+  @override
+  String csvNameAmbiguous(int line, String name) {
+    return '$line 行目: 登録名「$name」が複数あります。';
+  }
+
+  @override
+  String csvGroupNeedsBothSides(String name) {
+    return 'まとめ「$name」は F と R が1件ずつ必要です。';
+  }
+
+  @override
+  String csvGroupOverlap(String name) {
+    return 'まとめ「$name」の部品は、ほかのまとめと重なっています。';
+  }
+
+  @override
+  String get authCancelled => '認可が取り消されました';
+
+  @override
+  String authFailed(String error) {
+    return '認可に失敗しました（$error）';
+  }
+
+  @override
+  String get authStateMismatch => '認可の戻り値が一致しません。もう一度連携してください。';
+
+  @override
+  String get authCodeMissing => '認可コードがありません。アドレス欄の code= を確認してください。';
+
+  @override
+  String get pasteCode => 'コードを貼ってください';
+
+  @override
+  String get pasteCodeUnreadable => '貼った内容から code を読めませんでした';
+
+  @override
+  String tokenFailed(int code) {
+    return 'トークンの取得に失敗しました（$code）';
+  }
+
+  @override
+  String get tokenIncomplete => 'トークンの応答が不完全です';
+
+  @override
+  String get stravaUserFallback => 'Strava ユーザー';
+
+  @override
+  String get listenNotStarted => '待ち受けを開始していません';
+
+  @override
+  String get listenTimedOut => 'ブラウザからの戻りを待ちきれませんでした。もう一度連携してください。';
+
+  @override
+  String get authAborted => '連携を中止しました';
+
+  @override
+  String get rateLimited => 'Strava の回数制限に当たりました。しばらくしてからやり直してください。';
+
+  @override
+  String get authInvalid => 'Strava の認可が無効です。Strava 連携の画面から再連携してください。';
+
+  @override
+  String stravaFetchFailed(int code) {
+    return 'Strava からの取得に失敗しました（$code）';
+  }
+
+  @override
+  String get tokenRefreshNeedsSecret =>
+      'トークンの更新に Client ID と Secret が必要です。Strava 連携の画面を確認してください。';
+
+  @override
+  String get activitiesUnreadable => '走行一覧の応答が読み取れませんでした';
+
+  @override
+  String get tooManyActivities => '一度に取れる量を超えました。期間を短くしてやり直してください。';
+
+  @override
+  String browserAuthFailed(String code) {
+    return 'ブラウザでの認可に失敗しました（$code）';
+  }
+
+  @override
+  String get loopbackSuccess =>
+      'GearDoctor に連携しました。このタブを閉じてください。アプリが手前に切り替わることはありません。連携ボタンが緑に戻れば成功です。';
 }

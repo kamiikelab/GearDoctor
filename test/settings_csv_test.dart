@@ -108,4 +108,35 @@ Registered name,Interval,Target,Default,Custom,Threshold,Group,Position
     expect(plan.canImport, isTrue);
     expect(plan.groups.single.displayName, 'タイヤ');
   });
+
+  test('french export round-trips and still accepts Japanese and English', () {
+    final csv = exportSettingsCsv(
+      parts: defaultParts(locale: 'fr')
+          .map((part) => partForGear(part, 'ex'))
+          .toList(),
+      groups: defaultGroups(locale: 'fr')
+          .map((group) => groupForGear(group, 'ex'))
+          .toList(),
+      header: settingsCsvHeaderFr,
+      locale: 'fr',
+    );
+    expect(csv.split('\n').first, settingsCsvHeaderFr);
+    expect(csv, contains('Chaîne,Distance,Défaut,'));
+    expect(csv, contains(',Mois,'));
+    final parsed = parseSettingsCsv(csv);
+    expect(parsed.errors, isEmpty);
+    expect(parsed.rows, hasLength(18));
+    expect(
+      parseSettingsCsv(
+        '$settingsCsvHeader\nチェーン,距離,推奨,4000,4000,80,,\n',
+      ).errors,
+      isEmpty,
+    );
+    expect(
+      parseSettingsCsv(
+        '$settingsCsvHeaderEn\nChain,Months,Auto,12,12,80,,\n',
+      ).errors,
+      isEmpty,
+    );
+  });
 }

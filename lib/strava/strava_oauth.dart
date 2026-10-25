@@ -5,6 +5,7 @@ import 'dart:math';
 
 import 'package:http/http.dart' as http;
 
+import '../l10n/active_locale.dart';
 import '../models/models.dart';
 import 'strava_config.dart';
 
@@ -27,8 +28,10 @@ class StravaAuthResult {
 }
 
 class StravaAuthException implements Exception {
-  StravaAuthException(this.message);
+  StravaAuthException(this.message, {this.unauthorized = false});
+
   final String message;
+  final bool unauthorized;
 
   @override
   String toString() => message;
@@ -70,16 +73,18 @@ String extractAuthorizationCode(
   final error = redirected.queryParameters['error'];
   if (error != null && error.isNotEmpty) {
     throw StravaAuthException(
-      error == 'access_denied' ? '認可が取り消されました' : '認可に失敗しました（$error）',
+      error == 'access_denied'
+          ? activeL10n.authCancelled
+          : activeL10n.authFailed(error),
     );
   }
   final state = redirected.queryParameters['state'];
   if (state != expectedState) {
-    throw StravaAuthException('認可の戻り値が一致しません。もう一度連携してください。');
+    throw StravaAuthException(activeL10n.authStateMismatch);
   }
   final code = redirected.queryParameters['code'];
   if (code == null || code.isEmpty) {
-    throw StravaAuthException('認可コードがありません。アドレス欄の code= を確認してください。');
+    throw StravaAuthException(activeL10n.authCodeMissing);
   }
   return code;
 }
@@ -88,7 +93,7 @@ String extractAuthorizationCode(
 String extractAuthorizationCodeFromPaste(String pasted, {String? expectedState}) {
   final trimmed = pasted.trim();
   if (trimmed.isEmpty) {
-    throw StravaAuthException('コードを貼ってください');
+    throw StravaAuthException(activeL10n.pasteCode);
   }
   if (trimmed.contains('://') || trimmed.contains('code=')) {
     final uri = Uri.parse(trimmed.contains('://') ? trimmed : 'http://local/?$trimmed');
@@ -97,7 +102,7 @@ String extractAuthorizationCodeFromPaste(String pasted, {String? expectedState})
     }
     final code = uri.queryParameters['code'];
     if (code == null || code.isEmpty) {
-      throw StravaAuthException('貼った内容から code を読めませんでした');
+      throw StravaAuthException(activeL10n.pasteCodeUnreadable);
     }
     return code;
   }
@@ -124,14 +129,14 @@ Future<StravaAuthResult> exchangeAuthorizationCode({
 
 StravaAuthResult parseTokenResponse(http.Response response) {
   if (response.statusCode < 200 || response.statusCode >= 300) {
-    throw StravaAuthException('トークンの取得に失敗しました（${response.statusCode}）');
+    throw StravaAuthException(activeL10n.tokenFailed(response.statusCode));
   }
   final json = jsonDecode(response.body) as Map<String, dynamic>;
   final access = json['access_token'] as String?;
   final refresh = json['refresh_token'] as String?;
   final expires = json['expires_at'];
   if (access == null || refresh == null || expires == null) {
-    throw StravaAuthException('トークンの応答が不完全です');
+    throw StravaAuthException(activeL10n.tokenIncomplete);
   }
   final athlete = json['athlete'] as Map<String, dynamic>? ?? {};
   final first = '${athlete['firstname'] ?? ''}'.trim();
@@ -145,7 +150,7 @@ StravaAuthResult parseTokenResponse(http.Response response) {
       isUtc: true,
     ),
     athleteId: '${athlete['id'] ?? ''}',
-    athleteName: name.isEmpty ? 'Strava ユーザー' : name,
+    athleteName: name.isEmpty ? activeL10n.stravaUserFallback : name,
     bikes: parseStravaBikes(athlete['bikes']),
   );
 }
@@ -226,8 +231,7 @@ class StravaLoopbackListener {
         ..headers.contentType = ContentType.html
         ..write(
           '<!doctype html><meta charset="utf-8"><title>GearDoctor</title>'
-          '<p>GearDoctor に連携しました。このタブを閉じてください。'
-          'アプリが手前に切り替わることはありません。連携ボタンが緑に戻れば成功です。</p>',
+          '<p>${activeL10n.loopbackSuccess}</p>',
         );
       await request.response.close();
       if (!(_completer?.isCompleted ?? true)) {
@@ -241,13 +245,11 @@ class StravaLoopbackListener {
   }) {
     final completer = _completer;
     if (completer == null) {
-      throw StravaAuthException('待ち受けを開始していません');
+      throw StravaAuthException(activeL10n.listenNotStarted);
     }
     return completer.future.timeout(
       timeout,
-      onTimeout: () => throw StravaAuthException(
-        'ブラウザからの戻りを待ちきれませんでした。もう一度連携してください。',
-      ),
+      onTimeout: () => throw StravaAuthException(activeL10n.listenTimedOut),
     );
   }
 
@@ -255,7 +257,7 @@ class StravaLoopbackListener {
     await _server?.close(force: true);
     _server = null;
     if (_completer != null && !_completer!.isCompleted) {
-      _completer!.completeError(StravaAuthException('連携を中止しました'));
+      _completer!.completeError(StravaAuthException(activeL10n.authAborted));
     }
     _completer = null;
   }

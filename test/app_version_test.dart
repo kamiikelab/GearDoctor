@@ -14,5 +14,9 @@ void main() {
       privacyPolicyUri('en').toString(),
       'https://kamiikelab.github.io/GearDoctor/privacy-policy.html?lang=en',
     );
+    expect(
+      privacyPolicyUri('fr').toString(),
+      'https://kamiikelab.github.io/GearDoctor/privacy-policy.html?lang=fr',
+    );
   });
 }

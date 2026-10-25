@@ -10,8 +10,10 @@ import '../domain/dates.dart';
 import '../domain/replacement_csv.dart';
 import '../domain/settings_csv.dart';
 import '../domain/usage.dart';
+import '../l10n/active_locale.dart';
 import '../l10n/app_localizations.dart';
 import '../models/models.dart';
+import '../user_message.dart';
 import '../strava/strava_api.dart';
 import '../strava/strava_config.dart';
 import '../strava/strava_oauth.dart';
@@ -24,7 +26,9 @@ class AppStore extends ChangeNotifier {
     StravaSecretVault? secretVault,
   })  : _database = database ?? AppDatabase(),
         _nowOverride = now,
-        _secretVault = secretVault ?? platformStravaSecretVault();
+        _secretVault = secretVault ?? platformStravaSecretVault() {
+    setActiveLanguageCode(catalogLocale);
+  }
 
   final AppDatabase _database;
   final DateTime? _nowOverride;
@@ -46,10 +50,18 @@ class AppStore extends ChangeNotifier {
 
   String get catalogLocale {
     final code = settings.localeCode;
-    if (code == 'en' || code == 'ja') {
+    if (code == 'en' || code == 'ja' || code == 'fr') {
       return code!;
     }
-    return deviceLocale == 'en' ? 'en' : 'ja';
+    if (deviceLocale == 'ja' || deviceLocale == 'en' || deviceLocale == 'fr') {
+      return deviceLocale;
+    }
+    return 'en';
+  }
+
+  AppLocalizations get messages {
+    setActiveLanguageCode(catalogLocale);
+    return activeL10n;
   }
 
   bool get usingDemoRides => rides.any((ride) => isDemoRideId(ride.id));
@@ -106,6 +118,7 @@ class AppStore extends ChangeNotifier {
     groups = gearId == null ? [] : await repo.loadGroups(gearId: gearId);
     replacements = await repo.loadReplacements();
     loading = false;
+    setActiveLanguageCode(catalogLocale);
     notifyListeners();
   }
 
@@ -254,7 +267,7 @@ class AppStore extends ChangeNotifier {
         ? part.gearId
         : settings.selectedGearId;
     if (gearId == null) {
-      throw StateError('ギアを選んでから部品を追加してください。');
+      throw UserMessage(messages.selectGearFirstPart);
     }
     final repo = _requireRepo();
     await repo.upsertPart(part.copyWith(gearId: gearId));
@@ -296,7 +309,7 @@ class AppStore extends ChangeNotifier {
   }) async {
     final gearId = settings.selectedGearId;
     if (gearId == null) {
-      throw StateError('ギアを選んでから交換を記録してください。');
+      throw UserMessage(messages.selectGearFirstRecord);
     }
     await _requireRepo().upsertReplacement(
       Replacement(
@@ -340,7 +353,7 @@ class AppStore extends ChangeNotifier {
     _ensureNotDemoForPartsAndCsv();
     final gearId = settings.selectedGearId;
     if (gearId == null) {
-      throw StateError('ギアを選んでから CSV を取り込んでください。');
+      throw UserMessage(messages.selectGearFirstCsv);
     }
     final repo = _requireRepo();
     final partIds = <String>{};
@@ -382,7 +395,7 @@ class AppStore extends ChangeNotifier {
     _ensureNotDemoForPartsAndCsv();
     final gearId = settings.selectedGearId;
     if (gearId == null) {
-      throw StateError('ギアを選んでから CSV を取り込んでください。');
+      throw UserMessage(messages.selectGearFirstCsv);
     }
     final repo = _requireRepo();
     final byName = <String, Part>{};
@@ -470,7 +483,7 @@ class AppStore extends ChangeNotifier {
   }) async {
     final gearId = settings.selectedGearId;
     if (gearId == null) {
-      throw StateError('ギアを選んでから表示をまとめてください。');
+      throw UserMessage(messages.selectGearFirstGroup);
     }
     await _requireRepo().insertGroup(
       DisplayGroup(
@@ -498,7 +511,7 @@ class AppStore extends ChangeNotifier {
   Future<void> addGear(String name) async {
     final trimmed = name.trim();
     if (trimmed.isEmpty) {
-      throw StateError('名前を入力してください');
+      throw UserMessage(messages.bikeNameRequired);
     }
     final repo = _requireRepo();
     final id = newId('g');
@@ -520,10 +533,10 @@ class AppStore extends ChangeNotifier {
   }) async {
     final gearId = settings.selectedGearId;
     if (gearId == null) {
-      throw StateError('ギアを選んでから走行を記録してください');
+      throw UserMessage(messages.needGearForRide);
     }
     if (distanceKm <= 0 || distanceKm.isNaN) {
-      throw StateError('距離は 0 より大きい数にしてください');
+      throw UserMessage(messages.invalidRideDistance);
     }
     final repo = _requireRepo();
     if (usingDemoRides) {
@@ -546,18 +559,18 @@ class AppStore extends ChangeNotifier {
     required double distanceKm,
   }) async {
     if (!isManualRideId(id)) {
-      throw StateError('Strava の走行は直せません');
+      throw UserMessage(messages.cannotEditStravaRide);
     }
     final gearId = settings.selectedGearId;
     if (gearId == null) {
-      throw StateError('ギアを選んでから走行を記録してください');
+      throw UserMessage(messages.needGearForRide);
     }
     if (distanceKm <= 0 || distanceKm.isNaN) {
-      throw StateError('距離は 0 より大きい数にしてください');
+      throw UserMessage(messages.invalidRideDistance);
     }
     final current = rides.where((ride) => ride.id == id);
     if (current.isEmpty || current.first.gearId != gearId) {
-      throw StateError('このギアの走行ではありません');
+      throw UserMessage(messages.rideNotOnThisBike);
     }
     await _requireRepo().upsertRide(
       Ride(
@@ -572,15 +585,15 @@ class AppStore extends ChangeNotifier {
 
   Future<void> deleteManualRide(String id) async {
     if (!isManualRideId(id)) {
-      throw StateError('Strava の走行は消せません');
+      throw UserMessage(messages.cannotDeleteStravaRide);
     }
     final gearId = settings.selectedGearId;
     if (gearId == null) {
-      throw StateError('ギアを選んでから走行を記録してください');
+      throw UserMessage(messages.needGearForRide);
     }
     final current = rides.where((ride) => ride.id == id);
     if (current.isEmpty || current.first.gearId != gearId) {
-      throw StateError('このギアの走行ではありません');
+      throw UserMessage(messages.rideNotOnThisBike);
     }
     await _requireRepo().deleteRidesWhere((ride) => ride.id == id);
     await refresh();
@@ -588,7 +601,7 @@ class AppStore extends ChangeNotifier {
 
   Future<void> deleteGear(String gearId) async {
     if (!isUserDeletableGear(gearId)) {
-      throw StateError('Strava から取った自転車は、ここでは消せません。');
+      throw UserMessage(messages.cannotDeleteStravaBike);
     }
     final repo = _requireRepo();
     await repo.deleteGear(gearId);
@@ -612,6 +625,7 @@ class AppStore extends ChangeNotifier {
     settings = code == null || code.isEmpty
         ? settings.copyWith(clearLocale: true)
         : settings.copyWith(localeCode: code);
+    setActiveLanguageCode(catalogLocale);
     notifyListeners();
     await _requireRepo().saveSettings(settings);
   }
@@ -681,10 +695,10 @@ class AppStore extends ChangeNotifier {
   }) async {
     final start = settings.lastSyncFrom;
     if (start == null) {
-      throw StravaAuthException('先にStrava開始日を指定してください。');
+      throw StravaAuthException(messages.needStartDate);
     }
     if (!settings.stravaConnected) {
-      throw StravaAuthException('先に Strava 連携の画面から連携してください。');
+      throw StravaAuthException(messages.needConnect);
     }
     final owned = client == null;
     final httpClient = client ?? http.Client();
@@ -694,7 +708,7 @@ class AppStore extends ChangeNotifier {
         try {
           return await action(tokens.accessToken);
         } on StravaAuthException catch (error) {
-          if (!error.message.contains('認可が無効')) {
+          if (!error.unauthorized) {
             rethrow;
           }
           tokens = await _ensureTokens(httpClient, forceRefresh: true);
@@ -837,7 +851,7 @@ class AppStore extends ChangeNotifier {
   AppRepository _requireRepo() {
     final repo = _repo;
     if (repo == null) {
-      throw StateError('データベースがまだ開いていません');
+      throw UserMessage(messages.databaseNotOpen);
     }
     return repo;
   }

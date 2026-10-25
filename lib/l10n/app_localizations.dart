@@ -6,6 +6,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart' as intl;
 
 import 'app_localizations_en.dart';
+import 'app_localizations_fr.dart';
 import 'app_localizations_ja.dart';
 
 // ignore_for_file: type=lint
@@ -95,6 +96,7 @@ abstract class AppLocalizations {
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[
     Locale('en'),
+    Locale('fr'),
     Locale('ja'),
   ];
 
@@ -1669,6 +1671,312 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Couldn’t open the browser.'**
   String get couldNotOpenBrowser;
+
+  /// No description provided for @languageFrench.
+  ///
+  /// In en, this message translates to:
+  /// **'Français'**
+  String get languageFrench;
+
+  /// No description provided for @selectGearFirstRecord.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a bike before logging a replacement'**
+  String get selectGearFirstRecord;
+
+  /// No description provided for @selectGearFirstCsv.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a bike before importing a CSV'**
+  String get selectGearFirstCsv;
+
+  /// No description provided for @selectGearFirstGroup.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a bike before grouping the display'**
+  String get selectGearFirstGroup;
+
+  /// No description provided for @rideNotOnThisBike.
+  ///
+  /// In en, this message translates to:
+  /// **'This is not a ride on this bike'**
+  String get rideNotOnThisBike;
+
+  /// No description provided for @cannotEditStravaRide.
+  ///
+  /// In en, this message translates to:
+  /// **'Strava rides cannot be edited'**
+  String get cannotEditStravaRide;
+
+  /// No description provided for @cannotDeleteStravaRide.
+  ///
+  /// In en, this message translates to:
+  /// **'Strava rides cannot be deleted'**
+  String get cannotDeleteStravaRide;
+
+  /// No description provided for @databaseNotOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'The database is not open yet'**
+  String get databaseNotOpen;
+
+  /// No description provided for @csvRecordsHeaderError.
+  ///
+  /// In en, this message translates to:
+  /// **'Line 1 must be {ja}, {en}, or {fr}.'**
+  String csvRecordsHeaderError(String ja, String en, String fr);
+
+  /// No description provided for @csvSettingsHeaderError.
+  ///
+  /// In en, this message translates to:
+  /// **'Line 1 must be {ja}, {en}, or {fr}.'**
+  String csvSettingsHeaderError(String ja, String en, String fr);
+
+  /// No description provided for @csvNeedNameAndDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Line {line}: registered name and date are required.'**
+  String csvNeedNameAndDate(int line);
+
+  /// No description provided for @csvEmptyName.
+  ///
+  /// In en, this message translates to:
+  /// **'Line {line}: the registered name is empty.'**
+  String csvEmptyName(int line);
+
+  /// No description provided for @csvEmptyDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Line {line}: the date is empty. Enter YYYY/MM/DD, or leave it empty to use this bike\'s first ride.'**
+  String csvEmptyDate(int line);
+
+  /// No description provided for @csvBadDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Line {line}: the date must be YYYY/MM/DD.'**
+  String csvBadDate(int line);
+
+  /// No description provided for @csvEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'The CSV is empty.'**
+  String get csvEmpty;
+
+  /// No description provided for @csvNoRows.
+  ///
+  /// In en, this message translates to:
+  /// **'There are no data rows.'**
+  String get csvNoRows;
+
+  /// No description provided for @csvPartMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'Line {line}: there is no part named \"{name}\". Add the part first.'**
+  String csvPartMissing(int line, String name);
+
+  /// No description provided for @csvDuplicateName.
+  ///
+  /// In en, this message translates to:
+  /// **'Line {line}: there is more than one part named \"{name}\".'**
+  String csvDuplicateName(int line, String name);
+
+  /// No description provided for @csvSettingsNeedFields.
+  ///
+  /// In en, this message translates to:
+  /// **'Line {line}: registered name, interval, target, default, custom, and threshold are required.'**
+  String csvSettingsNeedFields(int line);
+
+  /// No description provided for @csvBadCycle.
+  ///
+  /// In en, this message translates to:
+  /// **'Line {line}: the interval must be Distance or Months.'**
+  String csvBadCycle(int line);
+
+  /// No description provided for @csvBadLimitMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Line {line}: the target must be Default, Auto, or Custom.'**
+  String csvBadLimitMode(int line);
+
+  /// No description provided for @csvBadRecommended.
+  ///
+  /// In en, this message translates to:
+  /// **'Line {line}: the default value must be an integer of 1 or more.'**
+  String csvBadRecommended(int line);
+
+  /// No description provided for @csvBadCustom.
+  ///
+  /// In en, this message translates to:
+  /// **'Line {line}: the custom value must be an integer of 1 or more.'**
+  String csvBadCustom(int line);
+
+  /// No description provided for @csvBadThreshold.
+  ///
+  /// In en, this message translates to:
+  /// **'Line {line}: the threshold must be an integer from 1 to 100.'**
+  String csvBadThreshold(int line);
+
+  /// No description provided for @csvBadSide.
+  ///
+  /// In en, this message translates to:
+  /// **'Line {line}: the position must be F or R.'**
+  String csvBadSide(int line);
+
+  /// No description provided for @csvSideNeedsGroup.
+  ///
+  /// In en, this message translates to:
+  /// **'Line {line}: enter a group name when a position is set.'**
+  String csvSideNeedsGroup(int line);
+
+  /// No description provided for @csvGroupNeedsSide.
+  ///
+  /// In en, this message translates to:
+  /// **'Line {line}: the position must be F or R when a group is set.'**
+  String csvGroupNeedsSide(int line);
+
+  /// No description provided for @csvDuplicateInFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Line {line}: the registered name \"{name}\" is duplicated in the CSV.'**
+  String csvDuplicateInFile(int line, String name);
+
+  /// No description provided for @csvNameAmbiguous.
+  ///
+  /// In en, this message translates to:
+  /// **'Line {line}: there is more than one part named \"{name}\".'**
+  String csvNameAmbiguous(int line, String name);
+
+  /// No description provided for @csvGroupNeedsBothSides.
+  ///
+  /// In en, this message translates to:
+  /// **'Group \"{name}\" needs one F and one R.'**
+  String csvGroupNeedsBothSides(String name);
+
+  /// No description provided for @csvGroupOverlap.
+  ///
+  /// In en, this message translates to:
+  /// **'Parts in group \"{name}\" overlap another group.'**
+  String csvGroupOverlap(String name);
+
+  /// No description provided for @authCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Authorization was cancelled'**
+  String get authCancelled;
+
+  /// No description provided for @authFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Authorization failed ({error})'**
+  String authFailed(String error);
+
+  /// No description provided for @authStateMismatch.
+  ///
+  /// In en, this message translates to:
+  /// **'The authorization response did not match. Connect again.'**
+  String get authStateMismatch;
+
+  /// No description provided for @authCodeMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'There is no authorization code. Check code= in the address bar.'**
+  String get authCodeMissing;
+
+  /// No description provided for @pasteCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Paste the code'**
+  String get pasteCode;
+
+  /// No description provided for @pasteCodeUnreadable.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not read a code from what you pasted'**
+  String get pasteCodeUnreadable;
+
+  /// No description provided for @tokenFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not get a token ({code})'**
+  String tokenFailed(int code);
+
+  /// No description provided for @tokenIncomplete.
+  ///
+  /// In en, this message translates to:
+  /// **'The token response is incomplete'**
+  String get tokenIncomplete;
+
+  /// No description provided for @stravaUserFallback.
+  ///
+  /// In en, this message translates to:
+  /// **'Strava user'**
+  String get stravaUserFallback;
+
+  /// No description provided for @listenNotStarted.
+  ///
+  /// In en, this message translates to:
+  /// **'Listening has not started'**
+  String get listenNotStarted;
+
+  /// No description provided for @listenTimedOut.
+  ///
+  /// In en, this message translates to:
+  /// **'Timed out waiting for the browser. Connect again.'**
+  String get listenTimedOut;
+
+  /// No description provided for @authAborted.
+  ///
+  /// In en, this message translates to:
+  /// **'Connection cancelled'**
+  String get authAborted;
+
+  /// No description provided for @rateLimited.
+  ///
+  /// In en, this message translates to:
+  /// **'Strava rate limit reached. Try again later.'**
+  String get rateLimited;
+
+  /// No description provided for @authInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Strava authorization is no longer valid. Reconnect from the Strava screen.'**
+  String get authInvalid;
+
+  /// No description provided for @stravaFetchFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not fetch from Strava ({code})'**
+  String stravaFetchFailed(int code);
+
+  /// No description provided for @tokenRefreshNeedsSecret.
+  ///
+  /// In en, this message translates to:
+  /// **'Refreshing the token needs Client ID and Secret. Check the Strava connect screen.'**
+  String get tokenRefreshNeedsSecret;
+
+  /// No description provided for @activitiesUnreadable.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not read the ride list response'**
+  String get activitiesUnreadable;
+
+  /// No description provided for @tooManyActivities.
+  ///
+  /// In en, this message translates to:
+  /// **'This is more than can be fetched at once. Shorten the period and try again.'**
+  String get tooManyActivities;
+
+  /// No description provided for @browserAuthFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Authorization in the browser failed ({code})'**
+  String browserAuthFailed(String code);
+
+  /// No description provided for @loopbackSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Connected to GearDoctor. Close this tab. The app will not come to the front. Success is when the connect button turns green again.'**
+  String get loopbackSuccess;
 }
 
 class _AppLocalizationsDelegate
@@ -1682,7 +1990,7 @@ class _AppLocalizationsDelegate
 
   @override
   bool isSupported(Locale locale) =>
-      <String>['en', 'ja'].contains(locale.languageCode);
+      <String>['en', 'fr', 'ja'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
@@ -1693,6 +2001,8 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
   switch (locale.languageCode) {
     case 'en':
       return AppLocalizationsEn();
+    case 'fr':
+      return AppLocalizationsFr();
     case 'ja':
       return AppLocalizationsJa();
   }

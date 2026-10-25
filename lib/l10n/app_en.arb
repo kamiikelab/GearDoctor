@@ -467,5 +467,255 @@
   "waitingForChrome": "Waiting for Strava approval in Chrome…",
   "closeChromeSuccess": "When Chrome shows a page, close it. Success is when the connect button turns green again.",
   "privacyPolicy": "Privacy policy",
-  "couldNotOpenBrowser": "Couldn’t open the browser."
+  "couldNotOpenBrowser": "Couldn’t open the browser.",
+  "languageFrench": "Français",
+  "selectGearFirstRecord": "Select a bike before logging a replacement",
+  "selectGearFirstCsv": "Select a bike before importing a CSV",
+  "selectGearFirstGroup": "Select a bike before grouping the display",
+  "rideNotOnThisBike": "This is not a ride on this bike",
+  "cannotEditStravaRide": "Strava rides cannot be edited",
+  "cannotDeleteStravaRide": "Strava rides cannot be deleted",
+  "databaseNotOpen": "The database is not open yet",
+  "csvRecordsHeaderError": "Line 1 must be {ja}, {en}, or {fr}.",
+  "@csvRecordsHeaderError": {
+    "placeholders": {
+      "ja": {
+        "type": "String"
+      },
+      "en": {
+        "type": "String"
+      },
+      "fr": {
+        "type": "String"
+      }
+    }
+  },
+  "csvSettingsHeaderError": "Line 1 must be {ja}, {en}, or {fr}.",
+  "@csvSettingsHeaderError": {
+    "placeholders": {
+      "ja": {
+        "type": "String"
+      },
+      "en": {
+        "type": "String"
+      },
+      "fr": {
+        "type": "String"
+      }
+    }
+  },
+  "csvNeedNameAndDate": "Line {line}: registered name and date are required.",
+  "@csvNeedNameAndDate": {
+    "placeholders": {
+      "line": {
+        "type": "int"
+      }
+    }
+  },
+  "csvEmptyName": "Line {line}: the registered name is empty.",
+  "@csvEmptyName": {
+    "placeholders": {
+      "line": {
+        "type": "int"
+      }
+    }
+  },
+  "csvEmptyDate": "Line {line}: the date is empty. Enter YYYY/MM/DD, or leave it empty to use this bike's first ride.",
+  "@csvEmptyDate": {
+    "placeholders": {
+      "line": {
+        "type": "int"
+      }
+    }
+  },
+  "csvBadDate": "Line {line}: the date must be YYYY/MM/DD.",
+  "@csvBadDate": {
+    "placeholders": {
+      "line": {
+        "type": "int"
+      }
+    }
+  },
+  "csvEmpty": "The CSV is empty.",
+  "csvNoRows": "There are no data rows.",
+  "csvPartMissing": "Line {line}: there is no part named \"{name}\". Add the part first.",
+  "@csvPartMissing": {
+    "placeholders": {
+      "line": {
+        "type": "int"
+      },
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "csvDuplicateName": "Line {line}: there is more than one part named \"{name}\".",
+  "@csvDuplicateName": {
+    "placeholders": {
+      "line": {
+        "type": "int"
+      },
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "csvSettingsNeedFields": "Line {line}: registered name, interval, target, default, custom, and threshold are required.",
+  "@csvSettingsNeedFields": {
+    "placeholders": {
+      "line": {
+        "type": "int"
+      }
+    }
+  },
+  "csvBadCycle": "Line {line}: the interval must be Distance or Months.",
+  "@csvBadCycle": {
+    "placeholders": {
+      "line": {
+        "type": "int"
+      }
+    }
+  },
+  "csvBadLimitMode": "Line {line}: the target must be Default, Auto, or Custom.",
+  "@csvBadLimitMode": {
+    "placeholders": {
+      "line": {
+        "type": "int"
+      }
+    }
+  },
+  "csvBadRecommended": "Line {line}: the default value must be an integer of 1 or more.",
+  "@csvBadRecommended": {
+    "placeholders": {
+      "line": {
+        "type": "int"
+      }
+    }
+  },
+  "csvBadCustom": "Line {line}: the custom value must be an integer of 1 or more.",
+  "@csvBadCustom": {
+    "placeholders": {
+      "line": {
+        "type": "int"
+      }
+    }
+  },
+  "csvBadThreshold": "Line {line}: the threshold must be an integer from 1 to 100.",
+  "@csvBadThreshold": {
+    "placeholders": {
+      "line": {
+        "type": "int"
+      }
+    }
+  },
+  "csvBadSide": "Line {line}: the position must be F or R.",
+  "@csvBadSide": {
+    "placeholders": {
+      "line": {
+        "type": "int"
+      }
+    }
+  },
+  "csvSideNeedsGroup": "Line {line}: enter a group name when a position is set.",
+  "@csvSideNeedsGroup": {
+    "placeholders": {
+      "line": {
+        "type": "int"
+      }
+    }
+  },
+  "csvGroupNeedsSide": "Line {line}: the position must be F or R when a group is set.",
+  "@csvGroupNeedsSide": {
+    "placeholders": {
+      "line": {
+        "type": "int"
+      }
+    }
+  },
+  "csvDuplicateInFile": "Line {line}: the registered name \"{name}\" is duplicated in the CSV.",
+  "@csvDuplicateInFile": {
+    "placeholders": {
+      "line": {
+        "type": "int"
+      },
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "csvNameAmbiguous": "Line {line}: there is more than one part named \"{name}\".",
+  "@csvNameAmbiguous": {
+    "placeholders": {
+      "line": {
+        "type": "int"
+      },
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "csvGroupNeedsBothSides": "Group \"{name}\" needs one F and one R.",
+  "@csvGroupNeedsBothSides": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "csvGroupOverlap": "Parts in group \"{name}\" overlap another group.",
+  "@csvGroupOverlap": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "authCancelled": "Authorization was cancelled",
+  "authFailed": "Authorization failed ({error})",
+  "@authFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "authStateMismatch": "The authorization response did not match. Connect again.",
+  "authCodeMissing": "There is no authorization code. Check code= in the address bar.",
+  "pasteCode": "Paste the code",
+  "pasteCodeUnreadable": "Could not read a code from what you pasted",
+  "tokenFailed": "Could not get a token ({code})",
+  "@tokenFailed": {
+    "placeholders": {
+      "code": {
+        "type": "int"
+      }
+    }
+  },
+  "tokenIncomplete": "The token response is incomplete",
+  "stravaUserFallback": "Strava user",
+  "listenNotStarted": "Listening has not started",
+  "listenTimedOut": "Timed out waiting for the browser. Connect again.",
+  "authAborted": "Connection cancelled",
+  "rateLimited": "Strava rate limit reached. Try again later.",
+  "authInvalid": "Strava authorization is no longer valid. Reconnect from the Strava screen.",
+  "stravaFetchFailed": "Could not fetch from Strava ({code})",
+  "@stravaFetchFailed": {
+    "placeholders": {
+      "code": {
+        "type": "int"
+      }
+    }
+  },
+  "tokenRefreshNeedsSecret": "Refreshing the token needs Client ID and Secret. Check the Strava connect screen.",
+  "activitiesUnreadable": "Could not read the ride list response",
+  "tooManyActivities": "This is more than can be fetched at once. Shorten the period and try again.",
+  "browserAuthFailed": "Authorization in the browser failed ({code})",
+  "@browserAuthFailed": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "loopbackSuccess": "Connected to GearDoctor. Close this tab. The app will not come to the front. Success is when the connect button turns green again."
 }
