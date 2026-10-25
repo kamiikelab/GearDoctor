@@ -17,7 +17,7 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  String? _message;
+  bool _resetDone = false;
   bool _busy = false;
   String? _buildNumber;
 
@@ -105,9 +105,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 onPressed: _busy ? null : _confirmResetToDemo,
                 child: Text(l10n.resetToDemo),
               ),
-              if (_message != null) ...[
+              if (_resetDone) ...[
                 const SizedBox(height: 12),
-                Text(_message!),
+                Text(l10n.resetDone),
               ],
               const SizedBox(height: 24),
               Text(
@@ -172,7 +172,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     }
     setState(() {
       _busy = true;
-      _message = null;
+      _resetDone = false;
     });
     await widget.store.resetToDemo();
     if (!mounted) {
@@ -180,7 +180,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     }
     setState(() {
       _busy = false;
-      _message = AppLocalizations.of(context).resetDone;
+      _resetDone = true;
     });
   }
 }

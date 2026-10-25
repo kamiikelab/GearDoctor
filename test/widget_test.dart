@@ -622,6 +622,50 @@ void main() {
     await tester.runAsync(() => store.setLocaleCode('en'));
   });
 
+  testWidgets('reset done message follows the selected language', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(800, 4000);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    final store = _ImmediateResetStore(
+      database: AppDatabase(overridePath: '${dir.path}/app.db'),
+      now: parseDate('2026-08-23'),
+    );
+    await tester.runAsync(store.load);
+    await tester.runAsync(() => store.setLocaleCode('en'));
+
+    await tester.pumpWidget(GearDoctorApp(store: store));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Settings'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Reset to demo'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Delete and reset'));
+    await tester.pumpAndSettle();
+    expect(find.text('Reset to the demo state.'), findsOneWidget);
+
+    await tester.tap(find.text('Français'));
+    await tester.pump();
+    await tester.runAsync(
+      () => Future<void>.delayed(const Duration(milliseconds: 100)),
+    );
+    await tester.pumpAndSettle();
+    expect(find.text("Retour à l'état de démo."), findsOneWidget);
+    expect(find.text('Reset to the demo state.'), findsNothing);
+
+    await tester.tap(find.text('日本語'));
+    await tester.pump();
+    await tester.runAsync(
+      () => Future<void>.delayed(const Duration(milliseconds: 100)),
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('初期状態に戻しました。'), findsOneWidget);
+    expect(find.text("Retour à l'état de démo."), findsNothing);
+  });
+
   testWidgets('english catalog is stored when demo is seeded in English', (
     tester,
   ) async {
@@ -672,4 +716,12 @@ void main() {
       theme.textTheme.bodySmall?.fontSize,
     );
   });
+}
+
+class _ImmediateResetStore extends AppStore {
+  _ImmediateResetStore({required AppDatabase database, required DateTime now})
+      : super(database: database, now: now);
+
+  @override
+  Future<void> resetToDemo() async {}
 }
