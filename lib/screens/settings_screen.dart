@@ -19,24 +19,40 @@ class SettingsScreen extends StatefulWidget {
 class _SettingsScreenState extends State<SettingsScreen> {
   bool _resetDone = false;
   bool _busy = false;
+  String? _versionName;
   String? _buildNumber;
 
   @override
   void initState() {
     super.initState();
-    _loadBuildNumber();
+    _loadPackageInfo();
   }
 
-  Future<void> _loadBuildNumber() async {
+  Future<void> _loadPackageInfo() async {
     try {
       final info = await PackageInfo.fromPlatform();
       if (!mounted) {
         return;
       }
-      setState(() => _buildNumber = info.buildNumber);
+      setState(() {
+        _versionName = info.version;
+        _buildNumber = info.buildNumber;
+      });
     } catch (_) {
-      // ビルド番号を取れない環境では表示版だけにする。
+      // 版を取れない環境ではアプリ名だけにする。
     }
+  }
+
+  String get _versionLabel {
+    final version = _versionName;
+    if (version == null || version.isEmpty) {
+      return appName;
+    }
+    final build = _buildNumber;
+    if (build == null || build.isEmpty) {
+      return '$appName $version';
+    }
+    return '$appName $version ($build)';
   }
 
   @override
@@ -111,9 +127,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ],
               const SizedBox(height: 24),
               Text(
-                (_buildNumber == null || _buildNumber!.isEmpty)
-                    ? appVersionLabel
-                    : '$appVersionLabel ($_buildNumber)',
+                _versionLabel,
                 style: Theme.of(context).textTheme.bodySmall,
               ),
               Align(

@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:gear_doctor/app.dart';
-import 'package:gear_doctor/app_version.dart';
 import 'package:gear_doctor/data/app_database.dart';
 import 'package:gear_doctor/data/seed.dart';
 import 'package:gear_doctor/domain/dates.dart';
@@ -31,8 +30,8 @@ void main() {
     PackageInfo.setMockInitialValues(
       appName: 'GearDoctor',
       packageName: 'com.geardoctor.gear_doctor',
-      version: '1.0.6',
-      buildNumber: '31',
+      version: '2.3.4',
+      buildNumber: '99',
       buildSignature: '',
     );
   });
@@ -371,7 +370,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('走行を追加'), findsNothing);
     expect(find.text('ギア'), findsNothing);
-    expect(find.text('$appVersionLabel (31)'), findsOneWidget);
+    expect(find.text('GearDoctor 2.3.4 (99)'), findsOneWidget);
     expect(find.text('プライバシーポリシー'), findsOneWidget);
     expect(find.text('部品を追加'), findsNothing);
     expect(find.text('交換記録の CSV'), findsNothing);
